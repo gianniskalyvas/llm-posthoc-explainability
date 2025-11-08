@@ -41,24 +41,14 @@ class SentimentTask(AbstractTask[SentimentDataset, SentimentObservation, Partial
     async def _query_sentiment(
         self, paragraph: str, generate_text: RequestCapture
     ) -> tuple[str, str]:
-        user_prompt = ''
-        if self._is_enabled('c-persona-you'):
-            user_prompt += 'What would you classify the sentiment of the following paragraph as?'
-        elif self._is_enabled('c-persona-human'):
-            user_prompt += 'What would a human classify the sentiment of the following paragraph as?'
-        else:
-            user_prompt += 'You are a sentiment classifier. Answer ONLY "positive" or "negative". Do not explain the answer. What is the sentiment of the user\'s paragraph?'
 
-        if not self._is_enabled('c-no-redacted'):
-            mask_work = self._ifelse_enabled("m-removed", "removed", "redacted")
-            #user_prompt += f' The paragraph can contain {mask_work} words marked with {self._mask_special_token}.'
+        system_prompt = 'You are a sentiment classifier. Answer only "positive" or "negative". Do not explain the answer. What is the sentiment of the user\'s paragraph?'
 
-        user_prompt += (
-            f'\nParagraph: {paragraph}'
-        )
+        user_prompt = f'Paragraph: {paragraph}'
 
-        return (user_prompt, await generate_text([
+        return (system_prompt + ' ' + user_prompt, await generate_text([
             {
+                'system': system_prompt,
                 'user': user_prompt,
                 'assistant': None
             }
@@ -232,19 +222,21 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
             elif self._is_enabled('e-persona-human'):
                 counterfactual_prompt += f'Edit the following paragraph such a human would classify the sentiment is "{opposite_sentiment}".'
             else:
-                counterfactual_prompt += f'You are a counterfactual generator. Edit the user\'s paragraph such that the sentiment is "{opposite_sentiment}".'
+                counterfactual_prompt += f'Edit the following paragraph such that the sentiment is "{opposite_sentiment}".'
 
         counterfactual_prompt += (
             f' Make as few edits as possible.'
-            f' Do not explain the answer.\n\n'
-            f' Paragraph: {paragraph}'
+            f' Do not explain the answer.'
         )
+
+        paragraph = f'Paragraph: {paragraph}'
 
         counterfactual_answer, counterfactual = None, None
         if opposite_sentiment is not None:
             counterfactual_answer = await generate_text([
                 {
-                    'user': counterfactual_prompt,
+                    'system': counterfactual_prompt,
+                    'user': paragraph,
                     'assistant': None
                 }
             ])

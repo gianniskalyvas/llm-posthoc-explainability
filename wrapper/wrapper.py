@@ -3,15 +3,31 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import re
-import torch
 import random
 import numpy as np
 
 import nltk
-nltk.download('averaged_perceptron_tagger_eng')
+# ensure nltk resource is present; use canonical resource name and avoid repeated downloads in CI
+try:
+    nltk.data.find('taggers/averaged_perceptron_tagger')
+except LookupError:
+    nltk.download('averaged_perceptron_tagger')
 
-import sys
-sys.path.append("/workspace/llm-introspection-main/introspect/tasks")
+import sys, os
+# make introspect/tasks path relative to this repository instead of using an absolute path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+introspect_tasks_path = os.path.join(project_root, 'introspect', 'tasks')
+if os.path.isdir(introspect_tasks_path):
+    sys.path.insert(0, introspect_tasks_path)
+else:
+    # fallback: attempt one level up (useful if workspace layout differs)
+    alt_path = os.path.abspath(os.path.join(project_root, '..', 'llm-introspection-main', 'introspect', 'tasks'))
+    if os.path.isdir(alt_path):
+        sys.path.insert(0, alt_path)
+    else:
+        # keep previous behavior minimal: do not insert a hardcoded absolute path
+        pass
+
 from _common_match import match_contains, match_pair_match, match_startwith
 
 class TextAttackWrapper(ModelWrapper):
@@ -26,11 +42,11 @@ class TextAttackWrapper(ModelWrapper):
     def make_prompt(self, texts) -> str:
         if self.task == "sentiment":
             paragraph = texts[0]
-            system_msg = "You are a sentiment classifier. Answer only \"positive\" or \"negative\". Do not explain the answer. What is the sentiment of the user\'s paragraph?"
+            system_msg = f'You are a sentiment classifier. Answer only "positive" or "negative". Do not explain the answer. What is the sentiment of the user\'s paragraph?'
         elif self.task == "entailment":
-            hypothesis = texts[0].split('.')[1]
-            paragraph = texts[0].split('.')[0]
-            system_msg =  f'Does the statement "{hypothesis}" entail from the following paragraph? Answer either "yes" for entailment or "no" for no entailment. Do not explain the answer.'
+            hypothesis = texts[0].split('.')[0]
+            paragraph = texts[0].split('.')[1]
+            system_msg =  f'You are an entailment classifier. Does the statement "{hypothesis}" entail from the following paragraph? Answer either "yes" for entailment or "no" for no entailment. Do not explain the answer.'
         else:
             raise ValueError("Task must be either sentiment or entailment!")
 
@@ -100,16 +116,16 @@ class TextAttackWrapper(ModelWrapper):
             torch.cuda.manual_seed_all(seed)
             np.random.seed(seed)
             random.seed(seed)
-            
+
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
                     max_new_tokens=self.max_new_tokens,
                     repetition_penalty=1.0,
                     do_sample=False,
-                    top_p=None,
-                    top_k=None,
-                    temperature=None,
+                    top_p=1,
+                    top_k=0,
+                    temperature=0,
                     output_scores=True,
                     return_dict_in_generate=True,
                     pad_token_id=self.tokenizer.eos_token_id,

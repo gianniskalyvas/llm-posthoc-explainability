@@ -1,9 +1,10 @@
 # metrics/__init__.py
 
-from .metrics import calculate_metrics, detect_contradiction, semantic_similarity
+from .metrics import calculate_metrics, detect_contradiction, semantic_similarity, evaluate_cf
 from .plotting import plot_size_comparison, plot_attack_comparison
 
 __all__ = [
+    "evaluate_cf",
     "calculate_metrics",
     "semantic_similarity",
     "detect_contradiction",

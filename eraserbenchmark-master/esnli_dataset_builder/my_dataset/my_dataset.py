@@ -17,7 +17,6 @@ class MyDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager):
 
         data_dir = os.path.dirname(os.path.abspath(__file__))
-        data_dir = "/workspace/eraserbenchmark-master/esnli_dataset_builder/my_dataset"
     
         return [
             datasets.SplitGenerator(

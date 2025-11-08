@@ -1,78 +1,138 @@
-import os
-import re
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import re
+import os
 import seaborn as sns
 
-def plot_attack_comparison(model_attack_data, directory, cmap="viridis"):
-    dfs = []
-    for model, attacks in model_attack_data.items():
-        match = re.search(r'(\d+(?:\.\d+)?)[bB]', model)
-        model_size = float(match.group(1)) if match else 0
 
-        # Extract model family (everything before the first size number)
-        family_match = re.match(r'([a-zA-Z\-]+)', model)
-        model_family = family_match.group(1) if family_match else model
-        for attack, metrics in attacks.items():
-            success_rate = (metrics['successful'] / metrics['total']) * 100.0 if metrics['total'] > 0 else 0.0
-            dfs.append({
-                'Model': model,
-                'Model Family': model_family,
-                'Model Size': model_size,
-                'Model Size Label': f"{model_size}B",
-                'Attack': attack,
-                'Success Rate (%)': success_rate
+
+def plot_attack_comparison(models, attacks, plot_dir):
+
+    records = []
+    for model in models:
+        # Extract model family ("Llama" or "Qwen") and size ("1B", "3B", etc.)
+        family_match = re.match(r"([A-Za-z\-0-9\.]+?)(?:-|$)", model)
+        family = "Llama" if "Llama" in model else "Qwen"
+        size_match = re.search(r"(\d+\.?\d*)B", model)
+        size = float(size_match.group(1)) if size_match else None
+
+        for variant, vals in attacks[model].items():
+            records.append({
+                "model": model,
+                "family": family,
+                "size": size,
+                "variant": variant,
+                "success_rate": vals['successful'] / vals['total']
             })
 
-    df = pd.DataFrame(dfs)
-    df = df.sort_values(['Attack', 'Model Family', 'Model Size'])
+    df = pd.DataFrame(records)
 
-    for attack_type in df['Attack'].unique():
-        fig, ax = plt.subplots(figsize=(10, 5))  # <-- capture figure and axes
-        subset = df[df['Attack'] == attack_type]
-        palette = sns.color_palette(cmap, n_colors=subset['Model Family'].nunique())
+    # Split prompt variants from attacks
+    prompt_variants = df[~df['variant'].str.contains("TextFooler", case=False, na=False)]
+    attack_variants = df[df['variant'].str.contains("TextFooler", case=False, na=False)]
 
-        # Group by model family to connect points
-        for i, (family_name, family_data) in enumerate(subset.groupby('Model Family')):
-            family_data = family_data.sort_values('Model Size')
+    # ------------------------------
+    # 📈 1. Prompt variation success by model size
+    # ------------------------------
+
+    # Define base colors for each main variant
+    base_colors = {
+        'baseline': 'tab:gray',
+        'e-persona-you': 'tab:orange',
+        'e-persona-human': 'tab:green'
+    }
+
+    # Function to make color darker
+    def darken_color(color, amount=0.6):
+        c = mcolors.to_rgb(color)
+        return tuple([amount*x for x in c])
+
+    fig, axes = plt.subplots(1, 2, figsize=(12,5), sharey=True)
+
+    for i, family in enumerate(['Llama', 'Qwen']):
+        subdf = prompt_variants[prompt_variants['family']==family]
+        for variant, vdf in subdf.groupby('variant'):
+            # Determine color
+            if variant.startswith('e-implcit-target'):
+                # Map the corresponding base variant and darken it
+                if 'e-persona-you' in variant:
+                    color = darken_color(base_colors['e-persona-you'])
+                elif 'e-persona-human' in variant:
+                    color = darken_color(base_colors['e-persona-human'])
+                else:  # default for baseline-related e-implicit-target
+                    color = darken_color(base_colors['baseline'])
+            else:
+                color = base_colors.get(variant, 'gray')  # fallback color
+
+            axes[i].plot(vdf['size'], vdf['success_rate'], marker='o', label=variant, color=color)
+
+        axes[i].set_title(f"{family} Models")
+        axes[i].set_xlabel("Model Size (B parameters)")
+        axes[i].set_ylabel("Success Rate")
+        axes[i].grid(True)
+        axes[i].legend(fontsize=8)
+
+    plt.suptitle("Faithful Counterfactuals by Model Size & Prompt Variant")
+    plt.ylim(0, 1)  # Set y-axis limits from 0 to 1
+    plt.tight_layout()
+    fig.savefig(os.path.join(plot_dir, 'Introspection_Success'), dpi=300, bbox_inches="tight")
+    plt.show()
+
+    # ------------------------------
+    # 💥 2. Attack success by model size
+    # ------------------------------
+    fig2, ax = plt.subplots(figsize=(12,5))  # ✅ Create new figure and axis properly    
+
+    for family, subdf in attack_variants.groupby('family'):
+        for variant, vdf in subdf.groupby('variant'):
             plt.plot(
-                family_data['Model Size'],
-                family_data['Success Rate (%)'],
-                marker='o',
-                label=family_name,
-                color=palette[i],
-                linewidth=2
+                vdf['size'], vdf['success_rate'],
+                marker='s', linestyle='--', label=f"{family} - {variant}"
             )
 
-        plt.title(f"{attack_type.replace('.csv','')} Success Rate by Model Family", pad=15)
-        plt.ylim(0, 110)
-        plt.ylabel('Success Rate (%)')
-        plt.xlabel('Model Size')
-        plt.xticks(
-            ticks=sorted(subset['Model Size'].unique()),
-            labels=[f"{x}B" for x in sorted(subset['Model Size'].unique())]
-        )
-        plt.legend(title='Model Family', bbox_to_anchor=(1.05, 1), loc='upper left')
-        plt.grid(True, linestyle='--', alpha=0.5)
-        plt.tight_layout()
-        os.chdir(directory)
-        fig.savefig(attack_type.split('.')[0] +".png", dpi=300, bbox_inches="tight")
-        plt.show()
+    plt.title("Attack Success Rate by Model Size")
+    plt.xlabel("Model Size (B parameters)")
+    plt.ylabel("Attack Success Rate")
+    plt.ylim(0, 1)  # Set y-axis limits from 0 to 1
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True)
+    plt.tight_layout()
+    fig2.savefig(os.path.join(plot_dir, 'Attack_Success'), dpi=300, bbox_inches="tight")
+    plt.show()
+    
+    
 
+def extract_means(df):
+    flattened = pd.json_normalize(df.apply(lambda x: x.to_dict(), axis=1))
+    return {
+        'distance': {col: flattened[col].mean() for col in flattened if 'distance' in col},
+        'semantic_similarity': {col: flattened[col].mean() for col in flattened if 'similarity' in col},
+        'contradiction': {col: flattened[col].mean() for col in flattened if 'contradiction' in col},
+        'evidence_accuracy': {col: flattened[col].mean() for col in flattened if 'evidence_accuracy' in col},
+        'evidence_precision': {col: flattened[col].mean() for col in flattened if 'evidence_precision' in col},
+        'evidence_recall': {col: flattened[col].mean() for col in flattened if 'evidence_recall' in col},
+        'evidence_f1': {col: flattened[col].mean() for col in flattened if 'evidence_f1' in col},
+    }
+    
 
+def plot_size_comparison(models, results, directory, palette, show_plots=True):
+    
+    
+    os.makedirs(directory, exist_ok=True)
 
-
-def plot_size_comparison(result_dataframes, extract_means, directory, palette):
-
+    # --- Build model data ---
     model_data = {}
-    for name, df in result_dataframes.items():
-        match = re.search(r'(\d+(?:\.\d+)?)[bB]', name)
+    for model in models:
+        df = results[model]
+        match = re.search(r'(\d+(?:\.\d+)?)[bB]', model)
         size_float = float(match.group(1)) if match else 0
         size = f"{size_float}B"
 
-        if 'qwen' in name.lower():
+
+        if 'qwen' in model.lower():
             family = 'qwen'
-        elif 'llama' in name.lower():
+        elif 'llama' in model.lower():
             family = 'llama'
         else:
             family = 'unknown'
@@ -84,136 +144,176 @@ def plot_size_comparison(result_dataframes, extract_means, directory, palette):
             'metrics': extract_means(df)
         }
 
-    # Group by metric groups
+    # --- Metric groups (from first model) ---
     first_model = next(iter(model_data.values()))
     metric_groups = {k: v for k, v in first_model['metrics'].items() if v}
 
-    n_rows = len(metric_groups)
-    n_cols = max(len(metrics) for metrics in metric_groups.values())
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows))
+    print("Metric groups detected:")
+    for k in metric_groups.keys():
+        print("  •", k)
 
-    if n_rows == 1 and n_cols == 1:
-        axes = [[axes]]
-    elif n_rows == 1:
-        axes = [axes]
-    elif n_cols == 1:
-        axes = [[ax] for ax in axes]
+    # --- Experiment group sets ---
+    experiment_sets = {
+        "Introspection": [
+            "baseline",
+            "e-persona-you",
+            "e-persona-human",
+            "e-implcit-target",
+            "e-implcit-target-e-persona-you",
+            "e-implcit-target-e-persona-human"
+        ],
+        "TextFooler": [
+            "TextFoolerJin2019"
+        ]
+    }
 
-    # Get unique families and sizes for plotting
+    # --- Families and model sizes ---
     families = sorted(set(data['family'] for data in model_data.values()))
-
-    # Sort sizes numerically using the stored size_num
     all_sizes = sorted(set((data['size'], data['size_num']) for data in model_data.values()),
                        key=lambda x: x[1])
-    all_size_labels = [size[0] for size in all_sizes]  # ['1B', '3B', '4B', '8B', '12B']
-    all_size_nums = [size[1] for size in all_sizes]    # [1, 3, 4, 8, 12]
+    all_size_labels = [s[0] for s in all_sizes]
+    all_size_nums = [s[1] for s in all_sizes]
 
-    for row_idx, (group_name, metrics) in enumerate(metric_groups.items()):
-        for col_idx, (metric_name, _) in enumerate(metrics.items()):
-            ax = axes[row_idx][col_idx]
+    # === MAIN LOOP ===
+    for metric_group_name in metric_groups.keys():
+        print(f"\n🔹 Processing metric group: {metric_group_name}")
 
-            # Prepare data for each family
-            family_data = {}
-            for family in families:
-                family_values = []
-                family_sizes_num = []
-                family_size_labels = []
+        for group_label, experiments in experiment_sets.items():
 
-                for size_label, size_num in zip(all_size_labels, all_size_nums):
-                    key = f"{family}_{size_label}"
-                    if key in model_data:
-                        metrics_dict = model_data[key]['metrics']
-                        if (group_name in metrics_dict and
-                                metric_name in metrics_dict[group_name]):
-                            value = metrics_dict[group_name][metric_name]
-                            family_values.append(value)
-                            family_sizes_num.append(size_num)
-                            family_size_labels.append(size_label)
+            # --- CASE 1: Baseline group → separate plots per family ---
+            if group_label == "Introspection":
+                for family in families:
+                    print(f"   📊 Plotting {group_label} for {family}")
 
-                if family_values:
-                    family_data[family] = {
-                        'sizes_num': family_sizes_num,
-                        'size_labels': family_size_labels,
-                        'values': family_values
-                    }
+                    fig, ax = plt.subplots(figsize=(6, 5))
+                    colors = sns.color_palette(palette, len(experiments))
+                    plotted = False
 
-            # Plot each family
-            colors = sns.color_palette(palette, len(families))
-            for i, (family, data_dict) in enumerate(family_data.items()):
-                ax.plot(data_dict['sizes_num'], data_dict['values'],
-                        marker='o', linewidth=2, markersize=8,
-                        color=colors[i], label=family.title(),
-                        markerfacecolor='white', markeredgecolor=colors[i],
-                        markeredgewidth=2)
+                    for exp_idx, exp_name in enumerate(experiments):
+                        exp_values = []
+                        for size_label, size_num in zip(all_size_labels, all_size_nums):
+                            key = f"{family}_{size_label}"
+                            if key not in model_data:
+                                continue
 
-                # Annotations
-                for size_num, value, size_label in zip(data_dict['sizes_num'],
-                                                      data_dict['values'],
-                                                      data_dict['size_labels']):
-                    ax.text(size_num, value + 0.01,
-                            f"{value:.2f}", ha='center', va='bottom',
-                            fontsize=9, color=colors[i], fontweight='bold')
+                            metrics_dict = model_data[key]['metrics']
+                            if metric_group_name not in metrics_dict:
+                                continue
 
-            # Set ticks, labels, and titles
-            ax.set_xticks(all_size_nums)
-            ax.set_xticklabels(all_size_labels)
-            ax.set_title(f"{group_name.replace('_', ' ').title()}\n{metric_name.title().split('.')[0]}",
-                         fontsize=12, fontweight='bold')
+                            # --- match experiment name by prefix ---
+                            found_key = None
+                            for k in metrics_dict[metric_group_name].keys():
+                                if k.lower().startswith(exp_name.lower()):
+                                    found_key = k
+                                    break
+                            if not found_key:
+                                continue
 
-            # Y limits
-            all_values = []
-            for data_dict in family_data.values():
-                all_values.extend(data_dict['values'])
+                            val = metrics_dict[metric_group_name][found_key]
+                            exp_values.append((size_num, float(val)))
 
-            if all_values:
-                max_val = max(all_values)
-                y_upper = 1.1 if max_val <= 1 else max_val * 1.15
-                ax.set_ylim(0, y_upper)
+                        if not exp_values:
+                            continue
 
-            ax.tick_params(axis='x', rotation=45)
-            ax.grid(True, alpha=0.3, linestyle='--')
-            if all_values:
-                ax.legend(loc='lower right' if max_val <= 1 else 'upper right')
+                        exp_values.sort()
+                        x_vals, y_vals = zip(*exp_values)
+                        ax.plot(
+                            x_vals, y_vals,
+                            marker='o', linewidth=2, markersize=8,
+                            label=exp_name,
+                            linestyle='--' if 'implcit' in exp_name else '-',
+                            color=colors[exp_idx],
+                            markerfacecolor='white', markeredgewidth=2
+                        )
+                        plotted = True
 
-            if row_idx == n_rows - 1:
+                    ax.set_title(f"{metric_group_name.replace('_', ' ').title()} – {group_label.replace('_', ' ')} ({family.title()})",
+                                 fontsize=12, fontweight='bold')
+                    ax.set_xlabel('Model Size', fontweight='bold')
+                    ax.set_ylabel('Score', fontweight='bold')
+                    ax.set_xticks(all_size_nums)
+                    ax.set_xticklabels(all_size_labels)
+                    ax.grid(True, alpha=0.3, linestyle='--')
+
+                    if plotted:
+                        ax.legend(loc='lower right', title='Promp variation',fontsize=8)
+                        ymin, ymax = ax.get_ylim()
+                        ax.set_ylim(0, ymax * 1.15)
+
+                    plt.tight_layout()
+                    filename = f"{metric_group_name}_{group_label}_{family}.png"
+                    path = os.path.join(directory, filename)
+                    fig.savefig(path, dpi=300, bbox_inches="tight")
+                    print(f"   ✅ Saved {path}")
+                    if show_plots:
+                        plt.show()
+                    plt.close(fig)
+
+            # --- CASE 2: TextFooler group → single plot with both families ---
+            elif group_label == "TextFooler":
+                print(f"   📊 Plotting {group_label} (both families combined)")
+
+                fig, ax = plt.subplots(figsize=(6, 5))
+                colors = sns.color_palette(palette, len(["llama", "qwen"]))
+                plotted = False
+
+                for exp_name in experiments:
+                    for fam_idx, family in enumerate(["llama", "qwen"]):
+                        exp_values = []
+                        for size_label, size_num in zip(all_size_labels, all_size_nums):
+                            key = f"{family}_{size_label}"
+                            if key not in model_data:
+                                continue
+
+                            metrics_dict = model_data[key]['metrics']
+                            if metric_group_name not in metrics_dict:
+                                continue
+
+                            # --- match experiment name by prefix ---
+                            found_key = None
+                            for k in metrics_dict[metric_group_name].keys():
+                                if k.lower().startswith(exp_name.lower()):
+                                    found_key = k
+                                    break
+                            if not found_key:
+                                continue
+
+                            val = metrics_dict[metric_group_name][found_key]
+                            exp_values.append((size_num, float(val)))
+
+                        if not exp_values:
+                            continue
+
+                        exp_values.sort()
+                        x_vals, y_vals = zip(*exp_values)
+                        ax.plot(
+                            x_vals, y_vals,
+                            marker='o', linewidth=2, markersize=8,
+                            label=family.title(),
+                            color=colors[fam_idx],
+                            markerfacecolor='white', markeredgewidth=2
+                        )
+                        plotted = True
+
+                ax.set_title(f"{metric_group_name.replace('_', ' ').title()} – {group_label.replace('_', ' ')}",
+                             fontsize=12, fontweight='bold')
                 ax.set_xlabel('Model Size', fontweight='bold')
-            if col_idx == 0:
                 ax.set_ylabel('Score', fontweight='bold')
+                ax.set_xticks(all_size_nums)
+                ax.set_xticklabels(all_size_labels)
+                ax.grid(True, alpha=0.3, linestyle='--')
 
-            # Save each subplot as standalone PNG
-            title = f"{group_name}_{metric_name.split('.')[0]}"
-            single_fig, single_ax = plt.subplots(figsize=(5, 4))
+                if plotted:
+                    ax.legend(loc='lower right', title='Model Family',fontsize=8)
+                    ymin, ymax = ax.get_ylim()
+                    ax.set_ylim(0, ymax * 1.15)
 
-            # Re-plot into new figure to preserve labels/legend
-            for line in ax.get_lines():
-                single_ax.plot(line.get_xdata(), line.get_ydata(),
-                               marker=line.get_marker(),
-                               linestyle=line.get_linestyle(),
-                               linewidth=line.get_linewidth(),
-                               markersize=line.get_markersize(),
-                               color=line.get_color(),
-                               label=line.get_label(),
-                               markerfacecolor=line.get_markerfacecolor(),
-                               markeredgecolor=line.get_markeredgecolor(),
-                               markeredgewidth=line.get_markeredgewidth())
+                plt.tight_layout()
+                filename = f"{metric_group_name}_{group_label}.png"
+                path = os.path.join(directory, filename)
+                fig.savefig(path, dpi=300, bbox_inches="tight")
+                print(f"   ✅ Saved {path}")
+                if show_plots:
+                    plt.show()
+                plt.close(fig)
 
-            # Copy style
-            single_ax.set_xticks(ax.get_xticks())
-            single_ax.set_xticklabels([t.get_text() for t in ax.get_xticklabels()])
-            single_ax.set_ylim(ax.get_ylim())
-            single_ax.set_title(ax.get_title(), fontsize=12, fontweight='bold')
-            single_ax.set_xlabel(ax.get_xlabel(), fontweight='bold')
-            single_ax.set_ylabel(ax.get_ylabel(), fontweight='bold')
-            single_ax.grid(True, alpha=0.3, linestyle='--')
-            if ax.get_legend():
-                single_ax.legend(loc=ax.get_legend()._loc)
-
-            single_fig.tight_layout()
-            single_fig.savefig(os.path.join(directory, f"{title}.png"),
-                               dpi=300, bbox_inches="tight")
-            plt.close(single_fig)
-
-    plt.tight_layout()
-    os.chdir(directory)
-    fig.savefig("size_comparison.png", dpi=300, bbox_inches="tight")
-    plt.show()

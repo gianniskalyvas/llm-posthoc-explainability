@@ -96,3 +96,26 @@ def calculate_metrics(original_text, evidence_spans, evidence_ranges, perturbed_
         "FP": FP,
         "FN": FN
     }
+    
+def evaluate_cf(text, evidences, evidence_ranges, cf):
+
+    matcher = SequenceMatcher(None, text.split(), cf.split())
+
+    evidence_metrics = calculate_metrics(text, evidences, evidence_ranges, cf)
+    ev_accuracy = evidence_metrics['accuracy']
+    ev_precision = evidence_metrics['precision']
+    ev_recall = evidence_metrics['recall']
+    ev_f1 = evidence_metrics['f1']
+
+    semantic = semantic_similarity(cf, text)
+    contradiction = detect_contradiction(cf, text)
+
+    return {
+        "distance": 1 - matcher.ratio(),
+        "evidence_accuracy": ev_accuracy,
+        "evidence_precision": ev_precision,
+        "evidence_recall": ev_recall,
+        "evidence_f1": ev_f1,
+        "similarity_metrics": semantic,
+        "contradiction": contradiction
+    }
