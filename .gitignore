@@ -26,3 +26,7 @@ dist/
 *.tmp
 *.bak
 
+# Introspections directories (except results)
+introspections/cache/
+introspections/database/
+
