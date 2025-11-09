@@ -1,5 +1,4 @@
 
-import re
 import json
 from typing import Literal, TypeAlias
 
@@ -43,11 +42,11 @@ class EntailmentTask(AbstractTask[EntailmentDataset, EntailmentObservation, Part
         self, hypothesis: str, paragraph: str, generate_text: RequestCapture
     ) -> tuple[str,str]:
 
-        system_prompt = f'Does the statement "{hypothesis}" entail from the following paragraph?'
+        system_prompt = f'You are an entailment classifier. Does the statement "{hypothesis}" entail from the following paragraph?'
 
         system_prompt += (
             ' Answer either "yes" for entailment or "no" for no entailment.'
-            f' Do not explain the answer.'
+            ' Do not explain the answer.'
         )
 
         user_prompt = f'Paragraph: {paragraph}'
@@ -182,29 +181,45 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
         correct = self._process_is_correct(observation, entailment)
 
         opposite_entailment = self._make_counterfactual_entailment(entailment)
-        counterfactual_prompt = ''
         
+        counterfactual_prompt = ''
         if self._is_enabled('e-implcit-target'):
+            counterfactual_prompt += 'Generate a counterfactual explanation by making minimal changes to the user\'s paragraph, '
             if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f'Edit the following paragraph, such that given the statement "{hypothesis}", you would say the entailment is the opposite of what it currently is.'
+                counterfactual_prompt += f'so that given the statement "{hypothesis}", you would say the entailment is the opposite of what it currently is.'
             elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f'Edit the following paragraph, such that given the statement "{hypothesis}", a human would say the entailment is the opposite of what it currently is.'
+                counterfactual_prompt += f'so that given the statement "{hypothesis}", a human would say the entailment is the opposite of what it currently is.'
             else:
-                counterfactual_prompt += f'Edit the following paragraph, such that given the statement "{hypothesis}", the entailment becomes the opposite of what it currently is.'
+                counterfactual_prompt += f'so that given the statement "{hypothesis}", the entailment becomes the opposite of what it currently is.'
         else:
-            entail_instruction = 'entails' if opposite_entailment == 'yes' else 'does not entails'
+        
+            entail_instruction1 = 'does not entail' if opposite_entailment == 'yes' else 'entails'
+            entail_instruction2 = 'entails' if opposite_entailment == 'yes' else 'does not entail'
+        
             if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f'Edit the following paragraph such that you would say the statement "{hypothesis}" {entail_instruction} from it.'
+                counterfactual_prompt += (
+                    f' In the task of entailment classification, you predicted that the statement "{hypothesis}" {entail_instruction1} from user\'s paragraph.'
+                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                    f' so that the you would predict that the statement {entail_instruction2} from the following paragraph.'
+            	)
             elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f'Edit the following paragraph such that a human would say the statement "{hypothesis}" {entail_instruction} from it.'
+                counterfactual_prompt += (
+                    f' In the task of entailment classification, a human predicted that the statement "{hypothesis}" {entail_instruction1} from user\'s paragraph.'
+                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                    f' so that a human would predict that the statement {entail_instruction2} from the following paragraph.'
+            	)
             else:
-                counterfactual_prompt += f'Edit the following paragraph such that the statement "{hypothesis}" {entail_instruction} from it.'
-
+                counterfactual_prompt += (
+                    f' In the task of entailment classification, a black-box classifier predicted that the statement "{hypothesis}" {entail_instruction1} from user\'s paragraph.'
+                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                    f' so that the classifier would predict the statement {entail_instruction2} from the following paragraph.'
+            	)
+            
         counterfactual_prompt += (
-            f' Make as few edits to the paragraph as possible.'
-            f' Do not explain the answer.'
+            ' Use the following definition of ‘counterfactual explanation’:'
+            ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
         )
-
+        
         paragraph = f'Paragraph: {paragraph}'
 
 
@@ -279,7 +294,7 @@ class EntailmentRedactedTask(FaithfulTask[EntailmentDataset, EntailmentObservati
                 redacted_prompt += ' such that without these words it can not be determined if there is entailment or no entailment.'
 
         redacted_prompt += (
-            f' Do not explain the answer.\n\n' +
+            ' Do not explain the answer.\n\n' +
             f'Paragraph: {paragraph}'
         )
 
@@ -338,7 +353,7 @@ class EntailmentImportanceTask(FaithfulTask[EntailmentDataset, EntailmentObserva
         else:
             importance_prompt += ' such that without these words it can not be determined if there is entailment or no entailment.'
         importance_prompt += (
-            f' Do not explain the answer.\n\n' +
+            ' Do not explain the answer.\n\n' +
             f'Paragraph: {paragraph}'
         )
 

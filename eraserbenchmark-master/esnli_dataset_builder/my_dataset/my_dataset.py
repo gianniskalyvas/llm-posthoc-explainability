@@ -1,4 +1,3 @@
-import os
 import datasets
 
 class MyDataset(datasets.GeneratorBasedBuilder):
@@ -16,7 +15,10 @@ class MyDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
 
-        data_dir = os.path.dirname(os.path.abspath(__file__))
+        import os
+        import sys
+        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+        data_dir = os.path.abspath(os.path.join(script_dir,'..','..','eraserbenchmark-master','esnli_dataset_builder','my_dataset'))
     
         return [
             datasets.SplitGenerator(

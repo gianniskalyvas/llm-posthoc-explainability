@@ -210,23 +210,30 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
         
         counterfactual_prompt = ''
         if self._is_enabled('e-implcit-target'):
+            counterfactual_prompt += 'Generate a counterfactual explanation by making minimal changes to the user\'s paragraph, '
             if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f'Edit the following paragraph such you would classify the sentiment as the opposite of what it currently is.'
+                counterfactual_prompt += 'so that you would classify it as the opposite sentiment of what it currently is.'
+        
             elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f'Edit the following paragraph such a human would classify the as the opposite of what it currently is.'
+                counterfactual_prompt += 'so that a human would classify it as the opposite sentiment of what it currently is.'
             else:
-                counterfactual_prompt += f'Edit the following paragraph such that the sentiment becomes the opposite of what it currently is.'
+                counterfactual_prompt += 'so that the sentiment becomes the opposite of what it currently is.'
         else:
             if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f'Edit the following paragraph such you would classify the sentiment is "{opposite_sentiment}".'
+                counterfactual_prompt += f' In the task of sentiment classification, you predicted the label "{sentiment}" for the user\'s paragraph.'
             elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f'Edit the following paragraph such a human would classify the sentiment is "{opposite_sentiment}".'
+                counterfactual_prompt += f' In the task of sentiment classification, a human predicted the label "{sentiment}" for the user\'s paragraph.'
             else:
-                counterfactual_prompt += f'Edit the following paragraph such that the sentiment is "{opposite_sentiment}".'
-
+                counterfactual_prompt += f' In the task of sentiment classification, a black-box classifier predicted the label "{sentiment}" for the user\'s paragraph.'
+        
+            counterfactual_prompt += (
+                ' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                f' so that the label changes from "{sentiment}" to "{opposite_sentiment}".'
+            )
+        
         counterfactual_prompt += (
-            f' Make as few edits as possible.'
-            f' Do not explain the answer.'
+            ' Use the following definition of ‘counterfactual explanation’:'
+            ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
         )
 
         paragraph = f'Paragraph: {paragraph}'
@@ -301,7 +308,7 @@ class SentimentRedactedTask(FaithfulTask[SentimentDataset, SentimentObservation]
                 redacted_prompt += ' such that without these words the sentiment can not be determined.'
 
         redacted_prompt += (
-            f' Do not explain the answer.\n\n' +
+            ' Do not explain the answer.\n\n' +
             f'Paragraph: {paragraph}'
         )
 
@@ -359,7 +366,7 @@ class SentimentImportanceTask(FaithfulTask[SentimentDataset, SentimentObservatio
         else:
             importance_prompt += ' such that without these words the sentiment can not be determined.'
         importance_prompt += (
-            f' Do not explain the answer.\n\n' +
+            ' Do not explain the answer.\n\n' +
             f'Paragraph: {paragraph}'
         )
 

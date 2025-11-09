@@ -23,10 +23,10 @@ class RTEDataset(EntailmentDataset):
         }
 
     def _builder(self, cache_dir):
-       #return datasets.load_dataset_builder('glue', 'rte', cache_dir=str(cache_dir))
-       path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../eraserbenchmark-master/esnli_dataset_builder/my_dataset'))
-       return datasets.load_dataset_builder(path=path,cache_dir=str(cache_dir))
-       
+        #return datasets.load_dataset_builder('glue', 'rte', cache_dir=str(cache_dir))
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../eraserbenchmark-master/esnli_dataset_builder/my_dataset'))
+        return datasets.load_dataset_builder(path=path,cache_dir=str(cache_dir))
+    
     def _restructure(self, obs, idx) -> EntailmentObservation:
         return {
             'hypothesis': obs['sentence1'],
