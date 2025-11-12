@@ -19,12 +19,13 @@ datasets=(
     "RTE"
 )
 
+
 # Run analysis for each flag combination
 for dataset in "${datasets[@]}"; do
     for flags in "${flag_combos[@]}"; do
         echo "Running analysis with flags: $flags"
         python llm-introspection-main/experiments/analysis.py \
-            --persistent-dir "$(mkdir -p "$PWD/introspections" && printf "%s" "$PWD/introspections")" \
+            --persistent-dir "$PWD/introspections" \
             --endpoint "$endpoint" \
             --task counterfactual \
             --task-config "$flags" \
