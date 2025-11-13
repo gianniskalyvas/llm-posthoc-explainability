@@ -1,0 +1,58 @@
+# Aggregated requirements inferred from the repository (eraserbenchmark-master requirements.txt,
+# llm-introspection-main/pyproject.toml, and project imports).
+# Notes:
+# - Some packages (torch, tensorflow) may require platform-specific wheels (CUDA vs CPU).
+# - For reproducible CUDA-enabled installs prefer conda or following the package's install guidance.
+
+# Core data libs
+numpy>=1.25.2
+pandas>=2.0.0
+scipy
+
+
+# ML / Transformers
+torch
+transformers
+sentence-transformers
+text-generation
+
+# Utilities / performance
+tqdm
+numexpr
+bottleneck
+fastparquet
+
+# NLP / tokenizers / embeddings
+ftfy
+gensim
+scispacy
+spacy
+nltk
+
+# Evaluation / datasets
+datasets
+scikit-learn
+
+# Async / I/O
+aiohttp
+aiosqlite
+asyncstdlib
+
+# Plotting
+matplotlib
+plotnine
+seaborn
+
+# Misc
+regex
+tblib
+textattack
+huggingface-hub
+pysqlite3-binary
+
+# Optional / legacy (from eraserbenchmark-master).
+# If you need TensorFlow 1.x to run older code, install it specifically (may conflict):
+# tensorflow-gpu==1.14
+
+# If you prefer a conda-based environment, consider creating a conda environment and installing
+# pytorch via conda (recommended for CUDA support).
