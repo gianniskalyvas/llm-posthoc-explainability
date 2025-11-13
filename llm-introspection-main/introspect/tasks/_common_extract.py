@@ -41,6 +41,12 @@ def _remove_html(paragraph: str) -> str:
 def extract_paragraph(source: str) -> str|None:
     paragraph = source
 
+
+    match = re.search(r"<(.*?)>", paragraph)
+    if match:
+        return match.group(1)
+
+
     # Multiple suggestions
     # Example:
     # Here are some suggestions based on your request:
