@@ -42,7 +42,7 @@ def extract_paragraph(source: str) -> str|None:
     paragraph = source
 
 
-    match = re.search(r"<(.*?)>", paragraph)
+    match = re.search(r"<new>(.*?)</new>", paragraph)
     if match:
         return match.group(1)
 

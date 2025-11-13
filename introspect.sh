@@ -34,6 +34,6 @@ for dataset in "${datasets[@]}"; do
             --split test \
             --seed 0 \
             --max-workers 1 \
-            --client VLLM
+            --client VLLM 
     done
 done
