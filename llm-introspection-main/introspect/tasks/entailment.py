@@ -195,32 +195,24 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
         
             entail_instruction1 = 'does not entail' if opposite_entailment == 'yes' else 'entails'
             entail_instruction2 = 'entails' if opposite_entailment == 'yes' else 'does not entail'
-        
+            counterfactual_prompt += (
+                f' The task is entailment classification and the statement "{hypothesis}" {entail_instruction1} the user\'s paragraph.'
+                f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+            )
+
             if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += (
-                    f' In the task of entailment classification, you predicted that the statement "{hypothesis}" {entail_instruction1} from user\'s paragraph.'
-                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
-                    f' so that the you would predict that the statement {entail_instruction2} from the following paragraph.'
-            	)
+                counterfactual_prompt += f' so that you would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
             elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += (
-                    f' In the task of entailment classification, a human predicted that the statement "{hypothesis}" {entail_instruction1} from user\'s paragraph.'
-                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
-                    f' so that a human would predict that the statement {entail_instruction2} from the following paragraph.'
-            	)
+                counterfactual_prompt += f' so that a human would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
             else:
-                counterfactual_prompt += (
-                    f' In the task of entailment classification, a black-box classifier predicted that the statement "{hypothesis}" {entail_instruction1} from user\'s paragraph.'
-                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
-                    f' so that the classifier would predict the statement {entail_instruction2} from the following paragraph.'
-            	)
+                counterfactual_prompt += f' so that the classifier would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
             
         counterfactual_prompt += (
-            ' Use the following definition of ‘counterfactual explanation’:'
-            ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
-            ' Enclose the generated text within <new> tags.'
-        )
-        
+                ' Use the following definition of ‘counterfactual explanation’:'
+                ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
+                ' Enclose the generated text within <new> tags.'
+            )
+            
         paragraph = f'Paragraph: {paragraph}'
 
 

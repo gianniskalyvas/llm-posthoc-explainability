@@ -219,23 +219,22 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
             else:
                 counterfactual_prompt += 'so that the sentiment becomes the opposite of what it currently is.'
         else:
-            if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f' In the task of sentiment classification, you predicted the label "{sentiment}" for the user\'s paragraph.'
-            elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f' In the task of sentiment classification, a human predicted the label "{sentiment}" for the user\'s paragraph.'
-            else:
-                counterfactual_prompt += f' In the task of sentiment classification, a black-box classifier predicted the label "{sentiment}" for the user\'s paragraph.'
-        
             counterfactual_prompt += (
-                ' Generate a counterfactual explanation by making minimal changes to the paragraph,'
-                f' so that the label changes from "{sentiment}" to "{opposite_sentiment}".'
-            )
-        
+                    f' The task is sentiment classification. The following paragraph was classified as "{sentiment}".'
+                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                )
+            if self._is_enabled('e-persona-you'):
+                counterfactual_prompt +=  f' so that you would predict that the paragraph is "{opposite_sentiment}".'
+            elif self._is_enabled('e-persona-human'):
+                counterfactual_prompt +=f' so that a human would predict that the paragraph is "{opposite_sentiment}".'
+            else:
+                counterfactual_prompt += f' so that the classifier would predict that the paragraph is "{opposite_sentiment}".'
+                
         counterfactual_prompt += (
-            ' Use the following definition of ‘counterfactual explanation’:'
-            ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
-            ' Enclose the generated text within <new> tags.'
-        )
+                ' Use the following definition of ‘counterfactual explanation’:'
+                ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
+                ' Enclose the generated text within <new> tags.'
+            )
 
         paragraph = f'Paragraph: {paragraph}'
 
