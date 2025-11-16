@@ -16,8 +16,7 @@ flag_combos=(
 )
 
 datasets=(
-    "IMDB"
-    "RTE"
+     "RTE"
 )
 
 # Run analysis for each flag combination with unlimited retries and no delay
@@ -36,7 +35,7 @@ for dataset in "${datasets[@]}"; do
                 --split test \
                 --seed 0 \
                 --max-workers 1 \
-                --client VLLM
+                --client VLLM 
             rc=$?
             if [ $rc -eq 0 ]; then
                 echo "Run succeeded."
