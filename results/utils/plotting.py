@@ -12,10 +12,10 @@ def plot_attack_comparison(models, attacks, plot_dir):
     records = []
     for model in models:
         # Extract model family ("Llama" or "Qwen") and size ("1B", "3B", etc.)
-        family_match = re.match(r"([A-Za-z\-0-9\.]+?)(?:-|$)", model)
-        family = "Llama" if "Llama" in model else "Qwen"
-        size_match = re.search(r"(\d+\.?\d*)B", model)
-        size = float(size_match.group(1)) if size_match else None
+        family = model.split('-')[0].capitalize()
+        size = float(model.split('-')[1].replace('b', '')) if len(model.split('-')) > 1 else None
+        if family == 'Qwen' and size == 1.0:
+            size = 1.5  # Adjusting size for Qwen-1B to 1.5B for consistency
 
         for variant, vals in attacks[model].items():
             records.append({
@@ -48,24 +48,24 @@ def plot_attack_comparison(models, attacks, plot_dir):
         c = mcolors.to_rgb(color)
         return tuple([amount*x for x in c])
 
-    fig, axes = plt.subplots(1, 2, figsize=(12,5), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(15,7), sharey=True)
 
-    for i, family in enumerate(['Llama', 'Qwen']):
+    for i, family in enumerate(['Llama3', 'Qwen']):
         subdf = prompt_variants[prompt_variants['family']==family]
         for variant, vdf in subdf.groupby('variant'):
             # Determine color
-            if variant.startswith('e-implcit-target'):
+            if 'e-implcit-target' in variant:
                 # Map the corresponding base variant and darken it
                 if 'e-persona-you' in variant:
                     color = darken_color(base_colors['e-persona-you'])
                 elif 'e-persona-human' in variant:
                     color = darken_color(base_colors['e-persona-human'])
-                else:  # default for baseline-related e-implicit-target
+                else:  # default for baseline-related e-implcit-target
                     color = darken_color(base_colors['baseline'])
             else:
                 color = base_colors.get(variant, 'gray')  # fallback color
 
-            axes[i].plot(vdf['size'], vdf['success_rate'], marker='o', label=variant, color=color)
+            axes[i].plot(vdf['size'], vdf['success_rate'], marker="o", label=variant, color=color)
 
         axes[i].set_title(f"{family} Models")
         axes[i].set_xlabel("Model Size (B parameters)")
@@ -125,22 +125,18 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
     model_data = {}
     for model in models:
         df = results[model]
-        match = re.search(r'(\d+(?:\.\d+)?)[bB]', model)
-        size_float = float(match.group(1)) if match else 0
-        size = f"{size_float}B"
 
 
-        if 'qwen' in model.lower():
-            family = 'qwen'
-        elif 'llama' in model.lower():
-            family = 'llama'
-        else:
-            family = 'unknown'
+        family = model.split('-')[0].capitalize()
+        size = float(model.split('-')[1].replace('b', '')) if len(model.split('-')) > 1 else None
+        if family == 'Qwen' and size == 1.0:
+            size = 1.5  # Adjusting size for Qwen-1B to 1.5B for consistency
 
-        model_data[f"{family}_{size}"] = {
+
+        model_data[f"{family}_{size}B"] = {
             'family': family,
-            'size': size,
-            'size_num': size_float,
+            'size':  f'{size}B',
+            'size_num':size,
             'metrics': extract_means(df)
         }
 
@@ -254,11 +250,11 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                 print(f"   📊 Plotting {group_label} (both families combined)")
 
                 fig, ax = plt.subplots(figsize=(6, 5))
-                colors = sns.color_palette(palette, len(["llama", "qwen"]))
+                colors = sns.color_palette(palette, len(["Llama3", "Qwen"]))
                 plotted = False
 
                 for exp_name in experiments:
-                    for fam_idx, family in enumerate(["llama", "qwen"]):
+                    for fam_idx, family in enumerate(["Llama3", "Qwen"]):
                         exp_values = []
                         for size_label, size_num in zip(all_size_labels, all_size_nums):
                             key = f"{family}_{size_label}"
@@ -316,4 +312,3 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                 if show_plots:
                     plt.show()
                 plt.close(fig)
-

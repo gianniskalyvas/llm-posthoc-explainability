@@ -1,0 +1,30 @@
+{
+    "e-implcit-target-e-persona-human": {
+        "successful": 1937,
+        "total": 6598
+    },
+    "baseline": {
+        "successful": 1937,
+        "total": 6598
+    },
+    "e-implcit-target-e-persona-you": {
+        "successful": 1937,
+        "total": 6598
+    },
+    "e-persona-you": {
+        "successful": 1947,
+        "total": 6598
+    },
+    "e-implcit-target": {
+        "successful": 1479,
+        "total": 6598
+    },
+    "e-persona-human": {
+        "successful": 1492,
+        "total": 6598
+    },
+    "TextFoolerJin2019": {
+        "successful": 3584,
+        "total": 6598
+    }
+}
