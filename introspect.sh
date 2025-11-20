@@ -12,7 +12,7 @@ echo "You picked: $model_name"
 
 # Retry configuration
 # Define flag combinations
-flag_combos=(
+flags=(
     ""
     "e-persona-you"
     "e-persona-human"
@@ -26,15 +26,15 @@ datasets=(
 
 # Run analysis for each flag combination with unlimited retries and no delay
 for dataset in "${datasets[@]}"; do
-    for flags in "${flag_combos[@]}"; do
-        echo "Running analysis with flags: $flags"
+    for flag in "${flags[@]}"; do
+        echo "Running analysis with flags: $flag"
         attempt=1
         while true; do
             python llm-introspection-main/experiments/analysis.py \
                 --persistent-dir "$PWD/introspections" \
                 --endpoint "$endpoint" \
                 --task counterfactual \
-                --task-config "$flags" \
+                --task-config "$flag" \
                 --model-name "$model_name" \
                 --dataset "$dataset" \
                 --split test \
