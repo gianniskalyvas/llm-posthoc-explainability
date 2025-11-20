@@ -6,6 +6,29 @@ import os
 import seaborn as sns
 
 
+# Define base colors for each main variant
+base_colors = {
+    'baseline': 'tab:gray',
+    'e-persona-you': 'tab:orange',
+    'e-persona-human': 'tab:green'
+}
+
+# Function to make color darker
+def darken_color(color, amount=0.6):
+    c = mcolors.to_rgb(color)
+    return tuple([amount*x for x in c])
+
+def get_variant_color(variant):
+    if 'e-implcit-target' in variant:
+        # Map the corresponding base variant and darken it
+        if 'e-persona-you' in variant:
+            return darken_color(base_colors['e-persona-you'])
+        elif 'e-persona-human' in variant:
+            return darken_color(base_colors['e-persona-human'])
+        else:  # default for baseline-related e-implcit-target
+            return darken_color(base_colors['baseline'])
+    else:
+        return base_colors.get(variant, 'gray')  # fallback color
 
 def plot_attack_comparison(models, attacks, plot_dir):
 
@@ -36,36 +59,12 @@ def plot_attack_comparison(models, attacks, plot_dir):
     # 📈 1. Prompt variation success by model size
     # ------------------------------
 
-    # Define base colors for each main variant
-    base_colors = {
-        'baseline': 'tab:gray',
-        'e-persona-you': 'tab:orange',
-        'e-persona-human': 'tab:green'
-    }
-
-    # Function to make color darker
-    def darken_color(color, amount=0.6):
-        c = mcolors.to_rgb(color)
-        return tuple([amount*x for x in c])
-
     fig, axes = plt.subplots(1, 2, figsize=(15,7), sharey=True)
 
     for i, family in enumerate(['Llama3', 'Qwen']):
         subdf = prompt_variants[prompt_variants['family']==family]
         for variant, vdf in subdf.groupby('variant'):
-            # Determine color
-            if 'e-implcit-target' in variant:
-                # Map the corresponding base variant and darken it
-                if 'e-persona-you' in variant:
-                    color = darken_color(base_colors['e-persona-you'])
-                elif 'e-persona-human' in variant:
-                    color = darken_color(base_colors['e-persona-human'])
-                else:  # default for baseline-related e-implcit-target
-                    color = darken_color(base_colors['baseline'])
-            else:
-                color = base_colors.get(variant, 'gray')  # fallback color
-
-            axes[i].plot(vdf['size'], vdf['success_rate'], marker="o", label=variant, color=color)
+            axes[i].plot(vdf['size'], vdf['success_rate'], marker="o", label=variant, color=get_variant_color(variant))
 
         axes[i].set_title(f"{family} Models")
         axes[i].set_xlabel("Model Size (B parameters)")
@@ -116,7 +115,7 @@ def extract_means(df):
     }
     
 
-def plot_size_comparison(models, results, directory, palette, show_plots=True):
+def plot_size_comparison(models, results, directory, show_plots=True):
     
     
     os.makedirs(directory, exist_ok=True)
@@ -180,12 +179,10 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
             if group_label == "Introspection":
                 for family in families:
                     print(f"   📊 Plotting {group_label} for {family}")
-
                     fig, ax = plt.subplots(figsize=(6, 5))
-                    colors = sns.color_palette(palette, len(experiments))
                     plotted = False
 
-                    for exp_idx, exp_name in enumerate(experiments):
+                    for variant in experiments:
                         exp_values = []
                         for size_label, size_num in zip(all_size_labels, all_size_nums):
                             key = f"{family}_{size_label}"
@@ -199,7 +196,7 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                             # --- match experiment name by prefix ---
                             found_key = None
                             for k in metrics_dict[metric_group_name].keys():
-                                if k.lower().startswith(exp_name.lower()):
+                                if k.lower().startswith(variant.lower()):
                                     found_key = k
                                     break
                             if not found_key:
@@ -213,14 +210,7 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
 
                         exp_values.sort()
                         x_vals, y_vals = zip(*exp_values)
-                        ax.plot(
-                            x_vals, y_vals,
-                            marker='o', linewidth=2, markersize=8,
-                            label=exp_name,
-                            linestyle='--' if 'implcit' in exp_name else '-',
-                            color=colors[exp_idx],
-                            markerfacecolor='white', markeredgewidth=2
-                        )
+                        ax.plot(x_vals, y_vals, marker='o', label=variant, color=get_variant_color(variant))
                         plotted = True
 
                     ax.set_title(f"{metric_group_name.replace('_', ' ').title()} – {group_label.replace('_', ' ')} ({family.title()})",
@@ -232,7 +222,7 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                     ax.grid(True, alpha=0.3, linestyle='--')
 
                     if plotted:
-                        ax.legend(loc='lower right', title='Promp variation',fontsize=8)
+                        ax.legend(loc='best', title='Promp variation',fontsize=8)
                         ymin, ymax = ax.get_ylim()
                         ax.set_ylim(0, ymax * 1.15)
 
@@ -250,7 +240,6 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                 print(f"   📊 Plotting {group_label} (both families combined)")
 
                 fig, ax = plt.subplots(figsize=(6, 5))
-                colors = sns.color_palette(palette, len(["Llama3", "Qwen"]))
                 plotted = False
 
                 for exp_name in experiments:
@@ -284,11 +273,10 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                         x_vals, y_vals = zip(*exp_values)
                         ax.plot(
                             x_vals, y_vals,
-                            marker='o', linewidth=2, markersize=8,
+                            marker='s', linestyle='--',
                             label=family.title(),
-                            color=colors[fam_idx],
-                            markerfacecolor='white', markeredgewidth=2
                         )
+
                         plotted = True
 
                 ax.set_title(f"{metric_group_name.replace('_', ' ').title()} – {group_label.replace('_', ' ')}",
@@ -300,9 +288,8 @@ def plot_size_comparison(models, results, directory, palette, show_plots=True):
                 ax.grid(True, alpha=0.3, linestyle='--')
 
                 if plotted:
-                    ax.legend(loc='lower right', title='Model Family',fontsize=8)
-                    ymin, ymax = ax.get_ylim()
-                    ax.set_ylim(0, ymax * 1.15)
+                    ax.legend(loc='best', title='Model Family',fontsize=8)
+                    ax.set_ylim(0, 1)
 
                 plt.tight_layout()
                 filename = f"{metric_group_name}_{group_label}.png"

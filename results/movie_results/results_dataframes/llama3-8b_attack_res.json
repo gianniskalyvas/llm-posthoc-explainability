@@ -1,26 +1,26 @@
 {
     "baseline": {
-        "successful": 182,
+        "successful": 159,
         "total": 199
     },
     "e-implcit-target-e-persona-you": {
-        "successful": 182,
+        "successful": 178,
         "total": 199
     },
     "e-persona-you": {
-        "successful": 188,
+        "successful": 171,
         "total": 199
     },
     "e-persona-human": {
-        "successful": 192,
-        "total": 199
-    },
-    "e-implcit-target": {
-        "successful": 186,
+        "successful": 173,
         "total": 199
     },
     "e-implcit-target-e-persona-human": {
-        "successful": 182,
+        "successful": 172,
+        "total": 199
+    },
+    "e-implcit-target": {
+        "successful": 179,
         "total": 199
     },
     "TextFoolerJin2019": {

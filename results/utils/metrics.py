@@ -43,7 +43,19 @@ def detect_contradiction(premise, hypothesis):
     probs = torch.softmax(outputs.logits, dim=1)[0]
     return probs[0].item()
 
-def calculate_metrics(original_text, evidence_spans, evidence_ranges, perturbed_text):
+def calculate_metrics(original_text, evidence_ranges, perturbed_text):
+
+    cleanText = original_text.lower()                           # lowercase
+    cleanText = re.sub(r"[^\w\s]", "", cleanText)               # remove punctuation
+
+    cleanCf = re.sub(r"</?new>", "", perturbed_text)            # remove <new> tags if extraction failed
+    cleanCf = cleanCf.lower()                             
+    cleanCf = re.sub(r"[^\w\s]", "", cleanCf)            
+
+    matcher = SequenceMatcher(None, cleanText.split(), cleanCf.split())
+    distance = 1 - matcher.ratio()
+
+
     orig_tokens = original_text.split()
     pert_tokens = perturbed_text.split()
 
@@ -88,6 +100,7 @@ def calculate_metrics(original_text, evidence_spans, evidence_ranges, perturbed_
     f1 = 2 * precision * recall / (precision + recall) if precision + recall > 0 else 0
 
     return {
+        "distance": distance,
         "precision": precision,
         "recall": recall,
         "accuracy": accuracy,
@@ -97,25 +110,18 @@ def calculate_metrics(original_text, evidence_spans, evidence_ranges, perturbed_
         "FN": FN
     }
     
-def evaluate_cf(text, evidences, evidence_ranges, cf):
-
-    matcher = SequenceMatcher(None, text.split(), cf.split())
-
-    evidence_metrics = calculate_metrics(text, evidences, evidence_ranges, cf)
-    ev_accuracy = evidence_metrics['accuracy']
-    ev_precision = evidence_metrics['precision']
-    ev_recall = evidence_metrics['recall']
-    ev_f1 = evidence_metrics['f1']
-
+def evaluate_cf(text, evidence_ranges, cf):
+   
+    matcher_metrics = calculate_metrics(text, evidence_ranges, cf)
     semantic = semantic_similarity(cf, text)
     contradiction = detect_contradiction(cf, text)
 
     return {
-        "distance": 1 - matcher.ratio(),
-        "evidence_accuracy": ev_accuracy,
-        "evidence_precision": ev_precision,
-        "evidence_recall": ev_recall,
-        "evidence_f1": ev_f1,
+        "distance": matcher_metrics['distance'],
+        "evidence_accuracy": matcher_metrics['accuracy'],
+        "evidence_precision": matcher_metrics['precision'],
+        "evidence_recall": matcher_metrics['recall'],
+        "evidence_f1": matcher_metrics['f1'],
         "similarity_metrics": semantic,
         "contradiction": contradiction
     }
