@@ -46,6 +46,13 @@ def extract_paragraph(source: str) -> str|None:
     if match:
         return match.group(1)
 
+    match = re.search(r"<new>(.*?)<new>", paragraph)
+    if match:
+        return match.group(1)
+    
+    match = re.search(r"<new>(.*?)\n", paragraph)
+    if match:
+        return match.group(1)
 
     # Multiple suggestions
     # Example:

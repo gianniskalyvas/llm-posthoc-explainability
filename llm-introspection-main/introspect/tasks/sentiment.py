@@ -233,7 +233,7 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
         counterfactual_prompt += (
                 ' Use the following definition of ‘counterfactual explanation’:'
                 ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
-                ' Enclose the generated text within <new> tags.'
+                ' Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
             )
 
         paragraph = f'Paragraph: {paragraph}'

@@ -1,8 +1,14 @@
 #!/bin/bash
 
 # Get input parameters
-read -p "Enter endpoint URL (e.g., http://localhost:3000): " endpoint
-read -p "Enter model name (llama3-{1b,3b,8b} or qwen-{1b,3b,7b}): " model_name
+read -p "Enter endpoint URL of VLLM server: " endpoint
+echo "Choose a model:"
+select model_name in llama3-1b llama3-3b llama3-8b qwen-1b qwen-3b qwen-7b; do
+    [[ -n "$model_name" ]] && break
+    echo "Invalid selection."
+done
+
+echo "You picked: $model_name"
 
 # Retry configuration
 # Define flag combinations
@@ -11,11 +17,10 @@ flag_combos=(
     "e-persona-you"
     "e-persona-human"
     "e-implcit-target"
-    "e-implcit-target e-persona-you"
-    "e-implcit-target e-persona-human"
 )
 
 datasets=(
+     "IMDB"
      "RTE"
 )
 
@@ -45,4 +50,46 @@ for dataset in "${datasets[@]}"; do
             attempt=$((attempt + 1))
         done
     done
+    while true; do
+        python llm-introspection-main/experiments/analysis.py \
+            --persistent-dir "$PWD/introspections" \
+            --endpoint "$endpoint" \
+            --task counterfactual \
+            --task-config "e-implcit-target" "e-persona-you" \
+            --model-name "$model_name" \
+            --dataset "$dataset" \
+            --split test \
+            --seed 0 \
+            --max-workers 1 \
+            --client VLLM 
+        rc=$?
+        if [ $rc -eq 0 ]; then
+            echo "Run succeeded."
+            break
+        fi
+        echo "Run failed (exit code $rc). Retrying immediately... (attempt $attempt)"
+        attempt=$((attempt + 1))
+    done
+    while true; do
+        python llm-introspection-main/experiments/analysis.py \
+            --persistent-dir "$PWD/introspections" \
+            --endpoint "$endpoint" \
+            --task counterfactual \
+            --task-config "e-implcit-target" "e-persona-human" \
+            --model-name "$model_name" \
+            --dataset "$dataset" \
+            --split test \
+            --seed 0 \
+            --max-workers 1 \
+            --client VLLM 
+        rc=$?
+        if [ $rc -eq 0 ]; then
+            echo "Run succeeded."
+            break
+        fi
+        echo "Run failed (exit code $rc). Retrying immediately... (attempt $attempt)"
+        attempt=$((attempt + 1))
+    done
+
+
 done

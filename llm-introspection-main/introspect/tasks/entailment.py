@@ -205,12 +205,12 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
             elif self._is_enabled('e-persona-human'):
                 counterfactual_prompt += f' so that a human would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
             else:
-                counterfactual_prompt += f' so that the classifier would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
+                counterfactual_prompt += f' so that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
             
         counterfactual_prompt += (
                 ' Use the following definition of ‘counterfactual explanation’:'
                 ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
-                ' Enclose the generated text within <new> tags.'
+                ' Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
             )
             
         paragraph = f'Paragraph: {paragraph}'
