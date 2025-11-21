@@ -7,12 +7,12 @@ We evaluate multiple models across different scales by generating two types of c
  - Introspections: Self-generated counterfactuals, where the model attempts to produce an alternative input that flips its own prediction.
  - Adversarial attacks, representing minimal perturbations that change the model’s output.
 
-The code for Self-generated counterfactuals is derived from the paper Are Self-Explanations from Large Language Models Faithful?, but we modified and extended it to suit the specific needs of our study.
-The Adversarial attacks are generated via TextAttack's TextFoolerJin2019 algorithm. 
+The code for Self-generated counterfactuals is derived from the paper *Are Self-Explanations from Large Language Models Faithful?*, but has been modified and extended to suit the specific needs of our study.
+The Adversarial attacks are generated via TextAttack's *TextFoolerJin2019* algorithm. 
 
 These edits are treated as explanations, and we assess their quality along two dimensions:
  - **Faithfulness** — whether the edits reliably flip the model’s prediction.
- - **Minimality** — how close, semantically similar, and contradictory the conterfactual is to the input.
+ - **Minimality** — how close, semantically similar and contradictory the conterfactual is to the input.
 
 We also examined a central question: Are the parts of the input that models choose to change—the features they rely on for classification—the same parts that humans consider important?
 To explore this, we analyzed how model size influences the interpretability of counterfactual explanations using the ERASER benchmark, which provides human-annotated rationale spans.
@@ -20,10 +20,10 @@ By measuring how closely the counterfactual edits overlap with human-identified 
 
 ### Datasets
 
-Evaluating Rationales And Simple English Reasoning (ERASER) benchmark: Standard benchmark datasets augmented with human-provided rationale annotations.
+ERASER benchmark: Standard benchmark datasets augmented with human-provided rationale annotations.
 
  - Movie Reviews: A collection of movie reviews labeled for sentiment (positive or negative). 
- - e-SNLI: Sentence pairs annotated for entailment, with “yes” or “no” labels.
+ - e-SNLI: Sentence pairs labeled for entailment (yes or no).
 
 ### Models
 
@@ -44,28 +44,33 @@ The figure below shows the classifier's accuracy across the models:
 
 ## 2. Counterfactual Generation
 
-- Extract the adversarial attack from TextAttack.
-- Run the introspect module with different task configurations. We vary two factors:
+### A. Extract the adversarial attack from TextAttack.
+### B. Run the introspect module with multiple task configurations.
 
-**Baseline** –  
-- No flags set. The model is informed of its prediction and is prompted to generate a counterfactual. No specific perspective is adopted.
-
-**Target Visibility** –  
-- **e-implicit-target:**  
-  The model is **not informed** of its prediction and must infer the target label itself.
-
-**Perspective / Persona** –  
-- **e-persona-you:**  
-  The model is prompted to generate the counterfactualto reverse its own decision.
-
-- **e-persona-human:**  
-  The model is prompted to generate the counterfactualto as if it is reversing a human's decision.
+**Baseline** –  This is the standard setup with no special flags, serving as our point of comparison.
+ - Flags: None
+ - Description: The model is directly informed of its own initial prediction. It is then prompted to generate a minimal text edit that would change this specific prediction. It does not adopt any specific persona.
 
 
+**Perspective / Persona Manipulation** – As proposed in the original paper, this changes the subject of the explanation—that is, whose decision is being reversed. 
+ - Flag: ```e-persona-you```
+
+     - Description: The model is prompted to generate the counterfactual to reverse its own decision. The explanation is framed from the LLM's perspective (e.g., "What would have to change for you to change your mind?").
+
+ - Flag: ```e-persona-human```
+
+     - Description: The model is prompted to generate the counterfactual as if it is reversing a human's decision. The explanation is framed from an external, human-centric perspective (e.g., "What would have to change for a human to change their mind?").
+
+
+**Target Visibility Manipulation** 
+ - Flag: ```e-implicit-target```
+ - Description: The model is not explicitly told what its initial prediction was. It must first infer the target label from the context before it can generate a counterfactual to reverse it. This adds a step of reasoning and tests the model's understanding of the decision boundary.
+
+Finally, it is important to note that the ```e-implicit-target``` manipulation, which controls target visibility, is an orthogonal dimension to the persona manipulation. Therefore, the ```e-implicit-target``` flag can be combined with either the ```e-persona-you``` or ```e-persona-human``` flags to create composite experimental conditions that test the interaction of these factors.
 
 ## 3. Quality Evaluation
 
-<h3 style="text-align:center;">Movie Reviews</h3>
+<h1 style="text-align:center;">Movie Reviews</h1>
 <div style="text-align:center;">
   <img src="results/movie_results/plots/Attack_Success.png" alt="Attack Success" style="display:block; margin:0 auto;"/>
   <div style="height:40px;"></div>
@@ -92,7 +97,7 @@ The figure below shows the classifier's accuracy across the models:
 </div>
 
 
-<h3 style="text-align:center;">e-SNLI</h3>
+<h1 style="text-align:center;">e-SNLI</h1>
 <div style="text-align:center;">
   <img src="results/esnli_results/plots/Attack_Success.png" alt="Attack Success" style="display:block; margin:0 auto;"/>
   <div style="height:40px;"></div>
@@ -122,7 +127,7 @@ The figure below shows the classifier's accuracy across the models:
 
 ## 4. Human and LLM Alignment
 
-<h3 style="text-align:center;">Movie Reviews</h3>
+<h1 style="text-align:center;">Movie Reviews</h1>
 <div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
 
   <!-- Evidence Accuracy Row -->
@@ -147,7 +152,7 @@ The figure below shows the classifier's accuracy across the models:
   
 </div>
 
-<h3 style="text-align:center;">e-SNLI</h3>
+<h1 style="text-align:center;">e-SNLI</h1>
 <div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
 
   <!-- Evidence Accuracy Row -->
