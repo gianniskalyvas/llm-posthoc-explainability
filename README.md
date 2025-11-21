@@ -77,17 +77,17 @@ The figure below shows the classifier's accuracy across the models:
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap;margin:0 auto; line-height:0;">
     <!-- Distance Row -->
-    <img src="results/movie_results/plots/distance_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/distance_Introspection_Qwen.png" alt="Distance Qwen" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/distance_TextFooler.png" alt="Distance TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/distance_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/distance_Introspection_Qwen.png" alt="Distance Qwen" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/distance_TextFooler.png" alt="Distance TextFooler" style="width:32%; margin:0; padding:0;"/>
     <!-- Contradiction Row -->
-    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/contradiction_TextFooler.png" alt="Contradiction TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_TextFooler.png" alt="Contradiction TextFooler" style="width:32%; margin:0; padding:0;"/>
     <!-- Semantic Similarity Row -->
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/semantic_similarity_TextFooler.png" alt="Semantic Similarity TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_TextFooler.png" alt="Semantic Similarity TextFooler" style="width:32%; margin:0; padding:0;"/>
   </div>
 </div>
 
@@ -104,17 +104,17 @@ The figure below shows the classifier's accuracy across the models:
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
     <!-- Distance Row -->
-    <img src="results/esnli_results/plots/distance_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/distance_Introspection_Qwen.png" alt="Distance Qwen" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/distance_TextFooler.png" alt="Distance TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/distance_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/distance_Introspection_Qwen.png" alt="Distance Qwen" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/distance_TextFooler.png" alt="Distance TextFooler" style="width:32%; margin:0; padding:0;"/>
     <!-- Contradiction Row -->
-    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/contradiction_TextFooler.png" alt="Contradiction TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_TextFooler.png" alt="Contradiction TextFooler" style="width:32%; margin:0; padding:0;"/>
     <!-- Semantic Similarity Row -->
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:33.333%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/semantic_similarity_TextFooler.png" alt="Semantic Similarity TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:32%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_TextFooler.png" alt="Semantic Similarity TextFooler" style="width:32%; margin:0; padding:0;"/>
   </div>
 </div>
 
@@ -126,24 +126,24 @@ The figure below shows the classifier's accuracy across the models:
 <div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
 
   <!-- Evidence Accuracy Row -->
-  <img src="results/movie_results/plots/evidence_accuracy_Introspection_Llama3.png" alt="Evidence Accuracy LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_accuracy_Introspection_Qwen.png" alt="Evidence Accuracy Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_accuracy_TextFooler.png" alt="Evidence Accuracy TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_accuracy_Introspection_Llama3.png" alt="Evidence Accuracy LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_accuracy_Introspection_Qwen.png" alt="Evidence Accuracy Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_accuracy_TextFooler.png" alt="Evidence Accuracy TextFooler" style="width:32%; margin:0; padding:0;"/>
   
   <!-- Evidence Precision Row -->
-  <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_precision_TextFooler.png" alt="Evidence Precision TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_precision_TextFooler.png" alt="Evidence Precision TextFooler" style="width:32%; margin:0; padding:0;"/>
   
   <!-- Evidence Recall Row -->
-  <img src="results/movie_results/plots/evidence_recall_Introspection_Llama3.png" alt="Evidence Recall LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_recall_Introspection_Qwen.png" alt="Evidence Recall Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_recall_TextFooler.png" alt="Evidence Recall TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_recall_Introspection_Llama3.png" alt="Evidence Recall LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_recall_Introspection_Qwen.png" alt="Evidence Recall Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_recall_TextFooler.png" alt="Evidence Recall TextFooler" style="width:32%; margin:0; padding:0;"/>
   
   <!-- Evidence F1 Row -->
-  <img src="results/movie_results/plots/evidence_f1_Introspection_Llama3.png" alt="Evidence F1 LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_f1_Introspection_Qwen.png" alt="Evidence F1 Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/movie_results/plots/evidence_f1_TextFooler.png" alt="Evidence F1 TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_f1_Introspection_Llama3.png" alt="Evidence F1 LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_f1_Introspection_Qwen.png" alt="Evidence F1 Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/movie_results/plots/evidence_f1_TextFooler.png" alt="Evidence F1 TextFooler" style="width:32%; margin:0; padding:0;"/>
   
 </div>
 
@@ -151,23 +151,23 @@ The figure below shows the classifier's accuracy across the models:
 <div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
 
   <!-- Evidence Accuracy Row -->
-  <img src="results/esnli_results/plots/evidence_accuracy_Introspection_Llama3.png" alt="Evidence Accuracy LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_accuracy_Introspection_Qwen.png" alt="Evidence Accuracy Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_accuracy_TextFooler.png" alt="Evidence Accuracy TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_accuracy_Introspection_Llama3.png" alt="Evidence Accuracy LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_accuracy_Introspection_Qwen.png" alt="Evidence Accuracy Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_accuracy_TextFooler.png" alt="Evidence Accuracy TextFooler" style="width:32%; margin:0; padding:0;"/>
   
   <!-- Evidence Precision Row -->
-  <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_precision_TextFooler.png" alt="Evidence Precision TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_precision_TextFooler.png" alt="Evidence Precision TextFooler" style="width:32%; margin:0; padding:0;"/>
   
   <!-- Evidence Recall Row -->
-  <img src="results/esnli_results/plots/evidence_recall_Introspection_Llama3.png" alt="Evidence Recall LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_recall_Introspection_Qwen.png" alt="Evidence Recall Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_recall_TextFooler.png" alt="Evidence Recall TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_recall_Introspection_Llama3.png" alt="Evidence Recall LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_recall_Introspection_Qwen.png" alt="Evidence Recall Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_recall_TextFooler.png" alt="Evidence Recall TextFooler" style="width:32%; margin:0; padding:0;"/>
   
   <!-- Evidence F1 Row -->
-  <img src="results/esnli_results/plots/evidence_f1_Introspection_Llama3.png" alt="Evidence F1 LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_f1_Introspection_Qwen.png" alt="Evidence F1 Qwen" style="width:33.333%; margin:0; padding:0;"/>
-  <img src="results/esnli_results/plots/evidence_f1_TextFooler.png" alt="Evidence F1 TextFooler" style="width:33.333%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_f1_Introspection_Llama3.png" alt="Evidence F1 LLaMA-3" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_f1_Introspection_Qwen.png" alt="Evidence F1 Qwen" style="width:32%; margin:0; padding:0;"/>
+  <img src="results/esnli_results/plots/evidence_f1_TextFooler.png" alt="Evidence F1 TextFooler" style="width:32%; margin:0; padding:0;"/>
   
 </div>
