@@ -39,7 +39,7 @@ Ask the model to classify the instance.
 The figure below shows the classifier's accuracy across the models:
 
 <div style="text-align:center;">
-  <img src="results/classifiers_accuracy_vs_size.png" alt="Experiment Summary" width="40%"/>
+  <img src="results/classifiers_accuracy_vs_size.png" alt="Experiment Summary"/>
 </div>
 
 ## 2. Counterfactual Generation
@@ -67,15 +67,15 @@ The figure below shows the classifier's accuracy across the models:
 
 <h3 style="text-align:center;">Movie Reviews</h3>
 <div style="text-align:center;">
-  <img src="results/movie_results/plots/Attack_Success.png" alt="Attack Success" style="width:40%; display:block; margin:0 auto;"/>
+  <img src="results/movie_results/plots/Attack_Success.png" alt="Attack Success" style="display:block; margin:0 auto;"/>
   <div style="height:40px;"></div>
-  <img src="results/movie_results/plots/Introspection_Success.png" alt="Introspection Success" style="width:75%; display:block; margin:0 auto;"/>
+  <img src="results/movie_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto;"/>
 </div>
 
 <div style="height:40px;"></div>
 
 <div style="text-align:center;">
-  <div style="display:flex; flex-wrap:wrap; width:75%; margin:0 auto; line-height:0;">
+  <div style="display:flex; flex-wrap:wrap;margin:0 auto; line-height:0;">
     <!-- Distance Row -->
     <img src="results/movie_results/plots/distance_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
     <img src="results/movie_results/plots/distance_Introspection_Qwen.png" alt="Distance Qwen" style="width:33.333%; margin:0; padding:0;"/>
@@ -94,15 +94,15 @@ The figure below shows the classifier's accuracy across the models:
 
 <h3 style="text-align:center;">e-SNLI</h3>
 <div style="text-align:center;">
-  <img src="results/esnli_results/plots/Attack_Success.png" alt="Attack Success" style="width:40%; display:block; margin:0 auto;"/>
+  <img src="results/esnli_results/plots/Attack_Success.png" alt="Attack Success" style="display:block; margin:0 auto;"/>
   <div style="height:40px;"></div>
-  <img src="results/esnli_results/plots/Introspection_Success.png" alt="Introspection Success" style="width:75%; display:block; margin:0 auto;"/>
+  <img src="results/esnli_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto;"/>
 </div>
 
 <div style="height:40px;"></div>
 
 <div style="text-align:center;">
-  <div style="display:flex; flex-wrap:wrap; width:75%; margin:0 auto; line-height:0;">
+  <div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
     <!-- Distance Row -->
     <img src="results/esnli_results/plots/distance_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
     <img src="results/esnli_results/plots/distance_Introspection_Qwen.png" alt="Distance Qwen" style="width:33.333%; margin:0; padding:0;"/>
@@ -123,7 +123,7 @@ The figure below shows the classifier's accuracy across the models:
 ## 4. Human and LLM Alignment
 
 <h3 style="text-align:center;">Movie Reviews</h3>
-<div style="display:flex; flex-wrap:wrap; width:80%; margin:0 auto; line-height:0;">
+<div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
 
   <!-- Evidence Accuracy Row -->
   <img src="results/movie_results/plots/evidence_accuracy_Introspection_Llama3.png" alt="Evidence Accuracy LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
@@ -148,7 +148,7 @@ The figure below shows the classifier's accuracy across the models:
 </div>
 
 <h3 style="text-align:center;">e-SNLI</h3>
-<div style="display:flex; flex-wrap:wrap; width:80%; margin:0 auto; line-height:0;">
+<div style="display:flex; flex-wrap:wrap; margin:0 auto; line-height:0;">
 
   <!-- Evidence Accuracy Row -->
   <img src="results/esnli_results/plots/evidence_accuracy_Introspection_Llama3.png" alt="Evidence Accuracy LLaMA-3" style="width:33.333%; margin:0; padding:0;"/>
