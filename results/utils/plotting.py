@@ -93,7 +93,8 @@ def plot_attack_comparison(models, attacks, plot_dir):
     plt.title("Attack Success Rate by Model Size")
     plt.xlabel("Model Size (B parameters)")
     plt.ylabel("Attack Success Rate")
-    plt.ylim(0, 1)  # Set y-axis limits from 0 to 1
+    ymin, ymax = ax.get_ylim()
+    ax.set_ylim(0, ymax * 1.15)
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.grid(True)
     plt.tight_layout()

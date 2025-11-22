@@ -2,6 +2,7 @@
 
 As large language models (LLMs) grow in size to enhance performance, there remains a limited understanding of how this expansion affects their explainability.
 In this project, we use counterfactuals as our primary approach to post-hoc explainability.
+We use the following definition of ‘counterfactual explanation’: “A counterfactual explanation is a minimal edit of the input with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”
 
 We evaluate multiple models across different scales by generating two types of counterfactual explanations:
  - Introspections: Self-generated counterfactuals, where the model attempts to produce an alternative input that flips its own prediction.
