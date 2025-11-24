@@ -118,7 +118,6 @@ Michael Robbins' Hardball is a cinematic masterpiece. In about two hours, we get
 
 </details>
 
----
 
 ### A. Extract the adversarial attack from TextAttack.
 TextAttack's pipeline: 
@@ -165,12 +164,11 @@ Finally, it is important to note that the ```e-implicit-target``` manipulation, 
 
 ***Contradiction***: Contradiction probability from `roberta-large-mnli`. Higher values indicate stronger logical contradictions.
 
----
 
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
   <img src="results/movie_results/plots/Attack_Success.png" alt="Attack Success" style="display:block; margin:0 auto; width:70%;padding-bottom:40px; "/>
-  <p style="padding-bottom:40px; "><em>TextFooler achieves high attack success rates across all model sizes, with larger models showing slightly better robustness.</em></p>
+  <p style="padding-bottom:40px;"><em>TextFooler achieves high attack success rates across all model sizes, with larger models showing slightly better robustness.</em></p>
   <img src="results/movie_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:96%; padding-bottom:40px; "/>
   <p><em>
     1. Larger model size improves faithfulness.<br>
@@ -212,7 +210,7 @@ Finally, it is important to note that the ```e-implicit-target``` manipulation, 
 <h2 style="text-align:left;">e-SNLI</h2>
 <div style="text-align:center;">
   <img src="results/esnli_results/plots/Attack_Success.png" alt="Attack Success" style="display:block; margin:0 auto; width:70%; padding-bottom:40px;"/>
-  <p style="padding-bottom:40px; "><em>Mid-sized models appear to be the most robust.<em></p>
+  <p style="padding-bottom:40px;"><em>Mid-sized models appear to be the most robust.</em></p>
   <img src="results/esnli_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:96%; padding-bottom:40px;"/>
   <p><em>
     1. Increasing model size improves faithfulness.<br>
@@ -259,23 +257,17 @@ To measure how well counterfactual edits align with human-annotated evidence spa
 - **False Negative (FN)** — a token that lies **inside** a human-annotated evidence span but was **not** modified.
 - **True Negative (TN)** — a token that was **not modified** *and* lies **outside** any human-annotated evidence span.
 
-**Accuracy**: What percent of all tokens are correctly classified (either modified within evidence or unmodified outside evidence)?
+Accuracy = (TP + TN) / (TP + TN + FP + FN)
+ - What percent of all tokens are correctly classified (either modified within evidence or unmodified outside evidence)?
 
-<img src="https://render.githubusercontent.com/render/math?math=\text{Accuracy}=\frac{TP+TN}{TP+TN+FP+FN}">
+Precision = TP / (TP + FP)
+- What percent of the perturbations in the input are evidence supported?
 
-**Precision**: What percent of the perturbations in the input are *evidence* supported?
+Recall = TP / (TP + FN)  
+- What percent of the human evidence spans are covered by the perturbations in the input?
 
-<img src="https://render.githubusercontent.com/render/math?math=\text{Precision}=\frac{TP}{TP+FP}">
-
-**Recall**: What percent of the *human evidence spans* are covered by the perturbations in the input?  
-
-<img src="https://render.githubusercontent.com/render/math?math=\text{Recall}=\frac{TP}{TP+FN}">
-
-**F1 Score**: The harmonic mean of precision and recall, providing a balanced measure of alignment quality.
-
-<img src="https://render.githubusercontent.com/render/math?math=\text{F1}=2\cdot\frac{\text{Precision}\cdot\text{Recall}}{\text{Precision}+\text{Recall}}">
-
----
+F1 Score = 2 × (Precision × Recall) / (Precision + Recall)
+- The harmonic mean of precision and recall
 
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
@@ -299,7 +291,7 @@ To measure how well counterfactual edits align with human-annotated evidence spa
   </div>
   <p><em>
     1. Attacks show a slight decrease in their preference for perturbing human-annotated tokens as model size increases, across both model families. <br>
-    2. Smaller Llama is affected from prompt variations benefitting from them in general. while bigger version where more consistent <br>
+    2. Smaller Llama is affected from prompt variations benefitting from them in general. while bigger version where more consistent.
   </em></p>  
 </div>
 
@@ -324,8 +316,8 @@ To measure how well counterfactual edits align with human-annotated evidence spa
     <img src="results/esnli_results/plots/evidence_f1_TextFooler.png" alt="Evidence F1 TextFooler" style="width:32%; margin:0; padding:0;"/>
   </div>
   <p><em>
-    1. In this task it more clear that human-llm alignment grows with sise <br>
-    2. Only target visibility manipulation had a minor impact <br>
+    1. In this task it more clear that human-llm alignment grows with size. <br>
+    2. Only target visibility manipulation had a minor impact.
   </em></p>  
 </div>
 
