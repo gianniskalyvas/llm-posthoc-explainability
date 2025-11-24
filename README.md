@@ -152,17 +152,17 @@ Finally, it is important to note that the ```e-implicit-target``` manipulation, 
 
 ### Faithfulness Metrics
 
-***Attack Success Rate***: Percentage of adversarial attacks that successfully flip the model's prediction. Lower values indicate more robust models.
+ - ***Attack Success Rate***: Percentage of adversarial attacks that successfully flip the model's prediction. Lower values indicate more robust models.
 
-***Introspection Faithfulness***: Percentage of self-generated counterfactuals that successfully flip the model's prediction.
+ - ***Introspection Faithfulness***: Percentage of self-generated counterfactuals that successfully flip the model's prediction.
 
 ### Minimality Metrics
 
-***Distance***: Normalized edit distance (1 - SequenceMatcher ratio). Lower values indicate more minimal changes.
+ - ***Distance***: Normalized edit distance (1 - SequenceMatcher ratio). Lower values indicate more minimal changes.
 
-***Semantic Similarity***: Cosine similarity of `all-mpnet-base-v2` embeddings. Higher values indicate better semantic preservation.
+ - ***Semantic Similarity***: Cosine similarity of `all-mpnet-base-v2` embeddings. Higher values indicate better semantic preservation.
 
-***Contradiction***: Contradiction probability from `roberta-large-mnli`. Higher values indicate stronger logical contradictions.
+ - ***Contradiction***: Contradiction probability from `roberta-large-mnli`. Higher values indicate stronger logical contradictions.
 
 
 <h2 style="text-align:left;">Movie Reviews</h2>
@@ -246,7 +246,7 @@ Finally, it is important to note that the ```e-implicit-target``` manipulation, 
 </div>
 
 
-## 4. Human and LLM Alignment
+## 4. Human-centric Evaluation
 
 ### Metric Definitions
 
@@ -320,6 +320,16 @@ F1 Score = 2 × (Precision × Recall) / (Precision + Recall)
     2. Only target visibility manipulation had a minor impact.
   </em></p>  
 </div>
+
+# Conclusions
+
+ - **Scale Improves Faithfulness**: Larger models are generally better at generating self-explanations that actually flip their own predictions, especially in the Movie Reviews task.
+
+ - **Prompt Sensitivity**: Target visibility significantly influenced model performance, with mixed positive and negative effects, while perspective manipulation showed negligible impact across all metrics, including human human-centric metrics.
+
+ - **Adversarial Robustness vs. Interpretability**: TextFooler attacks are highly effective but produce edits that are not necessarily aligned with human reasoning. In contrast, self-explanations from larger models show a higher degree of this alignment.
+
+ - **Task-Dependent Behavior**: The results are not uniform across tasks. The optimal prompt for introspection faithfulness on Movie Reviews was the worst for e-SNLI.
 
 ## References
 
