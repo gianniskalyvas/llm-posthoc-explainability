@@ -261,27 +261,19 @@ To measure how well counterfactual edits align with human-annotated evidence spa
 
 **Accuracy**: What percent of all tokens are correctly classified (either modified within evidence or unmodified outside evidence)?
 
-$$
-\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
-$$
+<img src="https://render.githubusercontent.com/render/math?math=\text{Accuracy}=\frac{TP+TN}{TP+TN+FP+FN}">
 
 **Precision**: What percent of the perturbations in the input are *evidence* supported?
 
-$$
-\text{Precision} = \frac{TP}{TP + FP}
-$$
+<img src="https://render.githubusercontent.com/render/math?math=\text{Precision}=\frac{TP}{TP+FP}">
 
 **Recall**: What percent of the *human evidence spans* are covered by the perturbations in the input?  
 
-$$
-\text{Recall} = \frac{TP}{TP + FN}
-$$
+<img src="https://render.githubusercontent.com/render/math?math=\text{Recall}=\frac{TP}{TP+FN}">
 
 **F1 Score**: The harmonic mean of precision and recall, providing a balanced measure of alignment quality.
 
-$$
-\text{F1} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
-$$
+<img src="https://render.githubusercontent.com/render/math?math=\text{F1}=2\cdot\frac{\text{Precision}\cdot\text{Recall}}{\text{Precision}+\text{Recall}}">
 
 ---
 
