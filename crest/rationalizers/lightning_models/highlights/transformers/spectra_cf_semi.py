@@ -506,7 +506,7 @@ class SemiSupervisedCfTransformerSPECTRARationalizer(TransformerBaseRationalizer
 
             # pass masked inputs
             if 't5' in self.cf_gen_arch:
-                cf_gen_enc_out = self.cf_gen_encoder(inputs_embeds=e_bar, attention_mask=mask_enc)
+                cf_gen_enc_out = self.cf_gen_encoder(inputs_embeds=e_bar, attention_mask=mask_enc.long())
             else:
                 ext_mask = (1.0 - mask_enc[:, None, None, :].to(self.dtype)) * -10000.0
                 cf_gen_enc_out = self.cf_gen_encoder(e_bar, ext_mask)

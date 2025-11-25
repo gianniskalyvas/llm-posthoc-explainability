@@ -35,9 +35,9 @@ class TransformerBaselineClassifier(TransformerBaseRationalizer):
 
         if 't5' in self.ff_gen_arch:
             # t5 encoder and decoder receives word_emb and a raw mask
-            gen_h = self.ff_gen_encoder(inputs_embeds=gen_e, attention_mask=mask)
+            gen_h = self.ff_gen_encoder(inputs_embeds=gen_e, attention_mask=mask.long())
             if self.ff_gen_use_decoder:
-                gen_h = self.ff_gen_decoder(inputs_embeds=gen_e, attention_mask=mask,
+                gen_h = self.ff_gen_decoder(inputs_embeds=gen_e, attention_mask=mask.long(),
                                             encoder_hidden_states=gen_h.last_hidden_state,)
         else:
             # bert encoder receives word_emb + pos_embs and an extended mask

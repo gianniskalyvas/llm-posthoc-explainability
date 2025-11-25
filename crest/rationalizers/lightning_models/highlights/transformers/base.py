@@ -253,12 +253,12 @@ class TransformerBaseRationalizer(BaseRationalizer):
             # t5 encoder and decoder receives word_emb and a raw mask
             gen_h = self.ff_gen_encoder(
                 inputs_embeds=gen_e,
-                attention_mask=mask
+                attention_mask=mask.long()
             )
             if self.ff_gen_use_decoder:
                 gen_h = self.ff_gen_decoder(
                     inputs_embeds=gen_e,
-                    attention_mask=mask,
+                    attention_mask=mask.long(),
                     encoder_hidden_states=gen_h.last_hidden_state,
                 )
         else:
@@ -337,7 +337,7 @@ class TransformerBaseRationalizer(BaseRationalizer):
         else:
             if 't5' in self.ff_pred_arch:
                 # decide if we will mask the self-attention of the predictor
-                attn_mask = (1 - z_mask.squeeze(-1)).long() if self.ff_selection_mask else mask
+                attn_mask = (1 - z_mask.squeeze(-1)).long() if self.ff_selection_mask else mask.long()
                 pred_h = self.ff_pred_encoder(
                     inputs_embeds=pred_e,
                     attention_mask=attn_mask

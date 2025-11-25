@@ -183,7 +183,7 @@ class SupervisedCfTransformerSPECTRARationalizer(CounterfactualTransformerSPECTR
 
         # pass (1-z)-masked inputs
         if 't5' in self.cf_gen_arch:
-            cf_gen_enc_out = self.cf_gen_encoder(inputs_embeds=s_bar, attention_mask=mask)
+            cf_gen_enc_out = self.cf_gen_encoder(inputs_embeds=s_bar, attention_mask=mask.long())
             h_tilde = cf_gen_enc_out.last_hidden_state
         else:
             cf_gen_enc_out = self.cf_gen_encoder(s_bar, ext_mask)
