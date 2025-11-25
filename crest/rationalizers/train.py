@@ -1,6 +1,22 @@
 import logging
 import os
 
+# Fix for Hugging Face relative redirect issue
+import requests
+from urllib.parse import urljoin, urlparse
+
+_original_head = requests.head
+_original_get = requests.get
+
+def _fix_redirect(response, url):
+    if 'Location' in response.headers and response.headers['Location'].startswith('/'):
+        parsed = urlparse(url)
+        response.headers['Location'] = f"{parsed.scheme}://{parsed.netloc}{response.headers['Location']}"
+    return response
+
+requests.head = lambda url, **kw: _fix_redirect(_original_head(url, **kw), url)
+requests.get = lambda url, **kw: _fix_redirect(_original_get(url, **kw), url)
+
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from transformers import AutoTokenizer
