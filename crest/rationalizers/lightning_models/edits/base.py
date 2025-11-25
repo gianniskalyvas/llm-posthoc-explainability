@@ -40,7 +40,7 @@ class BaseEditor(TransformerBaseRationalizer):
         :param h_params (dict): hyperparams dict. See docs for more info.
         """
         super().__init__(tokenizer, nb_classes, is_multilabel, h_params)
-        if h_params['explainer'] == 'sparsemap':
+        if h_params.get('explainer') == 'sparsemap':
             explainer_cls = available_explainers['sparsemap']
             self.explainer = explainer_cls(h_params, self.ff_gen_hidden_size)
 
