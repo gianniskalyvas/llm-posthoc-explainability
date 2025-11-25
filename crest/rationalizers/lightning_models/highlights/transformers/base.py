@@ -574,7 +574,7 @@ class TransformerBaseRationalizer(BaseRationalizer):
                     preds, labels, num_classes=self.nb_classes, average="macro"
                 )
                 recall = torchmetrics.functional.recall(
-                    preds, labels, task="multiclass", num_classes=self.nb_classes, average="macro"
+                    preds, labels, num_classes=self.nb_classes, average="macro"
                 )
                 f1_score = 2 * precision * recall / (precision + recall)
                 dict_metrics[f"{prefix}_{flow}_accuracy"] = accuracy
