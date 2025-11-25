@@ -68,11 +68,14 @@ def find_eigen():
 
     # Loop over search paths and check for the existence of the Eigen/Dense
     # header.
+    print(f"Searching for Eigen in: {search_dirs}")
     for d in search_dirs:
         path = os.path.join(d, "Eigen", "Dense")
+        print(f"Checking path: {path}, exists: {os.path.exists(path)}")
         if os.path.exists(path):
             # Determine the version.
             vf = os.path.join(d, "Eigen", "src", "Core", "util", "Macros.h")
+            print(f"Checking version file: {vf}, exists: {os.path.exists(vf)}")
             if not os.path.exists(vf):
                 continue
             src = open(vf, "r").read()
@@ -80,6 +83,7 @@ def find_eigen():
             v2 = re.findall("#define EIGEN_MAJOR_VERSION (.+)", src)
             v3 = re.findall("#define EIGEN_MINOR_VERSION (.+)", src)
             if not len(v1) or not len(v2) or not len(v3):
+                print(f"Could not parse version from {vf}")
                 continue
             v = "{0}.{1}.{2}".format(v1[0], v2[0], v3[0])
             print("Found Eigen version {0} in: {1}".format(v, d))
