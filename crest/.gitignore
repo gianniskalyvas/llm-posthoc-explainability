@@ -162,6 +162,7 @@ cython_debug/
 # Custom
 .word_vectors_cache/
 log/
+experiments/
 tmp/
 lp-sparsemap/
 eigen/
