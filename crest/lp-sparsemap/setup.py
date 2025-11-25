@@ -49,6 +49,13 @@ def find_eigen():
     env_var = os.getenv("EIGEN_DIR")
     if env_var:
         search_dirs.append(env_var)
+    
+    # Add relative path to eigen directory in parent folder
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    relative_eigen = os.path.join(script_dir, "..", "eigen")
+    if os.path.exists(relative_eigen):
+        search_dirs.append(os.path.abspath(relative_eigen))
+    
     search_dirs += [
         "/usr/local/include/eigen3",
         "/usr/local/homebrew/include/eigen3",
