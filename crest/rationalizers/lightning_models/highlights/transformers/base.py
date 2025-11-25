@@ -568,7 +568,7 @@ class TransformerBaseRationalizer(BaseRationalizer):
                 preds = torch.argmax(torch.cat(stacked_outputs[f"{prefix}_predictions"]), dim=-1)
                 labels = torch.tensor(unroll(stacked_outputs[f"{prefix}_labels"]), device=preds.device)
                 accuracy = torchmetrics.functional.accuracy(
-                    preds, labels, num_classes=self.nb_classes, average="macro"
+                    preds, labels, num_classes=self.nb_classes, average="macro", top_k=1
                 )
                 precision = torchmetrics.functional.precision(
                     preds, labels, num_classes=self.nb_classes, average="macro"
