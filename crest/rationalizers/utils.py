@@ -326,7 +326,7 @@ def get_html_rationales(all_tokens, all_scores, all_gold_labels, all_pred_labels
         template_neg = '<span style="color: black; background-color: rgba(255, 0, 0, {}); ' \
                        'display:inline-block; font-size:12px;">&nbsp {} &nbsp</span>'
         text = ''
-        f = lambda w: w.replace('<', 'ᐸ').replace('>', 'ᐳ')
+        f = lambda w: w.replace('<', 'ᐸ').replace('>', 'ᐳ') if w is not None else ''
         for word, color in zip(tokens[:leng], scores[:leng]):
             if color >= 0:
                 text += template_pos.format(color, f(word))
