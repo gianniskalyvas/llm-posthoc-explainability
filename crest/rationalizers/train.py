@@ -173,26 +173,30 @@ def run(args):
     # log the best model path
     logger.log_hyperparams({'best_model_path': checkpoint_callback.best_model_path})
 
-    # perform test
-    shell_logger.info("Starting test...")
-    hf_datasets.logging.disable_progress_bar()
+    # perform test (skip if no_test is True)
+    skip_test = dict_args.get("no_test", False)
+    if skip_test:
+        shell_logger.info("Skipping test (no_test=True)...")
+    else:
+        shell_logger.info("Starting test...")
+        hf_datasets.logging.disable_progress_bar()
 
-    def log_final_outputs(final_outputs, flow_name=None, prefix_name=None):
-        for stat_dict in final_outputs:
-            new_stat_dict = {}
-            for stat_name, stat_value in stat_dict.items():
-                if flow_name is not None:
-                    stat_name = stat_name.replace('ff_', flow_name + '_')
-                if prefix_name is not None:
-                    stat_name = stat_name.replace('test_', 'test_' + prefix_name + '_')
-                new_stat_dict[stat_name] = stat_value
-            logger.log_metrics(new_stat_dict)
+        def log_final_outputs(final_outputs, flow_name=None, prefix_name=None):
+            for stat_dict in final_outputs:
+                new_stat_dict = {}
+                for stat_name, stat_value in stat_dict.items():
+                    if flow_name is not None:
+                        stat_name = stat_name.replace('ff_', flow_name + '_')
+                    if prefix_name is not None:
+                        stat_name = stat_name.replace('test_', 'test_' + prefix_name + '_')
+                    new_stat_dict[stat_name] = stat_value
+                logger.log_metrics(new_stat_dict)
 
-    # perform test
-    shell_logger.info("Testing on all samples...")
-    dm.is_original = None
-    outputs = trainer.test(datamodule=dm, verbose=True)
-    log_final_outputs(outputs, flow_name=None, prefix_name=None)
+        # perform test
+        shell_logger.info("Testing on all samples...")
+        dm.is_original = None
+        outputs = trainer.test(datamodule=dm, verbose=True)
+        log_final_outputs(outputs, flow_name=None, prefix_name=None)
 
     # bye bye
     shell_logger.info("Bye bye!")

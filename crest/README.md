@@ -74,13 +74,26 @@ To train a masker, first define a config file with the hyperparameters of the mo
 Take a look at the config files in the `configs/masker` folder for examples. 
 The meaning of the relevant hyperparameters is described in the table below.
 
-Then, run the following command (e.g., for training a masker with 30% masking on the IMDB dataset):
+**Example 1: Training a masker with T5-small on IMDB (30% masking):**
 
 ```bash
 python3 rationalizers train --config configs/masker/imdb_sparsemap_30p.yaml
 ```
 
-After training, the rationalizer will be saved to the path informed in the `default_root_dir` option.
+**Example 2: Training a masker with LongT5 on Movies dataset:**
+
+```bash
+python3 rationalizers train --config configs/masker/my_movies_longt5.yaml
+```
+
+The key differences for LongT5 configuration:
+- `tokenizer: 'google/long-t5-tglobal-base'` - Use LongT5 tokenizer
+- `gen_arch: 'google/long-t5-tglobal-base'` - Use LongT5 as generator
+- `pred_arch: 'google/long-t5-tglobal-base'` - Use LongT5 as predictor
+- `max_seq_len: 4096` - LongT5 supports longer sequences (up to 16384)
+- `batch_size: 2` - Reduce batch size due to longer sequences and larger model
+
+After training, the rationalizer will be saved to the path informed in the `default_root_dir` option (e.g., `experiments/masker_my_movies_longt5/version_0/checkpoints/best.ckpt`).
 
 This phase uses the following hyperparameters:
 
@@ -118,13 +131,21 @@ Check the config files in the `configs/editor` folder for examples.
 - Make sure to inform the path of the rationalizer trained in the previous phase via the `factual_ckpt` argument in the config file.
 - Make sure all the previous hyperparameters defined above are kept intact for training the editor. Alternatively, keep them undefined, in which case they will be loaded with the pre-trained rationalizer.
 
-Then, run the following command (e.g., for training a T5-small editor on the IMDB dataset):
+**Example 1: Training a T5-small editor on IMDB:**
 
 ```bash
 python3 rationalizers train --config configs/editor/imdb_sparsemap_30p.yaml
 ```
 
-After training, the editor will be saved to the path informed in the `default_root_dir` option.
+**Example 2: Training a LongT5 editor on Movies dataset:**
+
+Before running this command, make sure to update the `factual_ckpt` path in `configs/editor/my_movies_longt5.yaml` to point to your trained masker checkpoint (e.g., `experiments/masker_my_movies_longt5/version_0/checkpoints/best.ckpt`).
+
+```bash
+python3 rationalizers train --config configs/editor/my_movies_longt5.yaml
+```
+
+After training, the editor will be saved to the path informed in the `default_root_dir` option (e.g., `experiments/editor_my_movies_longt5/version_0/checkpoints/best.ckpt`).
 
 This phase uses the following hyperparameters:
 
@@ -144,18 +165,49 @@ This phase uses the following hyperparameters:
 
 ### Extracting Counterfactuals
 
-To extract counterfactuals from the editor (e.g., for the Revised IMDB dataset), run:
+To extract counterfactuals from the editor, you need to specify the checkpoint path, dataset name, and data split.
+
+**Example 1: Extract counterfactuals for IMDB test set:**
 
 ```bash
 python3 scripts/get_edits.py \
-    --ckpt-name "foo" \
-    --ckpt-path "path/to/editor/checkpoint" \
+    --ckpt-name "imdb_30p" \
+    --ckpt-path "experiments/editor_imdb_sparsemap_30p/version_0/checkpoints/best.ckpt" \
     --dm-name "revised_imdb" \
     --dm-dataloader "test" \
     --num-beams 15
 ```
 
+**Example 2: Extract counterfactuals for Movies dataset with LongT5:**
+
+```bash
+python3 scripts/get_edits.py \
+    --ckpt-name "movies_longt5" \
+    --ckpt-path "experiments/editor_my_movies_longt5/version_0/checkpoints/best.ckpt" \
+    --dm-name "contrast_imdb_cf" \
+    --dm-dataloader "test" \
+    --num-beams 15
+```
+
+**Example 3: Extract counterfactuals for training set (needed for rationalization phase):**
+
+```bash
+python3 scripts/get_edits.py \
+    --ckpt-name "movies_longt5" \
+    --ckpt-path "experiments/editor_my_movies_longt5/version_0/checkpoints/best.ckpt" \
+    --dm-name "contrast_imdb_cf" \
+    --dm-dataloader "train" \
+    --num-beams 15
+```
+
 The counterfactuals will be saved in a file named `data/edits/{dm_name}_{dm_dataloader}_beam_{num_beams}_{ckpt_name}_raw.tsv`.
+
+**Important parameters:**
+- `--ckpt-name`: A name identifier for your checkpoint (used in output filename)
+- `--ckpt-path`: Full path to your trained editor checkpoint
+- `--dm-name`: Dataset name (`revised_imdb`, `contrast_imdb_cf`, `snli`, etc.)
+- `--dm-dataloader`: Data split to process (`train`, `val`, or `test`)
+- `--num-beams`: Number of beams for beam search (15 is recommended)
 
 For more information about how to generate counterfactuals, check the instructions in the [scripts](scripts/) folder.
 

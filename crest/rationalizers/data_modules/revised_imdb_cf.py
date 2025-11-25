@@ -114,7 +114,7 @@ class CounterfactualRevisedIMDBDataModule(BaseDataModule):
         # Assign train/val/test datasets for use in dataloaders
         self.dataset = hf_datasets.load_dataset(
             path=self.path,
-            download_mode=hf_datasets.DownloadMode.FORCE_REDOWNLOAD,
+            download_mode=hf_datasets.DownloadMode.REUSE_DATASET_IF_EXISTS,
         )
 
         # build tokenizer

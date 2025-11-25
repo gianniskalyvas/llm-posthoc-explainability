@@ -22,6 +22,7 @@ train:
     save_tokenizer: False       # the tokenizer will be pickled and store in the checkpoint dir as `tokenizer.pickle`
     save_label_encoder: False   # the label encoder will be pickled and store in the checkpoint dir as `label_encoder.pickle`
     gpu_log: False              # whether to use the gpu callback to see gpu information in the logger
+    no_test: True               # skip testing after training (useful when test data is not available)
 
     # data
     dm: 'contrast_imdb_cf'                  # data module name (see docs for more options) - using contrast_imdb_cf for training

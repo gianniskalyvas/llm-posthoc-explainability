@@ -16,6 +16,7 @@ train:
     save_tokenizer: False       # the tokenizer will be pickled and store in the checkpoint dir as `tokenizer.pickle`
     save_label_encoder: False   # the label encoder will be pickled and store in the checkpoint dir as `label_encoder.pickle`
     gpu_log: False              # whether to use the gpu callback to see gpu information in the logger
+    no_test: True               # skip testing after training (useful when test data is not available)
     # load_tokenizer: False     # load a trained tokenizer stored in the checkpoint dir as `tokenizer.pickle`
     # load_label_encoder: False # load a trained label encoder stored in the checkpoint dir as `label_encoder.pickle`
 
