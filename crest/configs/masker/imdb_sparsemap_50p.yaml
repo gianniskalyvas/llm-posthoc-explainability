@@ -24,7 +24,7 @@ train:
     batch_size: 8               # minibatch size
     num_workers: 1              # number of workers used for data loading (0 means that only a single core will be used)
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary
-    max_seq_len: 512            # pretrained transformer limitation
+    max_seq_len: 4096           # long-t5 supports up to 16384, using 4096 for efficiency
     # max_dataset_size: 64      # limit dataset size (useful for quick testing)
 
     # early stopping
@@ -39,12 +39,12 @@ train:
     # ckpt: null  # path to the checkpoint to be loaded
 
     # factual flow
-    tokenizer: 't5-small'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
-    gen_arch: 't5-small'                # Pre-trained generator from the Hugging Face hub
+    tokenizer: 'google/long-t5-tglobal-base'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
+    gen_arch: 'google/long-t5-tglobal-base'                # Pre-trained generator from the Hugging Face hub
     gen_emb_requires_grad: False        # whether to fine-tune the generator's embedding layer
     gen_encoder_requires_grad: False    # whether to fine-tune the generator's encoder
     gen_use_decoder: False              # whether to use the generator's decoder
-    pred_arch: 't5-small'               # Pre-trained predictor from the Hugging Face hub
+    pred_arch: 'google/long-t5-tglobal-base'               # Pre-trained predictor from the Hugging Face hub
     pred_emb_requires_grad: False       # whether to fine-tune the predictor's embedding layer
     pred_bidirectional: False           # whether to use a bidirectional predictor
     pred_encoder_requires_grad: True    # whether to fine-tune the predictor's encoder

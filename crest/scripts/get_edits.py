@@ -223,7 +223,7 @@ if __name__ == '__main__':
     
     dm_args = dict(
         batch_size=batch_size,
-        max_seq_len=512,
+        max_seq_len=4096,
         num_workers=1,
         vocab_min_occurrences=1,
         is_original=True,
@@ -243,7 +243,7 @@ if __name__ == '__main__':
         no_repeat_ngram_size=2,
         num_return_sequences=1,
         min_length=None,
-        max_length=512,
+        max_length=4096,
     )
 
     out_dict = get_edits(
