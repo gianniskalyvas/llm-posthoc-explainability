@@ -77,14 +77,17 @@ def find_eigen():
             vf = os.path.join(d, "Eigen", "src", "Core", "util", "Macros.h")
             print(f"Checking version file: {vf}, exists: {os.path.exists(vf)}")
             if not os.path.exists(vf):
-                continue
+                # Version file not found, but Eigen/Dense exists, so use it anyway
+                print(f"Version file not found, but using Eigen from: {d}")
+                return d
             src = open(vf, "r").read()
             v1 = re.findall("#define EIGEN_WORLD_VERSION (.+)", src)
             v2 = re.findall("#define EIGEN_MAJOR_VERSION (.+)", src)
             v3 = re.findall("#define EIGEN_MINOR_VERSION (.+)", src)
             if not len(v1) or not len(v2) or not len(v3):
-                print(f"Could not parse version from {vf}")
-                continue
+                # Could not parse version, but Eigen exists, so use it anyway
+                print(f"Could not parse version, but using Eigen from: {d}")
+                return d
             v = "{0}.{1}.{2}".format(v1[0], v2[0], v3[0])
             print("Found Eigen version {0} in: {1}".format(v, d))
             return d
