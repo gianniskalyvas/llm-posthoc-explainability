@@ -678,16 +678,16 @@ class BaseEditor(TransformerBaseRationalizer):
         preds = torch.argmax(torch.cat(stacked_outputs[f"{prefix}_predictions"]), dim=-1)
         labels = torch.tensor(unroll(stacked_outputs[f"{prefix}_labels"]), device=preds.device)
         edits_labels = torch.tensor(unroll(stacked_outputs[f"{prefix}_edits_labels"]), device=preds.device)
-        acc = torchmetrics.functional.accuracy(preds, labels, num_classes=self.nb_classes, task="multiclass", average="macro")
+        acc = torchmetrics.functional.accuracy(preds, labels, num_classes=self.nb_classes, average="macro")
         dict_metrics[f"{prefix}_accuracy"] = acc
 
         if self.cf_classify_edits:
             preds = torch.argmax(torch.cat(stacked_outputs[f"{prefix}_edits_predictions"]), dim=-1)
-            acc = torchmetrics.functional.accuracy(preds, labels, num_classes=self.nb_classes, task="multiclass", average="macro")
+            acc = torchmetrics.functional.accuracy(preds, labels, num_classes=self.nb_classes, average="macro")
             dict_metrics[f"{prefix}_edit_accuracy"] = acc
 
             preds = torch.argmax(torch.cat(stacked_outputs[f"{prefix}_contrast_edits_predictions"]), dim=-1)
-            acc = torchmetrics.functional.accuracy(preds, edits_labels, num_classes=self.nb_classes, task="multiclass", average="macro")
+            acc = torchmetrics.functional.accuracy(preds, edits_labels, num_classes=self.nb_classes, average="macro")
             dict_metrics[f"{prefix}_contrast_edit_accuracy"] = acc
 
         # log all saved metrics
