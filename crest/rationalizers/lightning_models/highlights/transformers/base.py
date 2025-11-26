@@ -524,8 +524,10 @@ class TransformerBaseRationalizer(BaseRationalizer):
             idxs = idxs[:10] if prefix != 'test' else idxs[:100]
 
             # useful functions
-            select = lambda v: [v[i] for i in idxs]
-            detach = lambda v: [v[i].detach().cpu() for i in range(len(v))]
+            def select(v):
+                return [v[i] for i in idxs]
+            def detach(v):
+                return [v[i].detach().cpu() for i in range(len(v))]
 
             # log rationales
             if self.log_rationales_in_wandb:
@@ -656,11 +658,11 @@ class TransformerBaseRationalizer(BaseRationalizer):
         z, y_hat = self(input_ids, mask, token_type_ids=token_type_ids, current_epoch=self.current_epoch)
 
         # get rationales
-        z = [z_[:l] for z_, l in zip(z, lengths)]
+        z = [z_[:l] for z_, l in zip(z, lengths)]  # noqa: E741
 
         # tokens
         orig_tokens = [self.tokenizer.convert_ids_to_tokens(idxs) for idxs in input_ids.tolist()]
-        orig_tokens = [e[:l] for e, l in zip(orig_tokens, lengths)]
+        orig_tokens = [e[:l] for e, l in zip(orig_tokens, lengths)]  # noqa: E741
 
         output = {
             "tokens": orig_tokens,
