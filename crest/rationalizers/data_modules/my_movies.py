@@ -10,8 +10,8 @@ class MyMoviesDataModule(ImdbDataModule):
 
     def __init__(self, d_params: dict, tokenizer: object = None):
         super().__init__(d_params, tokenizer)
-        # path to your custom dataset (relative to repo root)
-        self.path = "../../eraserbenchmark-master/movies_dataset_builder/my_dataset/my_dataset.py"
+        # path to your custom dataset (absolute path or relative to crest/ directory)
+        self.path = "../eraserbenchmark-master/movies_dataset_builder/my_dataset/my_dataset.py"
 
     def setup(self, stage: str = None):
         # Load your custom dataset

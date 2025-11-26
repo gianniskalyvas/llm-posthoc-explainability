@@ -18,8 +18,8 @@ class MyESNLIDataModule(SNLIDataModule):
 
     def __init__(self, d_params: dict, tokenizer: object = None):
         super().__init__(d_params, tokenizer)
-        # path to your custom dataset (relative to repo root)
-        self.path = "../../eraserbenchmark-master/esnli_dataset_builder/my_dataset/my_dataset.py"
+        # path to your custom dataset (absolute path or relative to crest/ directory)
+        self.path = "../eraserbenchmark-master/esnli_dataset_builder/my_dataset/my_dataset.py"
         self.is_multilabel = True
         self.nb_classes = 2  # entailment (1), not_entailment (0)
         # Dataset already has binary labels, no need to filter neutrals
