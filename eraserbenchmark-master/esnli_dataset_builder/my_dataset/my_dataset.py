@@ -40,5 +40,5 @@ class MyDataset(datasets.GeneratorBasedBuilder):
                 yield idx, {
                     "sentence1": row["sentence1"],
                     "sentence2": row["sentence2"],
-                    "label": row["label"],
+                    "label": int(row["label"]),  # Convert string to int
                 }

@@ -38,5 +38,5 @@ class MyDataset(datasets.GeneratorBasedBuilder):
             for idx, row in enumerate(reader):
                 yield idx, {
                     "text": row["text"],
-                    "label": row["label"],
+                    "label": int(row["label"]),  # Convert string to int
                 }
