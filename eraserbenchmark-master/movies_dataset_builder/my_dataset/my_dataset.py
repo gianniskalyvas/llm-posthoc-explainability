@@ -13,22 +13,20 @@ class MyDataset(datasets.GeneratorBasedBuilder):
 
 
     def _split_generators(self, dl_manager):
-        import os
-        # Use __file__ to get the directory of this script
-        data_dir = os.path.dirname(os.path.abspath(__file__))
-
+        # data_dir is passed automatically by HuggingFace datasets
+        # It contains the directory where the dataset script is located
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={"filepath": f"{data_dir}/train.csv"},
+                gen_kwargs={"filepath": dl_manager.download_and_extract("train.csv")},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
-                gen_kwargs={"filepath": f"{data_dir}/val.csv"},
+                gen_kwargs={"filepath": dl_manager.download_and_extract("val.csv")},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
-                gen_kwargs={"filepath": f"{data_dir}/test.csv"},
+                gen_kwargs={"filepath": dl_manager.download_and_extract("test.csv")},
             ),
         ]
 
