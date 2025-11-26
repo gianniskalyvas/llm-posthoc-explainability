@@ -51,7 +51,7 @@ The data modules follow the same interface as existing CREST modules, so they wo
 ### Basic Usage
 
 ```bash
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 
 # For Movies dataset
 python get_edits.py \

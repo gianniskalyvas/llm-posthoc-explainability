@@ -10,7 +10,7 @@ The original CREST implementation uses T5-small with a hard 512-token limit. 85%
 
 Modified the codebase to use `google/long-t5-tglobal-base`:
 - **Model size**: 250M parameters (vs 60M for t5-small)
-- **Max sequence length**: 4096 tokens (vs 512 for t5-small)
+- **Max sequence length**: 6144 tokens (vs 512 for t5-small)
 - **Memory footprint**: ~3-4GB per model (vs ~2GB for t5-small)
 - **Total VRAM needed**: ~12GB for full CREST system (3 models)
 
@@ -19,19 +19,19 @@ Modified the codebase to use `google/long-t5-tglobal-base`:
 ### 1. Core Script Changes
 
 #### `/crest/scripts/get_edits.py`
-- **Line 225**: Changed `max_seq_len: 512` → `max_seq_len: 4096`
-- **Line 245**: Changed `max_length: 512` → `max_length: 4096`
+- **Line 226**: Changed `max_seq_len: 512` → `max_seq_len: 6144`
+- **Line 246**: Changed `max_length: 512` → `max_length: 6144`
 
 ### 2. Config Files Updated
 
 #### `/crest/configs/masker/imdb_sparsemap_50p.yaml`
 - Changed all model references: `t5-small` → `google/long-t5-tglobal-base`
-- Updated `max_seq_len: 512` → `max_seq_len: 4096`
+- Updated `max_seq_len: 512` → `max_seq_len: 6144`
 
 #### `/crest/configs/editor/imdb_sparsemap_50p.yaml`
 - Changed all model references: `t5-small` → `google/long-t5-tglobal-base`
-- Updated `max_seq_len: 512` → `max_seq_len: 4096`
-- Updated `max_length: 512` → `max_length: 4096` (in cf_generate_kwargs)
+- Updated `max_seq_len: 512` → `max_seq_len: 6144`
+- Updated `max_length: 512` → `max_length: 6144` (in cf_generate_kwargs)
 
 ### 3. New Config Files Created
 
@@ -39,30 +39,31 @@ Modified the codebase to use `google/long-t5-tglobal-base`:
 - `/crest/configs/masker/my_movies_longt5.yaml`
   - Uses `dm: 'contrast_imdb_cf'` for training data
   - `batch_size: 2` (reduced for LongT5 memory requirements)
-  - `max_seq_len: 4096`
+  - `max_seq_len: 6144`
   - All models: `google/long-t5-tglobal-base`
   
-- `/crest/configs/masker/my_esnli_longt5.yaml`
+- `/crest/configs/masker/my_esnli_baset5.yaml`
   - Uses `dm: 'snli'` for training data
-  - `batch_size: 4`
-  - `max_seq_len: 4096`
-  - All models: `google/long-t5-tglobal-base`
+  - `batch_size: 8` (standard t5-base batch size)
+  - `max_seq_len: 512` (sufficient for NLI premise-hypothesis pairs)
+  - All models: `t5-base` (not LongT5 - sequences are short enough)
 
 #### Editor Configs (Train Counterfactual Generator)
 - `/crest/configs/editor/my_movies_longt5.yaml`
   - Uses `dm: 'contrast_imdb_cf'` for training data
   - `batch_size: 2`
-  - `max_seq_len: 4096`, `max_length: 4096`
+  - `max_seq_len: 6144`, `max_length: 6144`
   - All models: `google/long-t5-tglobal-base`
   - `factual_ckpt`: Points to trained masker checkpoint (UPDATE after training)
   
-- `/crest/configs/editor/my_esnli_longt5.yaml`
+- `/crest/configs/editor/my_esnli_baset5.yaml`
   - Uses `dm: 'snli'` for training data
-  - `batch_size: 4`
-  - `max_seq_len: 4096`, `max_length: 4096`
-  - All models: `google/long-t5-tglobal-base`
+  - `batch_size: 8`
+  - `max_seq_len: 512`, `max_length: 512`
+  - All models: `t5-base` (not LongT5 - sequences are short enough)
   - `factual_ckpt`: Points to trained masker checkpoint (UPDATE after training)
   - `ignore_neutrals: True`
+  - `cf_task_name: 'nli_no_neutrals'`
 
 ### 4. Shell Scripts Updated
 
@@ -83,7 +84,7 @@ Modified the codebase to use `google/long-t5-tglobal-base`:
 
 #### For Movies Dataset:
 ```bash
-cd /home/user/Desktop/diploma/crest
+cd crest
 python train.py --config configs/masker/my_movies_longt5.yaml
 ```
 
@@ -97,11 +98,11 @@ python train.py --config configs/masker/my_movies_longt5.yaml
 
 #### For e-SNLI Dataset:
 ```bash
-cd /home/user/Desktop/diploma/crest
-python train.py --config configs/masker/my_esnli_longt5.yaml
+cd crest
+python train.py --config configs/masker/my_esnli_baset5.yaml
 ```
 
-**Expected output**: Checkpoint saved to `experiments/masker_my_esnli_longt5/version_0/checkpoints/best.ckpt`
+**Expected output**: Checkpoint saved to `experiments/masker_my_esnli_t5base/version_0/checkpoints/best.ckpt`
 
 **Training details**:
 - Uses `snli` dataset for training
@@ -120,16 +121,16 @@ factual_ckpt: experiments/masker_my_movies_longt5/version_0/checkpoints/best.ckp
 ```
 
 #### For e-SNLI:
-Edit `/crest/configs/editor/my_esnli_longt5.yaml` line 10:
+Edit `/crest/configs/editor/my_esnli_baset5.yaml` line 10:
 ```yaml
-factual_ckpt: experiments/masker_my_esnli_longt5/version_0/checkpoints/best.ckpt
+factual_ckpt: experiments/masker_my_esnli_t5base/version_0/checkpoints/best.ckpt
 ```
 
 ### Step 3: Train Editor (Counterfactual Generator)
 
 #### For Movies Dataset:
 ```bash
-cd /home/user/Desktop/diploma/crest
+cd crest
 python train.py --config configs/editor/my_movies_longt5.yaml
 ```
 
@@ -143,11 +144,11 @@ python train.py --config configs/editor/my_movies_longt5.yaml
 
 #### For e-SNLI Dataset:
 ```bash
-cd /home/user/Desktop/diploma/crest
-python train.py --config configs/editor/my_esnli_longt5.yaml
+cd crest
+python train.py --config configs/editor/my_esnli_baset5.yaml
 ```
 
-**Expected output**: Checkpoint saved to `experiments/editor_my_esnli_longt5/version_0/checkpoints/best.ckpt`
+**Expected output**: Checkpoint saved to `experiments/editor_my_esnli_t5base/version_0/checkpoints/best.ckpt`
 
 **Training details**:
 - Uses trained masker checkpoint
@@ -161,7 +162,7 @@ After both masker and editor are trained, update shell scripts with correct chec
 
 #### For Movies Dataset:
 ```bash
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 
 # Update get_edits_my_movies.sh with correct version numbers, then:
 bash get_edits_my_movies.sh
@@ -171,13 +172,13 @@ bash get_edits_my_movies.sh
 
 #### For e-SNLI Dataset:
 ```bash
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 
 # Update get_edits_my_esnli.sh with correct version numbers, then:
 bash get_edits_my_esnli.sh
 ```
 
-**Output**: Counterfactual edits saved to `experiments/editor_my_esnli_longt5/version_0/test_edits.txt`
+**Output**: Counterfactual edits saved to `experiments/editor_my_esnli_t5base/version_0/test_edits.txt`
 
 ## Key Architecture Notes
 
@@ -208,7 +209,7 @@ bash get_edits_my_esnli.sh
 - **Inference**: Uses `my_movies` or `my_esnli` (test-only custom datasets)
 
 ### Dataset Characteristics
-- **my_movies**: 199 test samples, 85% exceed 512 tokens
+- **my_movies**: 199 test samples, 85% exceed 512 tokens, longest is ~3040 tokens
 - **my_esnli**: 6598 test samples, binary labels (0/1), no neutrals
 
 ## Verification Steps
@@ -216,7 +217,7 @@ bash get_edits_my_esnli.sh
 After all changes, verify setup:
 
 ```bash
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 
 # Check data modules load correctly
 python -c "
@@ -240,7 +241,7 @@ print(f'Model params: {model.num_parameters() / 1e6:.1f}M')
 | Component | Original | Modified |
 |-----------|----------|----------|
 | Model | t5-small (60M params) | google/long-t5-tglobal-base (250M params) |
-| Max tokens | 512 | 4096 |
+| Max tokens | 512 | 6144 |
 | VRAM per model | ~2GB | ~3-4GB |
 | Total VRAM | ~6GB | ~12GB |
 | Batch size (movies) | 8 | 2 |
@@ -250,10 +251,11 @@ print(f'Model params: {model.num_parameters() / 1e6:.1f}M')
 ## Important Notes
 
 1. **No backward compatibility**: Cannot use existing t5-small checkpoints
-2. **Longer training time**: LongT5 is 4x larger, sequences 8x longer
-3. **Higher memory usage**: Need 16GB GPU for full pipeline
-4. **No truncation needed**: All movie reviews now fit in 4096 tokens
+2. **Longer training time**: LongT5 is 4x larger, sequences 12x longer (for movies only)
+3. **Higher memory usage**: Need 16GB GPU for movies pipeline, 8GB sufficient for e-SNLI
+4. **No truncation needed**: All movie reviews now fit in 6144 tokens (2x longest review)
 5. **Test-only inference**: Custom datasets only have test splits
+6. **e-SNLI uses standard t5-base**: NLI sequences are short enough (512 tokens), no need for LongT5
 
 ## References
 

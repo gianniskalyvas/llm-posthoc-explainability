@@ -34,7 +34,7 @@ Both data modules are configured to **use only the test split** for generating c
 ### Extracting Counterfactuals from Movies Dataset
 
 ```bash
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 
 python get_edits.py \
     --ckpt-name "my_movies_editor" \
@@ -49,7 +49,7 @@ python get_edits.py \
 ### Extracting Counterfactuals from e-SNLI Dataset
 
 ```bash
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 
 python get_edits.py \
     --ckpt-name "my_esnli_editor" \
@@ -67,14 +67,14 @@ Convenience scripts have been created:
 
 ```bash
 # For Movies dataset
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 # Edit the script to add your checkpoint paths
 nano get_edits_my_movies.sh
 # Then run it
 bash get_edits_my_movies.sh
 
 # For e-SNLI dataset
-cd /home/user/Desktop/diploma/crest/scripts
+cd crest/scripts
 # Edit the script to add your checkpoint paths
 nano get_edits_my_esnli.sh
 # Then run it
