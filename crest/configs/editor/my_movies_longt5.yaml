@@ -29,7 +29,7 @@ train:
     batch_size: 2               # reduced batch size for LongT5 (larger model + longer sequences)
     num_workers: 1              # number of workers used for data loading (0 means that only a single core will be used)
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary
-    max_seq_len: 4096           # long-t5 supports up to 16384, using 4096 for efficiency
+    max_seq_len: 6144           # long-t5 supports up to 16384, using 6144 (2x longest review of 3040 tokens)
     # max_dataset_size: 64      # limit dataset size (useful for quick testing)
 
     # early stopping
@@ -74,7 +74,7 @@ train:
         no_repeat_ngram_size: 2     # no bigrams repetitions are allowed (default: 0 | mice: 2)
         num_return_sequences: 1     # sample N sequences
         min_length: null            # minimum length of the generated sequence
-        max_length: 4096            # maximum length of the generated sequence (long-t5 supports up to 16384)
+        max_length: 6144            # maximum length of the generated sequence (2x longest review)
 
     # model: optimizer
     optimizer: 'adamw'
