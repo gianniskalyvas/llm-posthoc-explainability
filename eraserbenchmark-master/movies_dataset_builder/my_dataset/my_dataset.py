@@ -13,16 +13,18 @@ class MyDataset(datasets.GeneratorBasedBuilder):
 
 
     def _split_generators(self, dl_manager):
-
         import os
-        import sys
-        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
-        data_dir = os.path.abspath(os.path.join(script_dir,'..','..','eraserbenchmark-master','movies_dataset_builder','my_dataset'))
+        # Use __file__ to get the directory of this script
+        data_dir = os.path.dirname(os.path.abspath(__file__))
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={"filepath": f"{data_dir}/train.csv"},
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={"filepath": f"{data_dir}/val.csv"},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
