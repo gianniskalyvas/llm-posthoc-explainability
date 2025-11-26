@@ -25,8 +25,8 @@ train:
 
     # data
     dm: 'my_esnli'              # data module name - using your custom e-SNLI dataset with train/val/test splits
-    batch_size: 8               # batch size for T5-base
-    num_workers: 1              # number of workers used for data loading (0 means that only a single core will be used)
+    batch_size: 2               # reduced batch size for T5-base to save memory
+    num_workers: 4              # using all 4 CPU cores for data loading
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary
     max_seq_len: 512            # standard T5 sequence length
     # max_dataset_size: 64      # limit dataset size (useful for quick testing)
@@ -47,9 +47,9 @@ train:
     tokenizer: 't5-base'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
     gen_arch: 't5-base'                # Pre-trained generator from the Hugging Face hub
     pred_arch: 't5-base'               # Pre-trained predictor from the Hugging Face hub
-    gen_emb_requires_grad: True         # whether to fine-tune the generator's embedding layer
-    gen_encoder_requires_grad: True     # whether to fine-tune the generator's encoder
-    pred_emb_requires_grad: True        # whether to fine-tune the predictor's embedding layer
+    gen_emb_requires_grad: False        # freeze generator embedding to save memory
+    gen_encoder_requires_grad: False    # freeze generator encoder to save memory
+    pred_emb_requires_grad: False       # freeze predictor embedding to save memory
     pred_encoder_requires_grad: True    # whether to fine-tune the predictor's encoder
     pred_output_requires_grad: True     # whether to fine-tune the predictor's output layer
     explainer_requires_grad: True       # whether to fine-tune the explainer (including the mlp)
@@ -100,6 +100,7 @@ train:
     accelerator: gpu
     devices: 1
     gradient_clip_val: 5.0
+    accumulate_grad_batches: 4  # simulate batch_size=8 while using batch_size=2 to save memory
     min_epochs: 3
     max_epochs: 20
     #limit_train_batches: 10
