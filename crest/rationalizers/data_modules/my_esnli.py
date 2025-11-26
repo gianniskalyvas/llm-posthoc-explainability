@@ -36,18 +36,11 @@ class MyESNLIDataModule(SNLIDataModule):
         self.dataset = self.dataset.rename_column("sentence1", "hypothesis")
         self.dataset = self.dataset.rename_column("sentence2", "premise")
 
-        # Use only test split for all dataloaders (train, val, test)
-        # This ensures counterfactuals are generated only from test data
-        test_data = self.dataset["test"]
-        
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
-            test_data = test_data.select(range(min(self.max_dataset_size, len(test_data))))
-        
-        # Assign test data to all splits
-        self.dataset["train"] = test_data
-        self.dataset["validation"] = test_data
-        self.dataset["test"] = test_data
+            self.dataset["train"] = self.dataset["train"].select(range(min(self.max_dataset_size, len(self.dataset["train"]))))
+            self.dataset["validation"] = self.dataset["validation"].select(range(min(self.max_dataset_size, len(self.dataset["validation"]))))
+            self.dataset["test"] = self.dataset["test"].select(range(min(self.max_dataset_size, len(self.dataset["test"]))))
 
         # build tokenizer if not provided
         if self.tokenizer is None:
@@ -119,9 +112,11 @@ class MyESNLIDataModule(SNLIDataModule):
             vals, counts = np.unique(y, return_counts=True)
             return dict(zip(vals, counts / counts.sum()))
 
-        print("Label distribution (all from test split):")
+        print("Label distribution:")
+        print("Train:", get_dist(self.dataset["train"]["label"]))
+        print("Val:", get_dist(self.dataset["validation"]["label"]))
         print("Test:", get_dist(self.dataset["test"]["label"]))
-        print(f"Total samples: {len(self.dataset['test'])}")
+        print(f"Total samples - Train: {len(self.dataset['train'])}, Val: {len(self.dataset['validation'])}, Test: {len(self.dataset['test'])}")
 
         # convert `columns` to pytorch tensors and keep un-formatted columns
         if self.concat_inputs:

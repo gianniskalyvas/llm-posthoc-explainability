@@ -20,18 +20,11 @@ class MyMoviesDataModule(ImdbDataModule):
             download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
         )
 
-        # Use only test split for all dataloaders (train, val, test)
-        # This ensures counterfactuals are generated only from test data
-        test_data = self.dataset["test"]
-        
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
-            test_data = test_data.select(range(min(self.max_dataset_size, len(test_data))))
-        
-        # Assign test data to all splits
-        self.dataset["train"] = test_data
-        self.dataset["validation"] = test_data
-        self.dataset["test"] = test_data
+            self.dataset["train"] = self.dataset["train"].select(range(min(self.max_dataset_size, len(self.dataset["train"]))))
+            self.dataset["validation"] = self.dataset["validation"].select(range(min(self.max_dataset_size, len(self.dataset["validation"]))))
+            self.dataset["test"] = self.dataset["test"].select(range(min(self.max_dataset_size, len(self.dataset["test"]))))
 
         # build tokenizer if not provided
         if self.tokenizer is None:
