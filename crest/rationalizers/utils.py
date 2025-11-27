@@ -124,18 +124,32 @@ def setup_wandb_logger(default_root_dir: str, project: str = None, entity: str =
         from pytorch_lightning.loggers import TensorBoardLogger
         return TensorBoardLogger(save_dir=default_root_dir)
     
-    # Initialize wandb in offline mode to avoid connection issues
+    # Try to connect to wandb online, fall back to offline mode if it fails
     import os
-    os.environ["WANDB_MODE"] = "offline"
-    
-    id = uuid.uuid4()
-    return WandbLogger(
-        project="SPECTRA" if project is None else project,
-        entity="deepspin-cf-rationalizers" if entity is None else entity,
-        save_dir=default_root_dir,
-        offline=True,
-        # version=str(id.fields[1]),
-    )
+    try:
+        # Attempt online connection first
+        id = uuid.uuid4()
+        logger = WandbLogger(
+            project="SPECTRA" if project is None else project,
+            entity="deepspin-cf-rationalizers" if entity is None else entity,
+            save_dir=default_root_dir,
+            offline=False,
+            # version=str(id.fields[1]),
+        )
+        print("✓ Connected to wandb online")
+        return logger
+    except Exception as e:
+        # Fall back to offline mode if connection fails
+        print(f"⚠ Could not connect to wandb online ({e}), using offline mode")
+        os.environ["WANDB_MODE"] = "offline"
+        id = uuid.uuid4()
+        return WandbLogger(
+            project="SPECTRA" if project is None else project,
+            entity="deepspin-cf-rationalizers" if entity is None else entity,
+            save_dir=default_root_dir,
+            offline=True,
+            # version=str(id.fields[1]),
+        )
 
 
 def find_last_checkpoint_version(path_to_logs: str):
