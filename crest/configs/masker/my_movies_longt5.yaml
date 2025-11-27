@@ -22,7 +22,7 @@ train:
 
     # data
     dm: 'my_movies'                         # data module name - using your custom movies dataset with train/val/test splits
-    batch_size: 1               # minimal batch size for LongT5 to fit in memory
+    batch_size: 2               # minimal batch size for LongT5 to fit in memory
     num_workers: 4              # using all 4 CPU cores for data loading
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary
     max_seq_len: 2048           # stable length for training both encoders with FP16
@@ -43,7 +43,7 @@ train:
     tokenizer: 'google/long-t5-tglobal-base'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
     gen_arch: 'google/long-t5-tglobal-base'                # Pre-trained generator from the Hugging Face hub
     gen_emb_requires_grad: False        # freeze generator embedding to save memory
-    gen_encoder_requires_grad: True     # train generator to learn sentiment-specific rationales
+    gen_encoder_requires_grad: False     # train generator to learn sentiment-specific rationales
     gen_use_decoder: False              # whether to use the generator's decoder
     pred_arch: 'google/long-t5-tglobal-base'               # Pre-trained predictor from the Hugging Face hub
     pred_emb_requires_grad: False       # freeze predictor embedding to save memory
@@ -55,8 +55,8 @@ train:
     explainer_pre_mlp: True             # whether to use a mlp before the explainer
     explainer_requires_grad: True       # whether to fine-tune the explainer (including the mlp)
     sparsemap_budget: 50                # sequence budget for the SparseMAP explainer
-    sparsemap_transition: 0.1           # transition weight for the SparseMAP explainer
-    sparsemap_temperature: 0.1          # temperature for the SparseMAP explainer
+    sparsemap_transition: 0.01           # transition weight for the SparseMAP explainer
+    sparsemap_temperature: 0.01          # temperature for the SparseMAP explainer
     dropout: 0.1                        # dropout for the predictor's output layers
     selection_vector: 'zero'            # which vector to use to represent differentiable masking: `mask` for [MASK], `pad` for [PAD], and `zero` for 0 vectors
     selection_faithfulness: True        # whether to perform masking on the original input x (`True`) or on the hidden states h (`False`)
@@ -64,7 +64,7 @@ train:
 
     # model: optimizer
     optimizer: 'adamw'
-    lr: 0.00001
+    lr: 0.0001
     weight_decay: 0.000001
     betas: [0.9, 0.999]
     amsgrad: False
@@ -79,7 +79,7 @@ train:
     # model: lr scheduler
     #scheduler: 'multistep'
     #milestones: [25, 50, 75]
-    lr_decay: 0.97  # a.k.a gamma
+    #lr_decay: 0.97  # a.k.a gamma
 
     # trainer (will be passed to pytorch-lightning's Trainer object)
     # see the complete list here: https://pytorch-lightning.readthedocs.io/en/stable/trainer.html#trainer-flags
