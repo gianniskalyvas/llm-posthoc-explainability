@@ -54,7 +54,7 @@ train:
     explainer: 'sparsemap'              # explainer to be used. See rationalizers/explainers/__init__.py for more options
     explainer_pre_mlp: True             # whether to use a mlp before the explainer
     explainer_requires_grad: True       # whether to fine-tune the explainer (including the mlp)
-    sparsemap_budget: 30                # sequence budget for the SparseMAP explainer
+    sparsemap_budget: 50                # sequence budget for the SparseMAP explainer
     sparsemap_transition: 0.01          # transition weight for the SparseMAP explainer
     sparsemap_temperature: 0.01         # temperature for the SparseMAP explainer
     dropout: 0.1                        # dropout for the predictor's output layers
