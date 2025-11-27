@@ -64,7 +64,7 @@ train:
 
     # model: optimizer
     optimizer: 'adamw'
-    lr: 0.0001
+    lr: 0.00005   # 1e-5
     weight_decay: 0.000001
     betas: [0.9, 0.999]
     amsgrad: False
@@ -87,7 +87,7 @@ train:
     devices: 1
     precision: 32               # use mixed precision (fp16) to save ~50% memory
     gradient_clip_val: 5.0
-    accumulate_grad_batches: 4  # simulate batch_size=4 while using batch_size=1 to save memory
+    accumulate_grad_batches: 16  # simulate batch_size=32 while using batch_size=2 to save memory
     min_epochs: 3
     max_epochs: 15
     #limit_train_batches: 10

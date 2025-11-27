@@ -42,7 +42,7 @@ train:
     tokenizer: 't5-base'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
     gen_arch: 't5-base'                # Pre-trained generator from the Hugging Face hub
     gen_emb_requires_grad: False        # freeze generator embedding to save memory
-    gen_encoder_requires_grad: True    # freeze generator encoder to save memory
+    gen_encoder_requires_grad: False    # freeze generator encoder to save memory
     gen_use_decoder: False              # whether to use the generator's decoder
     pred_arch: 't5-base'               # Pre-trained predictor from the Hugging Face hub
     pred_emb_requires_grad: False       # freeze predictor embedding to save memory
@@ -64,7 +64,7 @@ train:
 
     # model: optimizer
     optimizer: 'adamw'
-    lr: 0.00005
+    lr: 0.0001
     weight_decay: 0.000001
     betas: [0.9, 0.999]
     amsgrad: False
