@@ -78,8 +78,8 @@ train:
 
     # model: lr scheduler
     scheduler: 'multistep'
-    #milestones: [25, 50, 75]
-    lr_decay: 0.9  # a.k.a gamma
+    milestones: [25, 50, 75]
+    lr_decay: 0.97  # a.k.a gamma
 
     # trainer (will be passed to pytorch-lightning's Trainer object)
     # see the complete list here: https://pytorch-lightning.readthedocs.io/en/stable/trainer.html#trainer-flags
