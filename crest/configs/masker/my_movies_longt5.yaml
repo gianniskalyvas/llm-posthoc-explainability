@@ -55,8 +55,8 @@ train:
     explainer_pre_mlp: True             # whether to use a mlp before the explainer
     explainer_requires_grad: True       # whether to fine-tune the explainer (including the mlp)
     sparsemap_budget: 50                # sequence budget for the SparseMAP explainer
-    sparsemap_transition: 0.01          # transition weight for the SparseMAP explainer
-    sparsemap_temperature: 0.01         # temperature for the SparseMAP explainer
+    sparsemap_transition: 0.1           # transition weight for the SparseMAP explainer
+    sparsemap_temperature: 0.1          # temperature for the SparseMAP explainer
     dropout: 0.1                        # dropout for the predictor's output layers
     selection_vector: 'zero'            # which vector to use to represent differentiable masking: `mask` for [MASK], `pad` for [PAD], and `zero` for 0 vectors
     selection_faithfulness: True        # whether to perform masking on the original input x (`True`) or on the hidden states h (`False`)
@@ -64,7 +64,7 @@ train:
 
     # model: optimizer
     optimizer: 'adamw'
-    lr: 0.0001
+    lr: 0.00001
     weight_decay: 0.000001
     betas: [0.9, 0.999]
     amsgrad: False
