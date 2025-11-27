@@ -77,7 +77,7 @@ train:
     t0: 1000000.0  # for asgd
 
     # model: lr scheduler
-    scheduler: 'linear_with_warmup'
+    scheduler: 'multistep'
     #milestones: [25, 50, 75]
     lr_decay: 0.9  # a.k.a gamma
 
