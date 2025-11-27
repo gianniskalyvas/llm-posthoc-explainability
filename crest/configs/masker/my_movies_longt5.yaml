@@ -31,7 +31,7 @@ train:
     # early stopping
     monitor: 'val_ff_accuracy'  # quantity to be monitored
     monitor_mode: 'max'         # whether to see if monitored metric has stopped decreasing (min) or increasing (max)
-    monitor_patience: 5         # number of epochs to wait for early stopping
+    monitor_patience: 10        # number of epochs to wait for early stopping
 
     # define the rationalizer model
     model: 'transformer_spectra'
@@ -54,7 +54,7 @@ train:
     explainer: 'sparsemap'              # explainer to be used. See rationalizers/explainers/__init__.py for more options
     explainer_pre_mlp: True             # whether to use a mlp before the explainer
     explainer_requires_grad: True       # whether to fine-tune the explainer (including the mlp)
-    sparsemap_budget: 50                # sequence budget for the SparseMAP explainer
+    sparsemap_budget: 30                # sequence budget for the SparseMAP explainer
     sparsemap_transition: 0.01          # transition weight for the SparseMAP explainer
     sparsemap_temperature: 0.01         # temperature for the SparseMAP explainer
     dropout: 0.1                        # dropout for the predictor's output layers
@@ -64,7 +64,7 @@ train:
 
     # model: optimizer
     optimizer: 'adamw'
-    lr: 0.000001 
+    lr: 0.000005
     weight_decay: 0.000001
     betas: [0.9, 0.999]
     amsgrad: False
@@ -77,8 +77,8 @@ train:
     t0: 1000000.0  # for asgd
 
     # model: lr scheduler
-    scheduler: 'multistep'
-    milestones: [25, 50, 75]
+    #scheduler: 'multistep'
+    #milestones: [25, 50, 75]
     lr_decay: 0.97  # a.k.a gamma
 
     # trainer (will be passed to pytorch-lightning's Trainer object)
