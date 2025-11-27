@@ -64,7 +64,7 @@ train:
 
     # model: optimizer
     optimizer: 'adamw'
-    lr: 0.0001
+    lr: 0.00005
     weight_decay: 0.000001
     betas: [0.9, 0.999]
     amsgrad: False
@@ -86,7 +86,6 @@ train:
     accelerator: gpu
     devices: 1
     gradient_clip_val: 5.0
-    accumulate_grad_batches: 1  # no accumulation needed with batch_size=8
     min_epochs: 3
     max_epochs: 15
     #limit_train_batches: 10
