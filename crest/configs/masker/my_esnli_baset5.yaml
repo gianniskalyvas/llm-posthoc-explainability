@@ -30,7 +30,7 @@ train:
     # early stopping
     monitor: 'val_ff_accuracy'  # quantity to be monitored
     monitor_mode: 'max'         # whether to see if monitored metric has stopped decreasing (min) or increasing (max)
-    monitor_patience: 5         # number of epochs to wait for early stopping
+    monitor_patience: 3         # number of epochs to wait for early stopping
 
     # define the rationalizer model
     model: 'transformer_spectra'
