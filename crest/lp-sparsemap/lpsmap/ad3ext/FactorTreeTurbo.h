@@ -21,6 +21,7 @@
 
 #include "ad3/GenericFactor.h"
 #include "DependencyDecoder.h"
+#include <tuple>
 
 namespace AD3 {
 class FactorTreeTurbo : public GenericFactor {
