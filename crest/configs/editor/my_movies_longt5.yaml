@@ -13,7 +13,7 @@ train:
     save_edits: False           # will be saved in a .txt in the default_root_dir as `{test|val}_edits.txt`
 
     # wandb for logging (optional, comment to disable)
-    wandb_project: 'crest'
+    wandb_project: 'editor_my_movies_longt5'
     wandb_entity: 'gian-kalyva-national-technical-university-of-athens'
 
     # io
