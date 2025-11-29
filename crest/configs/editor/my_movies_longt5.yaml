@@ -50,8 +50,20 @@ train:
     pred_arch: 'google/long-t5-tglobal-base'               # Pre-trained predictor from the Hugging Face hub
     pred_emb_requires_grad: False       # whether to fine-tune the predictor's embedding layer
     pred_encoder_requires_grad: False   # whether to fine-tune the predictor's encoder
+    pred_bidirectional: False           # whether to use a bidirectional predictor
+    pred_encoder_requires_grad: False   # whether to fine-tune the predictor's encoder   
     pred_output_requires_grad: False    # whether to fine-tune the predictor's output layer
+    shared_gen_pred: False              # whether to share the generator and predictor's architecture
+    explainer: 'sparsemap'              # explainer to be used. See rationalizers/explainers/__init__.py for more options
+    explainer_pre_mlp: True             # whether to use a mlp before the explainer
     explainer_requires_grad: False      # whether to fine-tune the explainer (including the mlp)
+    sparsemap_budget: 50                # sequence budget for the SparseMAP explainer
+    sparsemap_transition: 0.01          # transition weight for the SparseMAP explainer
+    sparsemap_temperature: 0.01         # temperature for the SparseMAP explainer
+    dropout: 0.1                        # dropout for the predictor's output layers
+    selection_vector: 'zero'            # which vector to use to represent differentiable masking: `mask` for [MASK], `pad` for [PAD], and `zero` for 0 vectors
+    selection_faithfulness: True        # whether to perform masking on the original input x (`True`) or on the hidden states h (`False`)
+    selection_mask: False               # whether to also mask elements during self-attention, rather than only masking input vectors
 
     # editor
     cf_gen_arch: "google/long-t5-tglobal-base"                 # pre-trained generator from the Hugging Face hub
@@ -104,7 +116,7 @@ train:
     #limit_train_batches: 10
     #limit_val_batches: 1
     #limit_test_batches: 1
-    log_every_n_steps: 200
+    #log_every_n_steps: 200
 
 
 # the options defined here will overwrite the ones defined in the checkpoint
