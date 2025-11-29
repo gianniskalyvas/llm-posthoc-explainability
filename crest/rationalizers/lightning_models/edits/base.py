@@ -147,6 +147,7 @@ class BaseEditor(TransformerBaseRationalizer):
 
         # get a contrast label
         if contrast_label:
+            shell_logger.info(f"DEBUG: y_prepend before flip: {y_prepend.tolist()}")
             if self.cf_task_name == 'nli' and self.nb_classes > 2:
                 # Option 1.
                 # get the least likely label from the model
@@ -161,12 +162,10 @@ class BaseEditor(TransformerBaseRationalizer):
                 y_prepend = y_contrast
             else:
                 y_prepend = 1 - y_prepend
-            # Debug print before modulo
-            shell_logger.info(f"DEBUG: y_prepend before modulo: {y_prepend.tolist()}")
             # Remap to [0, 1] if binary classification (nb_classes == 2)
             if self.nb_classes == 2:
                 y_prepend = torch.remainder(y_prepend, 2)
-                shell_logger.info(f"DEBUG: y_prepend after modulo: {y_prepend.tolist()}")
+                shell_logger.info(f"DEBUG: y_prepend after flip: {y_prepend.tolist()}")
 
         # edit only a single input in case we have concatenated inputs
         if self.cf_explainer_mask_token_type_id is not None and token_type_ids is not None:
