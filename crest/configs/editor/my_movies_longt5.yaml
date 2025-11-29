@@ -112,7 +112,7 @@ train:
     devices: 1
     gradient_clip_val: 5.0
     min_epochs: 3
-    max_epochs: 20
+    max_epochs: 50
     #limit_train_batches: 10
     #limit_val_batches: 1
     #limit_test_batches: 1
