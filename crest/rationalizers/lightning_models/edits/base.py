@@ -160,6 +160,10 @@ class BaseEditor(TransformerBaseRationalizer):
                 shell_logger.info("DEBUG: contrast_label branch: nli_no_neutrals")
                 # Only swap entailments with contradictions
                 y_prepend = 2 - y_prepend
+                # Remap to [0, 1] if only binary labels are expected
+                if self.nb_classes == 2:
+                    y_prepend = torch.remainder(y_prepend, 2)
+                    shell_logger.info(f"DEBUG: y_prepend remapped to binary: {y_prepend.tolist()}")
             elif self.cf_task_name == '20news':
                 shell_logger.info("DEBUG: contrast_label branch: 20news")
                 y_prepend = y_contrast
