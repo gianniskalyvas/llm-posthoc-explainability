@@ -36,6 +36,13 @@ class MyESNLIDataModule(SNLIDataModule):
         self.dataset = self.dataset.rename_column("sentence1", "hypothesis")
         self.dataset = self.dataset.rename_column("sentence2", "premise")
 
+        # Debug: print unique label values right after loading
+        import numpy as np
+        print("DEBUG: Unique labels after loading and renaming:")
+        print("Train:", np.unique(self.dataset["train"]["label"]))
+        print("Val:", np.unique(self.dataset["validation"]["label"]))
+        print("Test:", np.unique(self.dataset["test"]["label"]))
+
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
             self.dataset["train"] = self.dataset["train"].select(range(min(self.max_dataset_size, len(self.dataset["train"]))))
