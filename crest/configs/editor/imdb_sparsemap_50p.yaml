@@ -45,7 +45,6 @@ train:
     # factual flow
     tokenizer: 'google/long-t5-tglobal-base'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
     gen_arch: 'google/long-t5-tglobal-base'                # Pre-trained generator from the Hugging Face hub
-    pred_arch: 'google/long-t5-tglobal-base'               # Pre-trained predictor from the Hugging Face hub
     gen_emb_requires_grad: False        # whether to fine-tune the generator's embedding layer
     gen_encoder_requires_grad: False    # whether to fine-tune the generator's encoder
     pred_emb_requires_grad: False       # whether to fine-tune the predictor's embedding layer
