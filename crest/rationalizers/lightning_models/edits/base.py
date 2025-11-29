@@ -153,21 +153,7 @@ class BaseEditor(TransformerBaseRationalizer):
                 y_prepend = y_hat.argmin(-1)
                 # but in case that the least likely label is the true label, get the argmax instead
                 y_prepend[y_prepend == y] = y_hat.argmax(-1)[y_prepend == y]
-
-                # Option 2.
-                # swap entailments with contradictions
-                # y_prepend = 2 - y_prepend
-                # for neutrals, take the least probable class (as in mice)
-                # y_prepend[y_prepend == 1] = y_hat.argmin(-1)[y_prepend == 1]
-                # but in case that is the correct label, we take the predicted label
-                # y_prepend[y_prepend == y] = y_hat.argmax(-1)[y_prepend == y]
-
-                # Option 3.
-                # sample a label different from y_gold
-                # tmp = torch.rand(y_prepend.shape[0], self.nb_classes, device=y_prepend.device)
-                # ar = torch.arange(y_prepend.shape[0], device=y_prepend.device)
-                # tmp[ar, y_prepend] = -1.0
-                # y_prepend = tmp.argmax(-1)
+                # Option 2, 3 omitted for brevity
             elif self.cf_task_name == 'nli_no_neutrals':
                 # Only swap entailments with contradictions
                 y_prepend = 2 - y_prepend
@@ -175,6 +161,12 @@ class BaseEditor(TransformerBaseRationalizer):
                 y_prepend = y_contrast
             else:
                 y_prepend = 1 - y_prepend
+            # Debug print before modulo
+            shell_logger.info(f"DEBUG: y_prepend before modulo: {y_prepend.tolist()}")
+            # Remap to [0, 1] if binary classification (nb_classes == 2)
+            if self.nb_classes == 2:
+                y_prepend = torch.remainder(y_prepend, 2)
+                shell_logger.info(f"DEBUG: y_prepend after modulo: {y_prepend.tolist()}")
 
         # edit only a single input in case we have concatenated inputs
         if self.cf_explainer_mask_token_type_id is not None and token_type_ids is not None:
