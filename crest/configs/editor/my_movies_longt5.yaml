@@ -116,7 +116,7 @@ train:
     #limit_train_batches: 10
     #limit_val_batches: 1
     #limit_test_batches: 1
-    #log_every_n_steps: 25
+    log_every_n_steps: 200
 
 
 # the options defined here will overwrite the ones defined in the checkpoint
