@@ -149,6 +149,7 @@ class BaseEditor(TransformerBaseRationalizer):
         if contrast_label:
             shell_logger.info(f"DEBUG: y_prepend before flip: {y_prepend.tolist()}")
             if self.cf_task_name == 'nli' and self.nb_classes > 2:
+                shell_logger.info("DEBUG: contrast_label branch: nli multiclass (nb_classes > 2)")
                 # Option 1.
                 # get the least likely label from the model
                 y_prepend = y_hat.argmin(-1)
@@ -156,16 +157,16 @@ class BaseEditor(TransformerBaseRationalizer):
                 y_prepend[y_prepend == y] = y_hat.argmax(-1)[y_prepend == y]
                 # Option 2, 3 omitted for brevity
             elif self.cf_task_name == 'nli_no_neutrals':
+                shell_logger.info("DEBUG: contrast_label branch: nli_no_neutrals")
                 # Only swap entailments with contradictions
                 y_prepend = 2 - y_prepend
             elif self.cf_task_name == '20news':
+                shell_logger.info("DEBUG: contrast_label branch: 20news")
                 y_prepend = y_contrast
             else:
+                shell_logger.info(f"DEBUG: contrast_label branch: default (binary flip), cf_task_name={self.cf_task_name}")
                 y_prepend = 1 - y_prepend
-            # Remap to [0, 1] if binary classification (nb_classes == 2)
-            if self.nb_classes == 2:
-                y_prepend = torch.remainder(y_prepend, 2)
-                shell_logger.info(f"DEBUG: y_prepend after flip: {y_prepend.tolist()}")
+
 
         # edit only a single input in case we have concatenated inputs
         if self.cf_explainer_mask_token_type_id is not None and token_type_ids is not None:
