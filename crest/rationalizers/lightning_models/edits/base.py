@@ -169,8 +169,8 @@ class BaseEditor(TransformerBaseRationalizer):
                 # tmp[ar, y_prepend] = -1.0
                 # y_prepend = tmp.argmax(-1)
             elif self.cf_task_name == 'nli_no_neutrals':
-                # Only swap entailments with contradictions
-                y_prepend = 2 - y_prepend
+                # Only swap entailments with contradictions (binary: 0 ↔ 1)
+                y_prepend = 1 - y_prepend
             elif self.cf_task_name == '20news':
                 y_prepend = y_contrast
             else:
