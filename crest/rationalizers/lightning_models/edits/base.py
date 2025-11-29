@@ -679,6 +679,8 @@ class BaseEditor(TransformerBaseRationalizer):
         preds = torch.argmax(torch.cat(stacked_outputs[f"{prefix}_predictions"]), dim=-1)
         labels = torch.tensor(unroll(stacked_outputs[f"{prefix}_labels"]), device=preds.device)
         edits_labels = torch.tensor(unroll(stacked_outputs[f"{prefix}_edits_labels"]), device=preds.device)
+        # Debug: print unique values in edits_labels and nb_classes
+        shell_logger.info(f"DEBUG: nb_classes={self.nb_classes}, edits_labels unique={edits_labels.unique().tolist()}")
         acc = torchmetrics.functional.accuracy(preds, labels, num_classes=self.nb_classes, average="macro")
         dict_metrics[f"{prefix}_accuracy"] = acc
 
