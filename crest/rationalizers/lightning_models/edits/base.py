@@ -169,8 +169,8 @@ class BaseEditor(TransformerBaseRationalizer):
                 # tmp[ar, y_prepend] = -1.0
                 # y_prepend = tmp.argmax(-1)
             elif self.cf_task_name == 'nli_no_neutrals':
-                # Only swap entailments with contradictions (binary: 0 ↔ 1)
-                y_prepend = 1 - y_prepend
+                # Only swap entailments with contradictions
+                y_prepend = 2 - y_prepend
             elif self.cf_task_name == '20news':
                 y_prepend = y_contrast
             else:
@@ -311,9 +311,10 @@ class BaseEditor(TransformerBaseRationalizer):
     def _sample_from_lm(self, x_enc, x_dec, mask=None, mask_dec=None):  # noqa
         if 't5' in self.cf_gen_arch:
             if self.generation_mode:
-                # set ids that should not be generated
-                # bad_tokens_ids = get_t5_sentinel_ids(idx_a=self.self.sentinel_a, idx_b=self.self.sentinel_b)
-                # bad_tokens_ids += [self.eos_token_id]
+                # Exclude all extra_id tokens and eos from generation using tokenizer
+                extra_id_tokens = [v for k, v in self.tokenizer.get_vocab().items() if k.startswith('<extra_id_')]
+                bad_words_ids = [[i] for i in extra_id_tokens]
+                bad_words_ids.append([self.eos_token_id])
                 do_output_logits = False
                 logits = None
 
@@ -323,7 +324,7 @@ class BaseEditor(TransformerBaseRationalizer):
                     attention_mask=mask.long(),
                     return_dict_in_generate=True,
                     output_scores=do_output_logits,
-                    # bad_tokens_ids=bad_tokens_ids,
+                    bad_words_ids=bad_words_ids,
                     **self.cf_generate_kwargs
                 )
                 # clear memory because generation is done
