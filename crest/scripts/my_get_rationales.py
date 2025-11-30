@@ -147,13 +147,8 @@ if __name__ == '__main__':
     )
 
 
-    print("outputs type:", type(outputs))
-    print("outputs keys:", outputs.keys())
-    print("Available keys in outputs:", outputs[0].keys())
-
-
-    # get originals
-    orig_texts = tokens_to_text(unroll(outputs['texts']))
+    # get originals (use 'tokens' instead of 'texts')
+    orig_texts = tokens_to_text(unroll(outputs['tokens']))
     orig_labels = unroll(outputs['labels'])
     orig_predictions = torch.cat(outputs['predictions']).argmax(dim=-1).tolist()  # predictions for original inputs
     orig_z = unroll(outputs['z'])  # the z given to the original input by the rationalizer
@@ -169,5 +164,5 @@ if __name__ == '__main__':
         orig_texts,
         orig_labels,
         orig_predictions, 
-        orig_z, 
+        orig_z,
     )

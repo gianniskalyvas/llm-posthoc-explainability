@@ -63,18 +63,18 @@ train:
 
     # https://huggingface.co/docs/transformers/v4.23.1/en/main_classes/text_generation#transformers.generation_utils.GenerationMixin.generate
     cf_generate_kwargs:
-        do_sample: False            # deterministic or stochastic generation
-        num_beams: 15               # mice: 15
+        do_sample: True             # enable stochastic generation for diversity
+        num_beams: 1                # single beam for more randomness
         num_beam_groups: 1          # to promote diversity in beam groups
-        early_stopping: True        # stop search when >= num_beams sentences are done (default: False | mice: True)
+        early_stopping: True        # stop search when >= num_beams sentences are done
         length_penalty: 1.0         # (<1) means shorter sequences, (>1) longer sequences
-        top_k: 30                   # default: 50  | mice: 30
-        top_p: 0.95                 # default: 1.0 | mice: 0.95
-        typical_p: null             # default: 1.0
-        no_repeat_ngram_size: 2     # no bigrams repetitions are allowed (default: 0 | mice: 2)
+        top_k: 50                   # increase top_k for more candidate tokens
+        top_p: 1.0                  # allow full probability mass
+        typical_p: 1.0             # default: 1.0
+        no_repeat_ngram_size: 2     # no bigrams repetitions are allowed
         num_return_sequences: 1     # sample N sequences
         min_length: null            # minimum length of the generated sequence
-        max_length: 512            # standard T5 sequence length
+        max_length: 512             # lower for debugging, increase if output is too short
 
     # model: optimizer
     optimizer: 'adamw'
