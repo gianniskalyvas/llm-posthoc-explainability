@@ -34,7 +34,7 @@ train:
     # early stopping
     monitor: 'val_sum_loss'     # quantity to be monitored
     monitor_mode: 'min'         # whether to see if monitored metric has stopped decreasing (min) or increasing (max)
-    monitor_patience: 5         # number of epochs to wait for early stopping
+    monitor_patience: 15         # number of epochs to wait for early stopping
 
     # pytorch-lightning rationalizer model
     model: 'editor'
