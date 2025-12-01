@@ -17,7 +17,7 @@ class ImdbDataModule(BaseDataModule):
     def __init__(self, d_params: dict, tokenizer: object = None):
         super().__init__(d_params)
         # hard-coded stuff
-        self.path = "imdb"  # hf_datasets will handle everything
+        self.path = "stanfordnlp/imdb"  # hf_datasets will handle everything
         self.is_multilabel = True
         self.nb_classes = 2  # neg, pos
 
