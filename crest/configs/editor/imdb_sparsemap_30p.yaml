@@ -7,13 +7,13 @@ default_root_dir: 'experiments/editor_imdb_sparsemap_30p/'
 # training args
 train:
     # path to the pre-trained masker checkpoint
-    factual_ckpt: experiments/masker_imdb_sparsemap_30p/versionNone/checkpoints/epoch=12.ckpt
+    factual_ckpt: experiments/masker_imdb_sparsemap_30p/versionjkexuek0/checkpoints/epoch=1.ckpt
     load_tokenizer: False       # load a trained tokenizer stored in the checkpoint dir as `tokenizer.pickle`
     load_label_encoder: False   # load a trained label encoder stored in the checkpoint dir as `label_encoder.pickle`
     save_edits: False           # will be saved in a .txt in the default_root_dir as `{test|val}_edits.txt`
 
     # wandb for logging (optional, comment to disable)
-    wandb_project: 'crest'
+    wandb_project: 'editor_imdb_sparsemap_30p'
     wandb_entity: 'gian-kalyva-national-technical-university-of-athens'
 
     # io
@@ -24,7 +24,7 @@ train:
     gpu_log: False              # whether to use the gpu callback to see gpu information in the logger
 
     # data
-    dm: 'contrast_imdb_cf'                  # data module name (see docs for more options)
+    dm: 'imdb'                  # data module name (see docs for more options)
     batch_size: 8               # minibatch size
     num_workers: 1              # number of workers used for data loading (0 means that only a single core will be used)
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary

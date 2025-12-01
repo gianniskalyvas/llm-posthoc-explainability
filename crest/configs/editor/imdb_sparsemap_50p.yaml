@@ -13,7 +13,7 @@ train:
     save_edits: False           # will be saved in a .txt in the default_root_dir as `{test|val}_edits.txt`
 
     # wandb for logging (optional, comment to disable)
-    wandb_project: 'imdb-50-sparsemap-editor'
+    wandb_project: 'editor_imdb_sparsemap_50p'
     wandb_entity: 'gian-kalyva-national-technical-university-of-athens'
 
     # io
@@ -24,11 +24,11 @@ train:
     gpu_log: False              # whether to use the gpu callback to see gpu information in the logger
 
     # data
-    dm: 'contrast_imdb_cf'                  # data module name (see docs for more options)
+    dm: 'imdb'                  # data module name (see docs for more options)
     batch_size: 8               # minibatch size
     num_workers: 1              # number of workers used for data loading (0 means that only a single core will be used)
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary
-    max_seq_len: 4096           # long-t5 supports up to 16384, using 4096 for efficiency
+    max_seq_len: 512            # pretrained transformer limitation
     # max_dataset_size: 64      # limit dataset size (useful for quick testing)
 
     # early stopping
@@ -43,8 +43,9 @@ train:
     # ckpt: null  # path to the checkpoint to be loaded
 
     # factual flow
-    tokenizer: 'google/long-t5-tglobal-base'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
-    gen_arch: 'google/long-t5-tglobal-base'                # Pre-trained generator from the Hugging Face hub
+    tokenizer: 't5-small'               # Pre-trained tokenizer from the Hugging Face hub. If None, a nltk's WordPunct tokenizer is used
+    gen_arch: 't5-small'                # Pre-trained generator from the Hugging Face hub
+    pred_arch: 't5-small'               # Pre-trained predictor from the Hugging Face hub
     gen_emb_requires_grad: False        # whether to fine-tune the generator's embedding layer
     gen_encoder_requires_grad: False    # whether to fine-tune the generator's encoder
     pred_emb_requires_grad: False       # whether to fine-tune the predictor's embedding layer
@@ -53,7 +54,7 @@ train:
     explainer_requires_grad: False      # whether to fine-tune the explainer (including the mlp)
 
     # editor
-    cf_gen_arch: "google/long-t5-tglobal-base"                 # pre-trained generator from the Hugging Face hub
+    cf_gen_arch: "t5-small"                 # pre-trained generator from the Hugging Face hub
     cf_prepend_label_type: "gold"           # whether to prepend gold (`gold`) or predicted (`pred`) labels to the input of the editor
     cf_z_type: "pred"                       # whether to use the masker's explanations (`pred`) or gold explanations, when available (`gold`)
     cf_task_name: "binary_classification"   # the name of the task at hand, used to create the name of prepend labels: `binary_classification`, `nli`, `nli_no_neutrals`
@@ -72,7 +73,7 @@ train:
         no_repeat_ngram_size: 2     # no bigrams repetitions are allowed (default: 0 | mice: 2)
         num_return_sequences: 1     # sample N sequences
         min_length: null            # minimum length of the generated sequence
-        max_length: 4096            # maximum length of the generated sequence (long-t5 supports up to 16384)
+        max_length: 512             # maximum length of the generated sequence (default: 512 | mice: 512)
 
     # model: optimizer
     optimizer: 'adamw'
