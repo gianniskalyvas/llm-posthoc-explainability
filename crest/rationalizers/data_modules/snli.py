@@ -22,7 +22,7 @@ class SNLIDataModule(BaseDataModule):
         """
         super().__init__(d_params)
         # hard-coded stuff
-        self.path = "stanfordnlp/snli"  # hf_datasets will handle everything
+        self.path = "snli"  # hf_datasets will handle everything
         self.is_multilabel = True
         self.nb_classes = 3  # entailment, neutral, contradiction
 
