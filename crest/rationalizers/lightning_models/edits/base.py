@@ -169,6 +169,10 @@ class BaseEditor(TransformerBaseRationalizer):
                 y_prepend = y_contrast
             else:
                 shell_logger.info(f"DEBUG: contrast_label branch: default (binary flip), cf_task_name={self.cf_task_name}")
+                # Ensure y_prepend is within valid range for binary classification
+                if self.nb_classes == 2:
+                    # For binary classification, ensure labels are 0 or 1
+                    y_prepend = torch.clamp(y_prepend, 0, 1)
                 y_prepend = 1 - y_prepend
 
 
@@ -686,8 +690,17 @@ class BaseEditor(TransformerBaseRationalizer):
             dict_metrics[f"{prefix}_edit_accuracy"] = acc
 
             preds = torch.argmax(torch.cat(stacked_outputs[f"{prefix}_contrast_edits_predictions"]), dim=-1)
-            acc = torchmetrics.functional.accuracy(preds, edits_labels, num_classes=self.nb_classes, average="macro")
-            dict_metrics[f"{prefix}_contrast_edit_accuracy"] = acc
+            # Filter out invalid labels (negative values) before calculating accuracy
+            valid_mask = edits_labels >= 0
+            if valid_mask.sum() > 0:
+                valid_preds = preds[valid_mask]
+                valid_edits_labels = edits_labels[valid_mask]
+                acc = torchmetrics.functional.accuracy(valid_preds, valid_edits_labels, num_classes=self.nb_classes, average="macro")
+                dict_metrics[f"{prefix}_contrast_edit_accuracy"] = acc
+            else:
+                # If no valid labels, set accuracy to 0
+                dict_metrics[f"{prefix}_contrast_edit_accuracy"] = 0.0
+                shell_logger.warning(f"No valid edits_labels found for {prefix}_contrast_edit_accuracy")
 
         # log all saved metrics
         for metric_name, metric_value in dict_metrics.items():
