@@ -22,7 +22,7 @@ class SNLIDataModule(BaseDataModule):
         """
         super().__init__(d_params)
         # hard-coded stuff
-        self.path = "snli"  # hf_datasets will handle everything
+        self.path = "stanfordnlp/snli"  # hf_datasets will handle everything
         self.is_multilabel = True
         self.nb_classes = 3  # entailment, neutral, contradiction
 
@@ -148,18 +148,10 @@ class SNLIDataModule(BaseDataModule):
                 download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
             )
         else:
-            try:
-                self.dataset = hf_datasets.load_dataset(
-                    "snli",
-                    download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
-                    trust_remote_code=True
-                )
-            except Exception as e:
-                print(f"Failed to load SNLI with trust_remote_code, trying without: {e}")
-                self.dataset = hf_datasets.load_dataset(
-                    "snli",
-                    download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
-                )
+            self.dataset = hf_datasets.load_dataset(
+                "stanfordnlp/snli",
+                download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
+            )
 
         if self.use_revised_snli_val:
             print('Using revised SNLI val set')

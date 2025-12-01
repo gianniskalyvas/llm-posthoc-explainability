@@ -17,7 +17,7 @@ class ImdbDataModule(BaseDataModule):
     def __init__(self, d_params: dict, tokenizer: object = None):
         super().__init__(d_params)
         # hard-coded stuff
-        self.path = "imdb"  # hf_datasets will handle everything
+        self.path = "stanfordnlp/imdb"  # hf_datasets will handle everything
         self.is_multilabel = True
         self.nb_classes = 2  # neg, pos
 
@@ -102,20 +102,11 @@ class ImdbDataModule(BaseDataModule):
 
     def setup(self, stage: str = None):
         # Assign train/val/test datasets for use in dataloaders
-        try:
-            self.dataset = hf_datasets.load_dataset(
-                "imdb",
-                download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
-                ignore_verifications=True,  # weird checksum mismatch from hf_datasets???
-                trust_remote_code=True
-            )
-        except Exception as e:
-            print(f"Failed to load with trust_remote_code, trying without: {e}")
-            self.dataset = hf_datasets.load_dataset(
-                "imdb",
-                download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
-                ignore_verifications=True  # weird checksum mismatch from hf_datasets???
-            )
+        self.dataset = hf_datasets.load_dataset(
+            "stanfordnlp/imdb",
+            download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
+            ignore_verifications=True  # weird checksum mismatch from hf_datasets???
+        )
         # remove unnecessary data
         del self.dataset['unsupervised']
 
