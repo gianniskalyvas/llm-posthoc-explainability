@@ -170,9 +170,6 @@ class BaseEditor(TransformerBaseRationalizer):
             else:
                 shell_logger.info(f"DEBUG: contrast_label branch: default (binary flip), cf_task_name={self.cf_task_name}")
                 # Ensure y_prepend is within valid range for binary classification
-                if self.nb_classes == 2:
-                    # For binary classification, ensure labels are 0 or 1
-                    y_prepend = torch.clamp(y_prepend, 0, 1)
                 y_prepend = 1 - y_prepend
             shell_logger.info(f"DEBUG: y_prepend after flip: {y_prepend.tolist()}")
 

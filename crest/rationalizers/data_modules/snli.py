@@ -24,7 +24,7 @@ class SNLIDataModule(BaseDataModule):
         # hard-coded stuff
         self.path = "stanfordnlp/snli"  # hf_datasets will handle everything
         self.is_multilabel = True
-        self.nb_classes = 3  # entailment, neutral, contradiction
+        self.nb_classes = 2  # entailment (0), contradiction (1) - removing neutral
 
         # hyperparams
         self.batch_size = d_params.get("batch_size", 64)
@@ -168,6 +168,25 @@ class SNLIDataModule(BaseDataModule):
 
         # filter out invalid samples
         self.dataset = self.dataset.filter(lambda ex: ex["label"] != -1)
+        
+        # Remove neutral labels (label == 1) to make it binary classification
+        # Keep only entailment (0) and contradiction (2), then remap contradiction to 1
+        def filter_and_remap_labels(example):
+            if example["label"] == 1:  # neutral - remove
+                return False
+            return True
+        
+        def remap_labels(example):
+            if example["label"] == 0:  # entailment becomes 1
+                example["label"] = 1
+            elif example["label"] == 2:  # contradiction becomes 0
+                example["label"] = 0
+            return example
+            
+        # Filter out neutrals
+        self.dataset = self.dataset.filter(filter_and_remap_labels)
+        # Remap labels to binary
+        self.dataset = self.dataset.map(remap_labels)
 
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
