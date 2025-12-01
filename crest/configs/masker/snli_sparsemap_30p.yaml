@@ -7,7 +7,7 @@ default_root_dir: 'experiments/masker_snli_sparsemap_30p/'
 # training args
 train:
     # wandb for logging (optional, comment to disable)
-    wandb_project: 'crest'
+    wandb_project: 'snli-30-sparsemap-masker'
     wandb_entity: 'gian-kalyva-national-technical-university-of-athens'
 
     # io

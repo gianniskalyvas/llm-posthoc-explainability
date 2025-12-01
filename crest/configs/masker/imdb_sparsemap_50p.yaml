@@ -7,7 +7,7 @@ default_root_dir: 'experiments/masker_imdb_sparsemap_50p/'
 # training args
 train:
     # wandb for logging (optional, comment to disable)
-    wandb_project: 'crest'
+    wandb_project: 'imdb-50-sparsemap-masker'
     wandb_entity: 'gian-kalyva-national-technical-university-of-athens'
 
     # io
