@@ -149,7 +149,7 @@ class SNLIDataModule(BaseDataModule):
             )
         else:
             self.dataset = hf_datasets.load_dataset(
-                path=self.path,
+                "snli",
                 download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
             )
 
