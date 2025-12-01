@@ -148,10 +148,18 @@ class SNLIDataModule(BaseDataModule):
                 download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
             )
         else:
-            self.dataset = hf_datasets.load_dataset(
-                "snli",
-                download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
-            )
+            try:
+                self.dataset = hf_datasets.load_dataset(
+                    "snli",
+                    download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
+                    trust_remote_code=True
+                )
+            except Exception as e:
+                print(f"Failed to load SNLI with trust_remote_code, trying without: {e}")
+                self.dataset = hf_datasets.load_dataset(
+                    "snli",
+                    download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
+                )
 
         if self.use_revised_snli_val:
             print('Using revised SNLI val set')

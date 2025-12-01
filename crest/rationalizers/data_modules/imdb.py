@@ -102,11 +102,20 @@ class ImdbDataModule(BaseDataModule):
 
     def setup(self, stage: str = None):
         # Assign train/val/test datasets for use in dataloaders
-        self.dataset = hf_datasets.load_dataset(
-            "imdb",
-            download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
-            ignore_verifications=True  # weird checksum mismatch from hf_datasets???
-        )
+        try:
+            self.dataset = hf_datasets.load_dataset(
+                "imdb",
+                download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
+                ignore_verifications=True,  # weird checksum mismatch from hf_datasets???
+                trust_remote_code=True
+            )
+        except Exception as e:
+            print(f"Failed to load with trust_remote_code, trying without: {e}")
+            self.dataset = hf_datasets.load_dataset(
+                "imdb",
+                download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
+                ignore_verifications=True  # weird checksum mismatch from hf_datasets???
+            )
         # remove unnecessary data
         del self.dataset['unsupervised']
 
