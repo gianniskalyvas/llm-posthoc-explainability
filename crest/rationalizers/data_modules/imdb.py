@@ -103,7 +103,7 @@ class ImdbDataModule(BaseDataModule):
     def setup(self, stage: str = None):
         # Assign train/val/test datasets for use in dataloaders
         self.dataset = hf_datasets.load_dataset(
-            path=self.path,
+            "imdb",
             download_mode=hf_datasets.DownloadMode.REUSE_CACHE_IF_EXISTS,
             ignore_verifications=True  # weird checksum mismatch from hf_datasets???
         )
