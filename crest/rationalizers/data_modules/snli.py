@@ -169,24 +169,36 @@ class SNLIDataModule(BaseDataModule):
         # filter out invalid samples
         self.dataset = self.dataset.filter(lambda ex: ex["label"] != -1)
         
-        # Remove neutral labels (label == 1) to make it binary classification
-        # Keep only entailment (0) and contradiction (2), then remap to binary [0,1]
-        def filter_and_remap_labels(example):
-            if example["label"] == 1:  # neutral - remove
-                return False
-            return True
+        # Remove neutral labels (label == 1) and remap to binary classification
+        def process_labels(example):
+            if example["label"] == 1:  # neutral - remove this sample
+                return None  # This will be filtered out
+            elif example["label"] == 0:  # entailment stays 0
+                example["label"] = 0
+                return example
+            elif example["label"] == 2:  # contradiction becomes 1
+                example["label"] = 1
+                return example
+            else:
+                print(f"WARNING: Unexpected label value: {example['label']}")
+                return None  # Filter out unexpected values
+            
+        # Filter out neutrals first
+        self.dataset = self.dataset.filter(lambda ex: ex["label"] != 1)
+        print("After filtering neutrals - sample labels:", self.dataset["train"]["label"][:10])
         
-        def remap_labels(example):
+        # Then remap labels
+        def remap_only(example):
             if example["label"] == 0:  # entailment stays 0
                 example["label"] = 0
             elif example["label"] == 2:  # contradiction becomes 1
                 example["label"] = 1
+            else:
+                print(f"WARNING: Unexpected label after filtering: {example['label']}")
             return example
             
-        # Filter out neutrals
-        self.dataset = self.dataset.filter(filter_and_remap_labels)
-        # Remap labels to binary
-        self.dataset = self.dataset.map(remap_labels)
+        self.dataset = self.dataset.map(remap_only)
+        print("After remapping - sample labels:", self.dataset["train"]["label"][:10])
 
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
