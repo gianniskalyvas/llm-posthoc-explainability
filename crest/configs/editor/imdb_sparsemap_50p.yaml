@@ -53,6 +53,16 @@ train:
     pred_output_requires_grad: False    # whether to fine-tune the predictor's output layer
     explainer_requires_grad: False      # whether to fine-tune the explainer (including the mlp)
 
+    # explainer configuration (must match masker config for checkpoint loading)
+    explainer: 'sparsemap'              # explainer to be used
+    explainer_pre_mlp: True             # whether to use a mlp before the explainer
+    sparsemap_budget: 50                # sequence budget for the SparseMAP explainer
+    sparsemap_transition: 0.01          # transition weight for the SparseMAP explainer
+    sparsemap_temperature: 0.01         # temperature for the SparseMAP explainer
+    selection_vector: 'zero'            # which vector to use to represent differentiable masking
+    selection_faithfulness: True        # whether to perform masking on the original input x
+    selection_mask: False               # whether to also mask elements during self-attention
+
     # editor
     cf_gen_arch: "t5-small"                 # pre-trained generator from the Hugging Face hub
     cf_prepend_label_type: "gold"           # whether to prepend gold (`gold`) or predicted (`pred`) labels to the input of the editor
