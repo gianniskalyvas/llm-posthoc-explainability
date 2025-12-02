@@ -78,10 +78,10 @@ train:
         num_beam_groups: 1          # to promote diversity in beam groups
         early_stopping: True        # stop search when >= num_beams sentences are done (default: False | mice: True)
         length_penalty: 1.0         # (<1) means shorter sequences, (>1) longer sequences
-        top_k: 30                   # default: 50  | mice: 30
-        top_p: 0.95                 # default: 1.0 | mice: 0.95
-        typical_p: null             # default: 1.0
-        no_repeat_ngram_size: 2     # no bigrams repetitions are allowed (default: 0 | mice: 2)
+        top_k: 50                   # default: 50  | mice: 30
+        top_p: 1.0                  # default: 1.0 | mice: 0.95
+        typical_p: 1.0              # default: 1.0
+        no_repeat_ngram_size: 0     # no bigrams repetitions are allowed (default: 0 | mice: 2)
         num_return_sequences: 1     # sample N sequences
         min_length: null            # minimum length of the generated sequence
         max_length: 512             # maximum length of the generated sequence (default: 512 | mice: 512)
