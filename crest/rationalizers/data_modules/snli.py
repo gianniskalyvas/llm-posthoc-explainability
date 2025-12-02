@@ -187,18 +187,29 @@ class SNLIDataModule(BaseDataModule):
         self.dataset = self.dataset.filter(lambda ex: ex["label"] != 1)
         print("After filtering neutrals - sample labels:", self.dataset["train"]["label"][:10])
         
-        # Then remap labels
-        def remap_only(example):
-            if example["label"] == 0:  # entailment stays 0
-                example["label"] = 0
-            elif example["label"] == 2:  # contradiction becomes 1
+        # Then remap labels using a simpler approach
+        def remap_contradiction_to_1(example):
+            if example["label"] == 2:
                 example["label"] = 1
-            else:
-                print(f"WARNING: Unexpected label after filtering: {example['label']}")
             return example
             
-        self.dataset = self.dataset.map(remap_only)
+        self.dataset = self.dataset.map(remap_contradiction_to_1)
         print("After remapping - sample labels:", self.dataset["train"]["label"][:10])
+        
+        # Double-check by forcing the label conversion
+        def ensure_binary_labels(batch):
+            # Convert all 2s to 1s in the batch
+            labels = []
+            for label in batch["label"]:
+                if label == 2:
+                    labels.append(1)
+                else:
+                    labels.append(label)
+            batch["label"] = labels
+            return batch
+            
+        self.dataset = self.dataset.map(ensure_binary_labels, batched=True)
+        print("After ensuring binary - sample labels:", self.dataset["train"]["label"][:10])
 
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
