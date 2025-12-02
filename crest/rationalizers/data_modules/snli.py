@@ -170,17 +170,17 @@ class SNLIDataModule(BaseDataModule):
         self.dataset = self.dataset.filter(lambda ex: ex["label"] != -1)
         
         # Remove neutral labels (label == 1) to make it binary classification
-        # Keep only entailment (0) and contradiction (2), then remap contradiction to 1
+        # Keep only entailment (0) and contradiction (2), then remap to binary [0,1]
         def filter_and_remap_labels(example):
             if example["label"] == 1:  # neutral - remove
                 return False
             return True
         
         def remap_labels(example):
-            if example["label"] == 0:  # entailment becomes 1
-                example["label"] = 1
-            elif example["label"] == 2:  # contradiction becomes 0
+            if example["label"] == 0:  # entailment stays 0
                 example["label"] = 0
+            elif example["label"] == 2:  # contradiction becomes 1
+                example["label"] = 1
             return example
             
         # Filter out neutrals
@@ -260,13 +260,8 @@ class SNLIDataModule(BaseDataModule):
             self.dataset = self.dataset.filter(lambda ex: len(ex["prem_ids"]) <= self.max_seq_len)
             self.dataset = self.dataset.filter(lambda ex: len(ex["hyp_ids"]) <= self.max_seq_len)
 
-        if self.filter_neutrals or self.ignore_neutrals:
-            print('Filtering out neutrals')
-            self.dataset = self.dataset.filter(lambda ex: ex["label"] != 1)
-
-            if self.filter_neutrals:
-                print('Fixing labels to be 0/1')
-                self.dataset = self.dataset.map(lambda ex: min(ex['label'], 1))
+        # Note: Neutrals have already been filtered and labels remapped above
+        # No additional filtering needed here
 
         def get_dist(y):
             vals, counts = np.unique(y, return_counts=True)
