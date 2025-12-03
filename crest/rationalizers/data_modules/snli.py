@@ -168,6 +168,15 @@ class SNLIDataModule(BaseDataModule):
 
         # filter out invalid samples
         self.dataset = self.dataset.filter(lambda ex: ex["label"] != -1)
+        print("=== DEBUG: Starting label processing ===")
+        print("Original label distribution before any processing:")
+        def get_dist(y):
+            vals, counts = np.unique(y, return_counts=True)
+            return dict(zip(vals, counts / counts.sum()))
+        
+        print("TRAIN:", get_dist(self.dataset["train"]["label"]))
+        print("VAL:", get_dist(self.dataset["validation"]["label"]))
+        print("TEST:", get_dist(self.dataset["test"]["label"]))
         
         # Remove neutral labels (label == 1) and remap to binary classification
         def process_labels(example):
@@ -184,19 +193,24 @@ class SNLIDataModule(BaseDataModule):
                 return None  # Filter out unexpected values
             
         # Filter out neutrals first
+        print("=== DEBUG: Filtering out neutrals ===")
         self.dataset = self.dataset.filter(lambda ex: ex["label"] != 1)
-        print("After filtering neutrals - sample labels:", self.dataset["train"]["label"][:10])
+        print("After filtering neutrals - label distribution:")
+        print("TRAIN:", get_dist(self.dataset["train"]["label"]))
         
         # Then remap labels using a simpler approach
+        print("=== DEBUG: Remapping contradiction labels (2->1) ===")
         def remap_contradiction_to_1(example):
             if example["label"] == 2:
                 example["label"] = 1
             return example
             
         self.dataset = self.dataset.map(remap_contradiction_to_1)
-        print("After remapping - sample labels:", self.dataset["train"]["label"][:10])
+        print("After first remapping - label distribution:")
+        print("TRAIN:", get_dist(self.dataset["train"]["label"]))
         
         # Double-check by forcing the label conversion
+        print("=== DEBUG: Ensuring binary labels (batch processing) ===")
         def ensure_binary_labels(batch):
             # Convert all 2s to 1s in the batch
             labels = []
@@ -209,7 +223,14 @@ class SNLIDataModule(BaseDataModule):
             return batch
             
         self.dataset = self.dataset.map(ensure_binary_labels, batched=True)
-        print("After ensuring binary - sample labels:", self.dataset["train"]["label"][:10])
+        print("After ensuring binary - label distribution:")
+        print("TRAIN:", get_dist(self.dataset["train"]["label"]))
+        print("=== DEBUG: Label processing complete ===")
+        
+        print("FINAL LABEL CHECK - should be 0s and 1s only:")
+        train_labels = self.dataset["train"]["label"]
+        unique_labels = set(train_labels)
+        print("Unique labels in training set:", unique_labels)
 
         # cap dataset size - useful for quick testing
         if self.max_dataset_size is not None:
@@ -286,10 +307,7 @@ class SNLIDataModule(BaseDataModule):
         # Note: Neutrals have already been filtered and labels remapped above
         # No additional filtering needed here
 
-        def get_dist(y):
-            vals, counts = np.unique(y, return_counts=True)
-            return dict(zip(vals, counts / counts.sum()))
-
+        print("=== FINAL DISTRIBUTION CHECK ===")
         print(get_dist(self.dataset["train"]["label"]))
         print(get_dist(self.dataset["validation"]["label"]))
         print(get_dist(self.dataset["test"]["label"]))
