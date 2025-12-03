@@ -34,12 +34,15 @@ class SNLIDataModule(BaseDataModule):
         self.max_dataset_size = d_params.get("max_dataset_size", None)
         self.concat_inputs = d_params.get("concat_inputs", True)
         self.swap_pair = d_params.get("swap_pair", False)
-        # Force binary classification by always filtering neutrals
-        self.filter_neutrals = True  # Force this to True for binary classification
-        self.ignore_neutrals = False
+        # Use configuration parameters with fallback to binary classification
+        self.filter_neutrals = d_params.get("filter_neutrals", True)  # Default to True for binary classification
+        self.ignore_neutrals = d_params.get("ignore_neutrals", True)   # Default to True for binary classification
         self.use_revised_snli_val = d_params.get("use_revised_snli_val", False)
-        # Always set nb_classes to 2 for binary classification
-        self.nb_classes = 2
+        # Set nb_classes based on filtering settings
+        if self.filter_neutrals or self.ignore_neutrals:
+            self.nb_classes = 2
+        else:
+            self.nb_classes = 3
 
         # objects
         self.dataset = None
