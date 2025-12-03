@@ -24,7 +24,7 @@ train:
     gpu_log: False              # whether to use the gpu callback to see gpu information in the logger
 
     # data
-    dm: 'snli'                  # data module name (see docs for more options)
+    dm: 'my_snli'                  # data module name (see docs for more options)
     batch_size: 64              # minibatch size
     num_workers: 10              # number of workers used for data loading (0 means that only a single core will be used)
     vocab_min_occurrences:  1   # frequency for a token to be added to the vocabulary
@@ -68,7 +68,7 @@ train:
     cf_gen_arch: "t5-small"                 # pre-trained generator from the Hugging Face hub
     cf_prepend_label_type: "gold"           # whether to prepend gold (`gold`) or predicted (`pred`) labels to the input of the editor
     cf_z_type: "pred"                       # whether to use the masker's explanations (`pred`) or gold explanations, when available (`gold`)
-    cf_task_name: "nli_no_neutrals"   # the name of the task at hand, used to create the name of prepend labels: `binary_classification`, `nli`, `nli_no_neutrals`
+    cf_task_name: "binary_classification"   # the name of the task at hand, used to create the name of prepend labels: `binary_classification`, `nli`, `nli_no_neutrals`
     cf_classify_edits: True                 # whether to classify the edits after generation
 
     # https://huggingface.co/docs/transformers/v4.23.1/en/main_classes/text_generation#transformers.generation_utils.GenerationMixin.generate
