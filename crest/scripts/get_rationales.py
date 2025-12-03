@@ -24,7 +24,8 @@ def predict(
     verbose=True,
     disable_progress_bar=False,
     return_tokenizer=False,
-    sparsemap_budget=None
+    sparsemap_budget=None,
+    test_run=False
 ):
     # disable hf_dataset progress bar
     if disable_progress_bar:
@@ -75,18 +76,34 @@ def predict(
     dm.prepare_data()
     dm.setup()
     
+    # clear cache before prediction
+    torch.cuda.empty_cache()
+    
     # predict
     model.generation_mode = True
-    trainer = Trainer(accelerator='gpu', devices=1)
+    trainer = Trainer(accelerator='gpu', devices=1, precision='16-mixed')
+    
     if dataloader == 'train':
-        outputs = trainer.predict(model, dm.train_dataloader(shuffle=False))
+        dl = dm.train_dataloader(shuffle=False)
     elif dataloader == 'val':
-        outputs = trainer.predict(model, dm.val_dataloader())
+        dl = dm.val_dataloader()
     else:
-        outputs = trainer.predict(model, dm.test_dataloader())
+        dl = dm.test_dataloader()
+    
+    if test_run:
+        # Convert to list and take only first few batches for testing
+        import itertools
+        dl = itertools.islice(dl, 3)  # Only process first 3 batches
+        print("Running in test mode: processing only first 3 batches")
+    
+    outputs = trainer.predict(model, dl)
     
     # empty cache (beam search uses a lot of caching)
     torch.cuda.empty_cache()
+    
+    # force garbage collection
+    import gc
+    gc.collect()
     
     # stack outputs
     outputs = {k: [x[k] for x in outputs] for k in outputs[0].keys()}
@@ -119,10 +136,16 @@ if __name__ == '__main__':
     parser.add_argument("--ckpt-path-factual", type=str, help="Path to the factual rationalizer ckpt.", default=None)
     parser.add_argument("--dm-name", type=str, help="Name of the data module.", required=True)
     parser.add_argument("--dm-dataloader", type=str, help="Name of the dataloader to use.", default='test')
-    parser.add_argument("--batch-size", type=int, help="Batch size.", default=16)
+    parser.add_argument("--batch-size", type=int, help="Batch size.", default=4)
     parser.add_argument("--sparsemap-budget", type=int, help="Budget for sparsemap.", default=None)
     parser.add_argument("--ignore-neutrals", action='store_true', help="Whether to ignore neutral examples.")
+    parser.add_argument("--max-split-size-mb", type=int, help="PyTorch CUDA memory split size in MB.", default=None)
+    parser.add_argument("--test-run", action='store_true', help="Run only a few batches for testing.")
     args = parser.parse_args()
+
+    # Set CUDA memory management if specified
+    if args.max_split_size_mb is not None:
+        os.environ['PYTORCH_CUDA_ALLOC_CONF'] = f'max_split_size_mb:{args.max_split_size_mb}'
 
     dm_args = dict(
         batch_size=args.batch_size,
@@ -143,13 +166,21 @@ if __name__ == '__main__':
         verbose=True,
         disable_progress_bar=False,
         return_tokenizer=True,
-        sparsemap_budget=args.sparsemap_budget
+        sparsemap_budget=args.sparsemap_budget,
+        test_run=args.test_run
     )
 
 
     print("outputs type:", type(outputs))
     print("outputs keys:", outputs.keys())
-    print("Available keys in outputs:", outputs[0].keys())
+    # Show structure of first item for each key
+    for key in outputs.keys():
+        if outputs[key]:  # if not empty
+            print(f"First item in '{key}':", type(outputs[key][0]))
+            if hasattr(outputs[key][0], 'shape'):
+                print(f"  Shape: {outputs[key][0].shape}")
+            if isinstance(outputs[key][0], list) and len(outputs[key][0]) > 0:
+                print(f"  Length: {len(outputs[key][0])}")
 
 
     # get originals

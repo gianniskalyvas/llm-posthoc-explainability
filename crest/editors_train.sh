@@ -6,4 +6,4 @@ python3 rationalizers train --config configs/editor/imdb_sparsemap_50p.yaml --se
 python3 rationalizers train --config configs/editor/imdb_sparsemap_50p.yaml --seed 0
 
 # >>> experiments/masker_snli_sparsemap_30p/versionNone/checkpoints/epoch=10.ckpt
-python3 rationalizers train --config configs/masker/snli_sparsemap_30p.yaml --seed 0
+python3 rationalizers train --config configs/editor/snli_sparsemap_30p.yaml --seed 0

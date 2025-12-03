@@ -16,9 +16,9 @@ python3 scripts/get_edits.py \
 
 # 1.4) Extract rationales (only)
 python3 scripts/get_rationales.py \
-    --ckpt-name "sparsemap_30p" \
-    --ckpt-path "experiments/editor_imdb_sparsemap_30p/version3rqzafjw/checkpoints/epoch=0.ckpt" \
-    --dm-name "revised_imdb" \
+    --ckpt-name "sparsemap_50p" \
+    --ckpt-path "experiments/editor_imdb_sparsemap_50p/versionNone/checkpoints/epoch=19.ckpt" \
+    --dm-name "my_movies" \
     --dm-dataloader "test"
 
 

@@ -1,0 +1,81 @@
+accelerator: gpu
+alpha: 0.99
+amsgrad: false
+batch_size: 2
+betas:
+- 0.9
+- 0.999
+centered: false
+cf_classify_edits: false
+cf_gen_arch: t5-small
+cf_generate_kwargs:
+  do_sample: false
+  early_stopping: true
+  length_penalty: 1.0
+  max_length: 512
+  min_length: null
+  no_repeat_ngram_size: 0
+  num_beam_groups: 1
+  num_beams: 15
+  num_return_sequences: 1
+  top_k: 50
+  top_p: 1.0
+  typical_p: 1.0
+cf_prepend_label_type: gold
+cf_task_name: binary_classification
+cf_z_type: pred
+ckpt: experiments/editor_imdb_sparsemap_50p/versionNone/checkpoints/epoch=19.ckpt
+dampening: 0.0
+default_root_dir: experiments/editor_imdb_sparsemap_50p
+devices: 1
+dm: imdb
+explainer: sparsemap
+explainer_pre_mlp: true
+explainer_requires_grad: false
+factual_ckpt: experiments/masker_imdb_sparsemap_50p/versionNone/checkpoints/epoch=5.ckpt
+gen_arch: t5-small
+gen_emb_requires_grad: false
+gen_encoder_requires_grad: false
+gpu_log: false
+gradient_clip_val: 5.0
+ignore_neutrals: false
+is_original: true
+lambd: 0.0001
+load_label_encoder: false
+load_tokenizer: false
+lr: 0.0001
+max_dataset_size: null
+max_epochs: 20
+max_seq_len: 512
+min_epochs: 3
+model: editor
+momentum: 0.0
+monitor: val_sum_loss
+monitor_mode: min
+monitor_patience: 5
+nesterov: false
+no_fit: false
+num_workers: 1
+optimizer: adamw
+pred_arch: t5-small
+pred_emb_requires_grad: false
+pred_encoder_requires_grad: false
+pred_output_requires_grad: false
+save_counterfactuals: false
+save_edits: false
+save_label_encoder: false
+save_rationales: false
+save_tokenizer: false
+seed: 0
+selection_faithfulness: true
+selection_mask: false
+selection_vector: zero
+sparsemap_budget: 30
+sparsemap_temperature: 0.01
+sparsemap_transition: 0.01
+t0: 1000000.0
+tokenizer: t5-small
+vocab_min_occurrences: 1
+wandb_entity: gian-kalyva-national-technical-university-of-athens
+wandb_project: editor_imdb_sparsemap_50p
+weight_decay: 1.0e-06
