@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
 
     # get originals
-    orig_texts = tokens_to_text(unroll(outputs['texts']))
+    orig_texts = tokens_to_text(unroll(outputs['tokens']))
     orig_labels = unroll(outputs['labels'])
     orig_predictions = torch.cat(outputs['predictions']).argmax(dim=-1).tolist()  # predictions for original inputs
     orig_z = unroll(outputs['z'])  # the z given to the original input by the rationalizer
