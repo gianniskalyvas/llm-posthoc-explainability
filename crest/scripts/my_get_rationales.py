@@ -146,10 +146,22 @@ if __name__ == '__main__':
         return_tokenizer=True,
         sparsemap_budget=args.sparsemap_budget
     )
+    
+
+    print("outputs type:", type(outputs))
+    print("outputs keys:", outputs.keys())
+    # Show structure of first item for each key
+    for key in outputs.keys():
+        if outputs[key]:  # if not empty
+            print(f"First item in '{key}':", type(outputs[key][0]))
+            if hasattr(outputs[key][0], 'shape'):
+                print(f"  Shape: {outputs[key][0].shape}")
+            if isinstance(outputs[key][0], list) and len(outputs[key][0]) > 0:
+                print(f"  Length: {len(outputs[key][0])}")
 
 
-    # get originals (use 'tokens' instead of 'texts')
-    orig_texts = tokens_to_text(unroll(outputs['tokens']))
+    # get originals
+    orig_texts = tokens_to_text(unroll(outputs['texts']))
     orig_labels = unroll(outputs['labels'])
     orig_predictions = torch.cat(outputs['predictions']).argmax(dim=-1).tolist()  # predictions for original inputs
     orig_z = unroll(outputs['z'])  # the z given to the original input by the rationalizer
@@ -165,5 +177,5 @@ if __name__ == '__main__':
         orig_texts,
         orig_labels,
         orig_predictions, 
-        orig_z,
+        orig_z, 
     )

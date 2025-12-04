@@ -15,12 +15,13 @@ python3 scripts/get_edits.py \
   --num-beams 15
 
 # 1.4) Extract rationales (only)
-python3 scripts/get_rationales.py \
+python3 scripts/my_get_rationales.py \
     --ckpt-name "sparsemap_50p" \
-    --ckpt-path "experiments/editor_imdb_sparsemap_50p/versionNone/checkpoints/epoch=19.ckpt" \
+    --ckpt-path "experiments/editor_my_esnli_sparsemap_30p_baseT5/versionNone/checkpoints/epoch=19.ckpt" \
     --dm-name "my_movies" \
-    --dm-dataloader "test"
-
+    --dm-dataloader "test" \
+    --max_seq_len 512 \
+    --sparsemap-budget 30
 
 # 2.0) Before proceeding, we need to extract counterfactuals for all training examples (this may take a while)
 python3 scripts/get_edits.py \
