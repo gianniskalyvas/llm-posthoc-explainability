@@ -1,7 +1,6 @@
-python3 rationalizers train --config configs/masker/my_movies_sparsemap_50p.yaml --seed 0
+python3 rationalizers train --config configs/masker/e_movies_sparsemap_50p.yaml --seed 0
 
-python3 rationalizers train --config configs/editor/my_movies_sparsemap_50p.yaml --seed 0
-
+python3 rationalizers train --config configs/editor/e_movies_sparsemap_50p.yaml --seed 0
 
 
 

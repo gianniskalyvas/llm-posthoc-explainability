@@ -80,6 +80,6 @@ available_data_modules = {
     "movies": MoviesDataModule,
     "20news": TwentyNewsGroupsDataModule,
     "imdb_sampled_subset": SampledSubsetImdbDataModule,
-    "my_movies": MyMoviesDataModule,
-    "my_esnli": MyESNLIDataModule,
+    "e_movies": MyMoviesDataModule,
+    "e_snli": MyESNLIDataModule,
 }
