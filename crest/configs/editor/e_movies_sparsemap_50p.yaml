@@ -7,7 +7,7 @@ default_root_dir: 'experiments/editor_e_movies_sparsemap_50p/'
 # training args
 train:
     # path to the pre-trained masker checkpoint
-    factual_ckpt: experiments/masker_e_movies_sparsemap_50p/versionNone/checkpoints/epoch=12.ckpt
+    factual_ckpt: experiments/masker_e_movies_sparsemap_50p/versionNone/checkpoints/epoch=4.ckpt
     load_tokenizer: False       # load a trained tokenizer stored in the checkpoint dir as `tokenizer.pickle`
     load_label_encoder: False   # load a trained label encoder stored in the checkpoint dir as `label_encoder.pickle`
     save_edits: False           # will be saved in a .txt in the default_root_dir as `{test|val}_edits.txt`
