@@ -120,13 +120,14 @@ if __name__ == '__main__':
     parser.add_argument("--dm-name", type=str, help="Name of the data module.", required=True)
     parser.add_argument("--dm-dataloader", type=str, help="Name of the dataloader to use.", default='test')
     parser.add_argument("--batch-size", type=int, help="Batch size.", default=16)
-    parser.add_argument("--sparsemap-budget", type=int, help="Budget for sparsemap.", default=None)
+    parser.add_argument("--sparsemap-budget", type=int, help="Budget for sparsemap.", required=True)
     parser.add_argument("--ignore-neutrals", action='store_true', help="Whether to ignore neutral examples.")
+    parser.add_argument("--max_seq_len", type=int, help="Maximum sequence length.", required=True)
     args = parser.parse_args()
 
     dm_args = dict(
         batch_size=args.batch_size,
-        max_seq_len=512,
+        max_seq_len=args.max_seq_len,
         num_workers=1,
         vocab_min_occurrences=1,
         is_original=True,
