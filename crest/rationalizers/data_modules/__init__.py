@@ -16,8 +16,8 @@ from rationalizers.data_modules.imdb_syn_exp import SyntheticExplainImdbDataModu
 from rationalizers.data_modules.mlqepe import MLQEPEDataModule
 from rationalizers.data_modules.mnli import MultiNLIDataModule
 from rationalizers.data_modules.movies import MoviesDataModule
-from rationalizers.data_modules.my_movies import MyMoviesDataModule
-from rationalizers.data_modules.my_esnli import MyESNLIDataModule
+from rationalizers.data_modules.e_movies import MyMoviesDataModule
+from rationalizers.data_modules.e_snli import MyESNLIDataModule
 from rationalizers.data_modules.multinli_old import OldMultiNLIDataModule
 from rationalizers.data_modules.revised_imdb import RevisedIMDBDataModule
 from rationalizers.data_modules.revised_imdb_cf import CounterfactualRevisedIMDBDataModule
