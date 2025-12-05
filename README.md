@@ -148,7 +148,7 @@ TextAttack's pipeline:
 
 Finally, it is important to note that the ```e-implicit-target``` manipulation, which controls target visibility, is an orthogonal dimension to the persona manipulation. Therefore, the ```e-implicit-target``` flag can be combined with either the ```e-persona-you``` or ```e-persona-human``` flags to create composite experimental conditions that test the interaction of these factors.
 
-## 3. Quality Evaluation
+## 3. Intrinsic Evaluation
 
 ### Faithfulness Metrics
 

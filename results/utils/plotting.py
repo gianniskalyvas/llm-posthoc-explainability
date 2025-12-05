@@ -106,15 +106,21 @@ def plot_attack_comparison(models, attacks, plot_dir):
 def extract_means(df):
     flattened = pd.json_normalize(df.apply(lambda x: x.to_dict(), axis=1))
     return {
-        'distance': {col: flattened[col].mean() for col in flattened if 'distance' in col},
+        'closeness': {col: flattened[col].mean() for col in flattened if 'closeness' in col},
         'semantic_similarity': {col: flattened[col].mean() for col in flattened if 'similarity' in col},
         'contradiction': {col: flattened[col].mean() for col in flattened if 'contradiction' in col},
+        'fluency': {col: flattened[col].mean() for col in flattened if 'fluency' in col},
+        'diversity': {col: flattened[col].mean() for col in flattened if 'diversity' in col},
         'evidence_accuracy': {col: flattened[col].mean() for col in flattened if 'evidence_accuracy' in col},
         'evidence_precision': {col: flattened[col].mean() for col in flattened if 'evidence_precision' in col},
         'evidence_recall': {col: flattened[col].mean() for col in flattened if 'evidence_recall' in col},
         'evidence_f1': {col: flattened[col].mean() for col in flattened if 'evidence_f1' in col},
+        'crest_accuracy': {col: flattened[col].mean() for col in flattened if 'crest_accuracy' in col},
+        'crest_precision': {col: flattened[col].mean() for col in flattened if 'crest_precision' in col},
+        'crest_recall': {col: flattened[col].mean() for col in flattened if 'crest_recall' in col},
+        'crest_f1': {col: flattened[col].mean() for col in flattened if 'crest_f1' in col}, 
     }
-    
+
 
 def plot_size_comparison(models, results, directory, show_plots=True):
     
