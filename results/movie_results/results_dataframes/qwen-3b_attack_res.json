@@ -1,12 +1,4 @@
 {
-    "e-persona-you": {
-        "successful": 37,
-        "total": 199
-    },
-    "e-persona-human": {
-        "successful": 45,
-        "total": 199
-    },
     "baseline": {
         "successful": 43,
         "total": 199
@@ -15,11 +7,19 @@
         "successful": 35,
         "total": 199
     },
+    "e-implcit-target-e-persona-you": {
+        "successful": 37,
+        "total": 199
+    },
     "e-implcit-target": {
         "successful": 40,
         "total": 199
     },
-    "e-implcit-target-e-persona-you": {
+    "e-persona-human": {
+        "successful": 45,
+        "total": 199
+    },
+    "e-persona-you": {
         "successful": 37,
         "total": 199
     },

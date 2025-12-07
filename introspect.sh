@@ -3,7 +3,7 @@
 # Get input parameters
 read -p "Enter endpoint URL of VLLM server: " endpoint
 echo "Choose a model:"
-select model_name in llama3-1b llama3-3b llama3-8b qwen-1b qwen-3b qwen-7b; do
+select model_name in llama3-1b llama3-3b llama3-8b qwen-1b qwen-3b qwen-7b qwen-14b; do
     [[ -n "$model_name" ]] && break
     echo "Invalid selection."
 done

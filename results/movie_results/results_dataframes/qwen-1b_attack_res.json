@@ -1,25 +1,25 @@
 {
-    "e-persona-you": {
+    "baseline": {
         "successful": 33,
-        "total": 199
-    },
-    "e-persona-human": {
-        "successful": 31,
-        "total": 199
-    },
-    "e-implcit-target": {
-        "successful": 20,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-you": {
-        "successful": 18,
         "total": 199
     },
     "e-implcit-target-e-persona-human": {
         "successful": 19,
         "total": 199
     },
-    "baseline": {
+    "e-implcit-target-e-persona-you": {
+        "successful": 18,
+        "total": 199
+    },
+    "e-implcit-target": {
+        "successful": 20,
+        "total": 199
+    },
+    "e-persona-human": {
+        "successful": 31,
+        "total": 199
+    },
+    "e-persona-you": {
         "successful": 33,
         "total": 199
     },

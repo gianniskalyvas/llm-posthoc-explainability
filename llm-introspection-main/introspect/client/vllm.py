@@ -94,7 +94,6 @@ class VLLMClient(AbstractClient[VLLMInfo]):
         payload: VLLMGeneratePayload = {
             'prompt': 'Alive?',
             'max_tokens': 1,
-            'best_of': 1,
             'stop': [],
             'temperature': 1,
             'top_k': 50,
@@ -115,7 +114,6 @@ class VLLMClient(AbstractClient[VLLMInfo]):
         payload: VLLMGeneratePayload = {
             'prompt': prompt,
             'max_tokens': config.get('max_new_tokens', 0),
-            'best_of': config.get('best_of', 0),
             'stop': config.get('stop', []),
             'temperature': config.get('temperature', 0),
             'top_k': config.get('top_k', 0),

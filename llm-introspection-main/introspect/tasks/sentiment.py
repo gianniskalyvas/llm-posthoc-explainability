@@ -76,51 +76,11 @@ class SentimentTask(AbstractTask[SentimentDataset, SentimentObservation, Partial
 
     def _extract_sentiment(self, source: str) -> SentimentPredict|None:
         source = source.lower()
-        pair_match_prefixes = (
-            'could be',
-            'are multiple',
-            'to express',
-            'might be',
-            'are some',
-            'be some',
-            'it contains',
-            'paragraph contains',
-            'paragraph has',
-            'tool detects',
-            'be considered',
-            'classified as',
-            'there are',
-            'seems',
-            'seems to be',
-            'seems to be mostly',
-            'appears to be',
-            'is:',
-            'is'
-        )
 
-        if match_startwith(('positive', 'sentiment: positive'))(source) \
-        or match_pair_match(pair_match_prefixes, ('positive', '"positive"'))(source):
+        if 'positive' in source:
             sentiment = 'positive'
-        elif match_startwith(('negative', 'sentiment: negative'))(source) \
-        or match_pair_match(pair_match_prefixes, ('negative', '"negative"'))(source):
+        elif 'negative' in source:
             sentiment = 'negative'
-        elif match_startwith(('mixed', 'neutral'))(source) \
-        or match_pair_match(pair_match_prefixes, ('neutral', '"neutral"', 'mixed', '"mixed"'))(source):
-            sentiment = 'neutral'
-        elif match_startwith(('unknown', 'i am sorry', 'sorry'))(source) \
-        or match_pair_match(pair_match_prefixes, ('unknown', '"unknown"'))(source) \
-        or match_contains((
-            'both positive and negative',
-            'difficult to determine',
-            'no explicit sentiments',
-            'no clear sentiment',
-            'cannot provide',
-            'unable to determine',
-            'cannot determine',
-            'cannot be determined',
-            'cannot be accurately determined'
-        ))(source):
-            sentiment = 'unknown'
         else:
             sentiment = None
 
