@@ -6,7 +6,7 @@ class Llama3Model(AbstractModel):
     _name = 'Llama3'
     _default_config = {
         "do_sample": False,
-        "max_new_tokens": 1024,
+        "max_new_tokens": 4096,
         "seed": 0,
         "repetition_penalty": 1.0,
         "temperature": 0,

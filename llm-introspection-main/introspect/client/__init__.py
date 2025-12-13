@@ -1,5 +1,5 @@
 
-__all__ = ['TGIClient', 'VLLMClient', 'OfflineClient', 'AbstractClient', 'clients']
+__all__ = ['TGIClient', 'VLLMClient', 'OfflineClient', 'OpenAICompatibleClient', 'AbstractClient', 'clients']
 
 from typing import Type
 
@@ -7,10 +7,12 @@ from .tgi import TGIClient
 from .vllm import VLLMClient
 from .offline import OfflineClient
 from .test import TestClient
+from .openai_compatible import OpenAICompatibleClient
 from ._abstract_client import AbstractClient
 
 clients: dict[str, Type[AbstractClient]] = {
     'TGI': TGIClient,
     'VLLM': VLLMClient,
-    'Offline': OfflineClient
+    'Offline': OfflineClient,
+    'OpenAI': OpenAICompatibleClient
 }
