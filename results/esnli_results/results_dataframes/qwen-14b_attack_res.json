@@ -1,0 +1,26 @@
+{
+    "baseline": {
+        "successful": 5569,
+        "total": 6598
+    },
+    "e-implcit-target-e-persona-human": {
+        "successful": 3786,
+        "total": 6598
+    },
+    "e-implcit-target-e-persona-you": {
+        "successful": 3749,
+        "total": 6598
+    },
+    "e-implcit-target": {
+        "successful": 3791,
+        "total": 6598
+    },
+    "e-persona-human": {
+        "successful": 5348,
+        "total": 6598
+    },
+    "e-persona-you": {
+        "successful": 5302,
+        "total": 6598
+    }
+}
