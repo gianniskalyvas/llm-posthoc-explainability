@@ -61,6 +61,12 @@ def plot_attack_comparison(models, attacks, plot_dir):
 
     fig, axes = plt.subplots(1, 2, figsize=(15,7), sharey=True)
 
+    # Get unique sizes from the data for x-axis ticks
+    unique_sizes = sorted(df['size'].unique())
+    # Filter to show fewer ticks to prevent overlap (keep major points)
+    major_sizes = [s for s in unique_sizes if s in [1, 1.5, 3, 8, 14, 32, 70]]
+    size_labels = [f'{int(s) if s == int(s) else s}B' for s in major_sizes]
+    
     for i, family in enumerate(['Llama3', 'Qwen']):
         subdf = prompt_variants[prompt_variants['family']==family]
         for variant, vdf in subdf.groupby('variant'):
@@ -69,6 +75,9 @@ def plot_attack_comparison(models, attacks, plot_dir):
         axes[i].set_title(f"{family} Models")
         axes[i].set_xlabel("Model Size (B parameters)")
         axes[i].set_ylabel("Success Rate")
+        axes[i].set_xscale('log')
+        axes[i].set_xticks(major_sizes)
+        axes[i].set_xticklabels(size_labels, rotation=45, ha='right')
         axes[i].grid(True)
         axes[i].legend(fontsize=8)
 
@@ -93,6 +102,8 @@ def plot_attack_comparison(models, attacks, plot_dir):
     plt.title("Attack Success Rate by Model Size")
     plt.xlabel("Model Size (B parameters)")
     plt.ylabel("Attack Success Rate")
+    plt.xscale('log')
+    plt.xticks(major_sizes, size_labels, rotation=45, ha='right')
     ymin, ymax = ax.get_ylim()
     ax.set_ylim(0, ymax * 1.15)
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -175,6 +186,10 @@ def plot_size_comparison(models, results, directory, show_plots=True):
                        key=lambda x: x[1])
     all_size_labels = [s[0] for s in all_sizes]
     all_size_nums = [s[1] for s in all_sizes]
+    
+    # Filter to show fewer ticks to prevent overlap (keep major points)
+    major_size_nums = [s for s in all_size_nums if s in [1, 1.5, 3, 8, 14, 32, 70]]
+    major_size_labels = [f'{int(s) if s == int(s) else s}B' for s in major_size_nums]
 
     # === MAIN LOOP ===
     for metric_group_name in metric_groups.keys():
@@ -224,8 +239,9 @@ def plot_size_comparison(models, results, directory, show_plots=True):
                                  fontsize=12, fontweight='bold')
                     ax.set_xlabel('Model Size', fontweight='bold')
                     ax.set_ylabel('Score', fontweight='bold')
-                    ax.set_xticks(all_size_nums)
-                    ax.set_xticklabels(all_size_labels)
+                    ax.set_xscale('log')
+                    ax.set_xticks(major_size_nums)
+                    ax.set_xticklabels(major_size_labels, rotation=45, ha='right')
                     ax.grid(True, alpha=0.3, linestyle='--')
 
                     if plotted:
@@ -290,8 +306,9 @@ def plot_size_comparison(models, results, directory, show_plots=True):
                              fontsize=12, fontweight='bold')
                 ax.set_xlabel('Model Size', fontweight='bold')
                 ax.set_ylabel('Score', fontweight='bold')
-                ax.set_xticks(all_size_nums)
-                ax.set_xticklabels(all_size_labels)
+                ax.set_xscale('log')
+                ax.set_xticks(major_size_nums)
+                ax.set_xticklabels(major_size_labels, rotation=45, ha='right')
                 ax.grid(True, alpha=0.3, linestyle='--')
 
                 if plotted:
