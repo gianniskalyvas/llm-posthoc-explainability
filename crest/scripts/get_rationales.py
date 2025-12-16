@@ -55,6 +55,9 @@ def predict(
 
     args = get_args_from_ckpt(ckpt_path, new_args)
 
+    # override dm if needed to fix compatibility issues
+    args.dm = dm_name
+
     # fix cf_explainer_mask_token_type_id
     if hasattr(args, 'explainer_mask_token_type_id') and args.explainer_mask_token_type_id == '':
         args.explainer_mask_token_type_id = None

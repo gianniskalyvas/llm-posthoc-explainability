@@ -84,10 +84,11 @@ class BaseRationalizer(pl.LightningModule):
         input_ids = batch["input_ids"]
         labels = batch["labels"]
         mask = input_ids != constants.PAD_ID
+        token_type_ids = batch.get("token_type_ids", None)
         prefix = "train"
 
         # forward-pass
-        z, y_hat = self(input_ids, mask=mask, current_epoch=self.current_epoch)
+        z, y_hat = self(input_ids, mask=mask, token_type_ids=token_type_ids, current_epoch=self.current_epoch)
 
         # compute loss
         y_hat = y_hat if not self.is_multilabel else y_hat.view(-1, self.nb_classes)
@@ -151,8 +152,9 @@ class BaseRationalizer(pl.LightningModule):
         input_ids = batch["input_ids"]
         labels = batch["labels"]
         mask = input_ids != constants.PAD_ID
+        token_type_ids = batch.get("token_type_ids", None)
         # forward-pass
-        z, y_hat = self(input_ids, mask=mask)
+        z, y_hat = self(input_ids, mask=mask, token_type_ids=token_type_ids)
 
         # compute loss
         y_hat = y_hat if not self.is_multilabel else y_hat.view(-1, self.nb_classes)
