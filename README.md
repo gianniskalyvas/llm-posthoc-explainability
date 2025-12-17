@@ -7,6 +7,7 @@ This project adopts counterfactuals as a primary method for post-hoc explainabil
 We evaluate multiple models across different scales by generating counterfactual explanations as in *Are Self-Explanations from Large Language Models Faithful?*.
 We extended the framework’s abstract classes to support newer models and our custom datasets, and to better align the framework with the specific requirements of our study.
 
+We analyze the impact of model scale on the quality of post-hoc counterfactual explanations.
 
 ### Datasets
 
@@ -19,7 +20,9 @@ ERASER benchmark: Standard benchmark datasets augmented with human-provided rati
 
 - **LLaMA-3:** 1B, 3B, 8B, 70B  
 - **Qwen-2.5:** 1.5B, 3B, 7B, 14B, 32B, 72B  
-- **t5-small**
+- **t5-small** trained according to CREST
+
+The selected models enable comparisons across scales within the same architecture, with CREST serving as a trained rationalization baseline rather than a generative self-explanation model.
 
 ---
 
@@ -28,62 +31,86 @@ ERASER benchmark: Standard benchmark datasets augmented with human-provided rati
 - `results/` — Evaluation metrics and visualization plots
 - `eraserbenchmark-master/` — ERASER benchmark datasets with human annotations
 - `llm-introspection-main/` — Modified introspection module (adapted from *Are Self-Explanations from Large Language Models Faithful?*)
-- `crest/` — Crest rationalizers
+- `crest/` — CREST rationalizers
 
-### Running Experiments
-Refer to `experiment_summary.ipynb` for a complete walkthrough of the experimental pipeline.
-
----
 
 # Experiment Pipeline
+
+Refer to `experiment_summary.ipynb` for a complete walkthrough of the experimental pipeline.
 
 ```mermaid
 flowchart LR
     A[Instance]
 
     %% Left branch: Explanations
-    A --> B[GRASER]
-    B --> C[Human Annotation]
-    C --> D[Measure Precision]
-    D --> E[Human Precision]
+    A --> B(ERASER)
+    B --> C[Human Annotations]
 
-    A --> F[CREST Explainer]
+
+    A --> F(CREST Explainer)
     F --> G[Rationales]
-    G --> H[Measure Precision]
-    H --> I[CREST Precision]
+
 
     %% Middle: Prediction
-    A --> J[Use the model to classify]
+    A --> J(Model<br/>Classifier)
     J --> K[Prediction]
 
     %% Right branch: Counterfactuals
-    A --> L[Persona]
-    L --> M[Ask the model to generate counterfactual]
-    M --> N[Self-generated counterfactual]
-    N --> O[Classify]
+    L[Persona]
+    A --> M(Model<br/>Counterfactual Generator)
+    L --> M
+    K --> W{Visible Target?}
+    W --> |Yes|M
+
+    M --> N[Counterfactual]
+    N --> O(Model<br/>Classifier)
     O --> P[Counterfactual Prediction]
 
     %% Evaluation logic
     K --> Q{Same?}
     P --> Q
+    
+    A --> T(editdistance)
+    N --> T
+    A --> IA(mpnet)
+    N --> IA
+    A --> IC(roberta_mnli)
+    N --> IC
 
-    Q -->|Yes| R[Unfaithful]
-    Q -->|No| S[Faithful]
+    G --> H(Measure Precision)
+    N --> H
+    C --> D(Measure Precision)
+    N --> D
 
-    %% Intrinsic evaluation
-    N --> T[Intrinsic Evaluation]
-    T --> U[Closeness]
-    T --> V[Semantic Similarity]
+    subgraph IB[Evaluation]
+
+      subgraph IE[Intrinsic]
+          Q -->|Yes| R[Unfaithful]
+          Q -->|No| S[Faithful]
+          T --> U[Closeness]
+          IA --> V[Semantic Similarity]
+          IC --> ID[Contradiction]
+      end
+
+      subgraph IF[Precision]
+        H --> I[CREST Precision]
+        D --> E[Human Precision]
+      end
+
+    end
+
 ```
 
 
-## 1. Models as Classifiers
+# Evaluation
+
+## 1. Classifiers
 
 <div style="text-align:center;">
   <img src="results/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:80%;"/>
 </div>
 
-## 2. Counterfactual Generation
+## 2. Counterfactuals
 
 ### Pipeline Examples
 
@@ -144,24 +171,17 @@ Michael Robbins' Hardball is a cinematic masterpiece. In about two hours, we get
 
 ### C. CREST
 
-We train a CREST rationalizer on each task hand that produces a mask vector indicating tokens relevant to the predicition. 
+We train a CREST rationalizer on each task that produces a token-level mask indicating features relevant to the prediction, allowing us to examine whether counterfactual edits perturb tokens identified as causally important.
 
 ## 3. Intrinsic Evaluation
 
-### Faithfulness Metrics
+ - *Faithfulness*: Percentage of self-generated counterfactuals that successfully flip the model's prediction.
 
- - ***Attack Success Rate***: Percentage of adversarial attacks that successfully flip the model's prediction. Lower values indicate more robust models.
+ - *Closeness*: Normalized edit distance.
 
- - ***Introspection Faithfulness***: Percentage of self-generated counterfactuals that successfully flip the model's prediction.
+ - *Semantic Similarity*: Cosine similarity of `all-mpnet-base-v2` embeddings.
 
-### Minimality Metrics
-
- - ***Distance***: Normalized edit distance (1 - SequenceMatcher ratio). Lower values indicate more minimal changes.
-
- - ***Semantic Similarity***: Cosine similarity of `all-mpnet-base-v2` embeddings. Higher values indicate better semantic preservation.
-
- - ***Contradiction***: Contradiction probability from `roberta-large-mnli`. Higher values indicate stronger logical contradictions.
-
+ - *Contradiction*: Contradiction probability from `roberta-large-mnli`.
 
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
@@ -226,7 +246,7 @@ We train a CREST rationalizer on each task hand that produces a mask vector indi
 </div>
 
 
-## 4. Human-centric Evaluation
+## 4. Precision
 
 ### Metric Definitions
 
@@ -239,8 +259,8 @@ Precision = TP / (TP + FP): What percent of the perturbations in the input are e
 
 
 We consider two types of evidence spans.
- - human-annotated from ERASER
- - Crest rationales
+ - Human-annotation provided by ERASER
+ - Rationales generated by trained CREST Explainer
 
 
 <h2 style="text-align:left;">Movie Reviews</h2>
@@ -275,9 +295,6 @@ We consider two types of evidence spans.
   </em></p>  
 </div>
 
-# Conclusions
-
- - **Scale Improves Faithfulness**
 
 ## References
 
