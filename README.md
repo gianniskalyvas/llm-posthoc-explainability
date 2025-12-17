@@ -104,7 +104,7 @@ flowchart LR
 ## 1. Classifiers
 
 <div style="text-align:center;">
-  <img src="results/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:80%;"/>
+  <img src="results/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:100%;"/>
 </div>
 
 ## 2. Counterfactuals
@@ -179,7 +179,7 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
-  <img src="results/movie_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:96%; padding-bottom:40px; "/>
+  <img src="results/movie_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
 </div>
 
 
@@ -189,14 +189,14 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;  ">
     <!-- Distance Row -->
-    <img src="results/movie_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:50%; margin:0; padding:0;"/>
     <!-- Contradiction Row -->
-    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:50%; margin:0; padding:0;"/>
     <!-- Semantic Similarity Row -->
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:50%; margin:0; padding:0;"/>
   </div>
 </div>
 
@@ -204,7 +204,7 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 
 <h2 style="text-align:left;">e-SNLI</h2>
 <div style="text-align:center;">
-  <img src="results/esnli_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:96%; padding-bottom:40px;"/>
+  <img src="results/esnli_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:100%; padding-bottom:40px;"/>
 </div>
 
 <div style="height:40px;"></div>
@@ -212,14 +212,14 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
     <!-- Distance Row -->
-    <img src="results/esnli_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:50%; margin:0; padding:0;"/>
     <!-- Contradiction Row -->
-    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:50%; margin:0; padding:0;"/>
     <!-- Semantic Similarity Row -->
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:50%; margin:0; padding:0;"/>
   </div>
 </div>
 
@@ -245,11 +245,11 @@ We consider two types of evidence spans.
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
     <!-- Evidence Accuracy Row -->
-    <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:50%; margin:0; padding:0;"/>
     <!-- Evidence Recall Row -->
-    <img src="results/movie_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest F1 LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest F1 Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest F1 LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest F1 Qwen" style="width:50%; margin:0; padding:0;"/>
   </div>
 
 </div>
@@ -258,11 +258,11 @@ We consider two types of evidence spans.
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
     <!-- Evidence Precision Row -->
-    <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:50%; margin:0; padding:0;"/>
     <!-- Evidence F1 Row -->
-    <img src="results/esnli_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest Precision LLaMA-3" style="width:40%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest Precision Qwen" style="width:40%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest Precision LLaMA-3" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest Precision Qwen" style="width:50%; margin:0; padding:0;"/>
   </div>
 </div>
 
