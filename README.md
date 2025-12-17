@@ -189,14 +189,14 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;  ">
     <!-- Distance Row -->
-    <img src="results/movie_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:49%; margin:0; padding:0;"/>
     <!-- Contradiction Row -->
-    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:49%; margin:0; padding:0;"/>
     <!-- Semantic Similarity Row -->
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:49%; margin:0; padding:0;"/>
   </div>
 </div>
 
@@ -212,14 +212,14 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
     <!-- Distance Row -->
-    <img src="results/esnli_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:49%; margin:0; padding:0;"/>
     <!-- Contradiction Row -->
-    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:49%; margin:0; padding:0;"/>
     <!-- Semantic Similarity Row -->
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:49%; margin:0; padding:0;"/>
   </div>
 </div>
 
