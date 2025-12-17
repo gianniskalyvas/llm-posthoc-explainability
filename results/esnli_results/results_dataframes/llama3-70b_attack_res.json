@@ -1,12 +1,4 @@
 {
-    "baseline": {
-        "successful": 5753,
-        "total": 6598
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 3676,
-        "total": 6598
-    },
     "e-implcit-target-e-persona-you": {
         "successful": 3693,
         "total": 6598
@@ -15,12 +7,20 @@
         "successful": 3684,
         "total": 6598
     },
-    "e-persona-human": {
-        "successful": 5805,
+    "e-implcit-target-e-persona-human": {
+        "successful": 3676,
         "total": 6598
     },
     "e-persona-you": {
         "successful": 5737,
+        "total": 6598
+    },
+    "baseline": {
+        "successful": 5753,
+        "total": 6598
+    },
+    "e-persona-human": {
+        "successful": 5805,
         "total": 6598
     }
 }
