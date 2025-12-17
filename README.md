@@ -245,11 +245,11 @@ We consider two types of evidence spans.
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
     <!-- Evidence Accuracy Row -->
-    <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:49%; margin:0; padding:0;"/>
     <!-- Evidence Recall Row -->
-    <img src="results/movie_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest F1 LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest F1 Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest F1 LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/movie_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest F1 Qwen" style="width:49%; margin:0; padding:0;"/>
   </div>
 
 </div>
@@ -258,11 +258,11 @@ We consider two types of evidence spans.
 <div style="text-align:center;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
     <!-- Evidence Precision Row -->
-    <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:49%; margin:0; padding:0;"/>
     <!-- Evidence F1 Row -->
-    <img src="results/esnli_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest Precision LLaMA-3" style="width:50%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest Precision Qwen" style="width:50%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest Precision LLaMA-3" style="width:49%; margin:0; padding:0;"/>
+    <img src="results/esnli_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest Precision Qwen" style="width:49%; margin:0; padding:0;"/>
   </div>
 </div>
 
