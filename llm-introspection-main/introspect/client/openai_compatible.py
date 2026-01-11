@@ -117,26 +117,20 @@ class OpenAICompatibleClient(AbstractClient[OpenAIInfo]):
         """Parse a Qwen-formatted prompt back to messages array"""
         messages = []
         
-        # Extract system message if present
-        system_match = re.match(r'<\|im_start\|>system\n(.*?)\n<\|im_end\|>', prompt, re.DOTALL)
-        if system_match:
-            system_content = system_match.group(1).strip()
-            if system_content:  # Only add system message if there's actual content
-                messages.append({'role': 'system', 'content': system_content})
-            # Remove system part from prompt
-            prompt = prompt[system_match.end():]
+        # Find all message blocks in order
+        message_pattern = r'<\|im_start\|>(system|user|assistant)(?:\n(.*?))?(?:\n<\|im_end\|>|$)'
+        matches = re.finditer(message_pattern, prompt, re.DOTALL)
         
-        # Extract user message
-        user_match = re.search(r'<\|im_start\|>user\n(.*?)\n<\|im_end\|>', prompt, re.DOTALL)
-        if user_match:
-            user_content = user_match.group(1).strip()
-            messages.append({'role': 'user', 'content': user_content})
-        
-        # Check if there's an assistant response
-        assistant_match = re.search(r'<\|im_start\|>assistant\n?(.*?)(?:<\|im_end\|>|$)', prompt, re.DOTALL)
-        if assistant_match and assistant_match.group(1).strip():
-            assistant_content = assistant_match.group(1).strip()
-            messages.append({'role': 'assistant', 'content': assistant_content})
+        for match in matches:
+            role = match.group(1)
+            content = match.group(2)
+            
+            # Only add messages with actual content (except for assistant messages at the end which might be empty)
+            if content and content.strip():
+                messages.append({'role': role, 'content': content.strip()})
+            elif role == 'assistant' and not content:
+                # This is likely the final assistant turn waiting for completion - don't add it
+                continue
         
         return messages
 
@@ -189,10 +183,23 @@ class OpenAICompatibleClient(AbstractClient[OpenAIInfo]):
             payload['frequency_penalty'] = (config['repetition_penalty'] - 1.0) * 2.0
 
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(self._connect_timeout_sec)) as session:
+            async with aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(
+                    total=self._connect_timeout_sec,
+                    connect=60,  # 60s for connection
+                    sock_read=300  # 5min for reading response
+                ),
+                connector=aiohttp.TCPConnector(limit=100, ttl_dns_cache=300)
+            ) as session:
                 async with session.post(endpoint, json=payload, headers=self._headers) as response:
                     
-                    if response.status != 200:
+                    if response.status == 429:  # Rate limited
+                        error_text = await response.text()
+                        raise GenerateError(f'Rate limited (429): {error_text}. Consider adding delays between requests.')
+                    elif response.status == 503:  # Service unavailable  
+                        error_text = await response.text()
+                        raise GenerateError(f'Service unavailable (503): {error_text}. Provider may be overloaded.')
+                    elif response.status != 200:
                         error_text = await response.text()
                         raise OpenAIError(f'API request failed with status {response.status}: {error_text}')
                     
@@ -217,4 +224,9 @@ class OpenAICompatibleClient(AbstractClient[OpenAIInfo]):
                     }
 
         except (OpenAIError, asyncio.TimeoutError, aiohttp.ClientError, json.JSONDecodeError) as err:
-            raise GenerateError(f'LLM generate failed: {str(err)}') from err
+            if 'rate' in str(err).lower() or 'limit' in str(err).lower() or '429' in str(err):
+                raise GenerateError(f'Rate limiting detected: {str(err)}. Consider adding delays between requests.') from err
+            elif 'timeout' in str(err).lower() or 'connect' in str(err).lower():
+                raise GenerateError(f'Connection/timeout error: {str(err)}. Provider may be overloaded.') from err
+            else:
+                raise GenerateError(f'LLM generate failed: {str(err)}') from err

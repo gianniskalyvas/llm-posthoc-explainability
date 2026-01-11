@@ -176,7 +176,7 @@ class AbstractClient(Generic[InfoType], metaclass=ABCMeta):
             'max_new_tokens': config.get('max_new_tokens', 20),
             'best_of': config.get('best_of', 1),
             'stop': config.get('stop', []),
-            'temperature': config.get('temperature', 1),
+            'temperature': config.get('temperature', 0),  # Changed from 1 to 0 for deterministic output
             'top_k': config.get('top_k', 50),
             'top_p': config.get('top_p', 1),
             'repetition_penalty': config.get('repetition_penalty', 1)

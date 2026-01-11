@@ -15,11 +15,17 @@ class Llama3Model(AbstractModel):
     }
 
     def _render_prompt(self, history):
-    
+        
+        prompt = "<|begin_of_text|>"
+
         for message_pair in history:
             system_msg = message_pair["system"]
             user_msg = message_pair["user"]
+            assistant_msg = message_pair["assistant"]
 
-            prompt = f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n{system_msg}\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n{user_msg}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+            prompt += f"<|start_header_id|>system<|end_header_id|>\n{system_msg}\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n{user_msg}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+            
+            if assistant_msg is not None:
+                prompt += f"\n{assistant_msg}\n<|eot_id|>"
 
         return prompt

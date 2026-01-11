@@ -22,5 +22,9 @@
     "e-persona-human": {
         "successful": 5805,
         "total": 6598
+    },
+    "e-chat-history": {
+        "successful": 5998,
+        "total": 6598
     }
 }

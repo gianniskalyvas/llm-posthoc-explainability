@@ -1,18 +1,18 @@
 {
-    "baseline": {
-        "successful": 6250,
+    "e-chat-history": {
+        "successful": 6340,
         "total": 6598
     },
-    "e-implcit-target-e-persona-human": {
-        "successful": 4832,
+    "baseline": {
+        "successful": 6250,
         "total": 6598
     },
     "e-implcit-target-e-persona-you": {
         "successful": 4825,
         "total": 6598
     },
-    "e-implcit-target": {
-        "successful": 4673,
+    "e-implcit-target-e-persona-human": {
+        "successful": 4832,
         "total": 6598
     },
     "e-persona-human": {
@@ -21,6 +21,10 @@
     },
     "e-persona-you": {
         "successful": 6221,
+        "total": 6598
+    },
+    "e-implcit-target": {
+        "successful": 4673,
         "total": 6598
     }
 }

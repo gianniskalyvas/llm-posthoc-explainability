@@ -19,6 +19,10 @@
         "successful": 3965,
         "total": 6598
     },
+    "e-chat-history": {
+        "successful": 4038,
+        "total": 6598
+    },
     "e-implcit-target-e-persona-you": {
         "successful": 2451,
         "total": 6598

@@ -183,8 +183,8 @@ def evaluate_cf(text, evidence_ranges, crest_rationales, cf):
     closeness = calculate_closeness(text, cf)
     semantic = semantic_similarity(cf, text)
     contradiction = detect_contradiction(cf, text)
-    fluency = calculate_fluency(cf)
-    diversity = calculate_self_bleu(cf)
+    #fluency = calculate_fluency(cf)
+    #diversity = calculate_self_bleu(cf)
 
     evidence_list = [0] * len(text.split())
     for start, end in evidence_ranges:
@@ -199,8 +199,8 @@ def evaluate_cf(text, evidence_ranges, crest_rationales, cf):
         "closeness": closeness,
         "similarity_metrics": semantic,
         "contradiction": contradiction,
-        "fluency": fluency,
-        "diversity": diversity,
+        #"fluency": fluency,
+        #"diversity": diversity,
         "evidence_accuracy": evidence_metrics['accuracy'],
         "evidence_precision": evidence_metrics['precision'],
         "evidence_recall": evidence_metrics['recall'],

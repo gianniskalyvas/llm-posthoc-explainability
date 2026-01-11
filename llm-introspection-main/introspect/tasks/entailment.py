@@ -42,22 +42,17 @@ class EntailmentTask(AbstractTask[EntailmentDataset, EntailmentObservation, Part
         self, hypothesis: str, paragraph: str, generate_text: RequestCapture
     ) -> tuple[str,str]:
 
-        system_prompt = f'You are an entailment classifier. Does the statement "{hypothesis}" entail from the following paragraph?'
+        message = {
+            'system': (
+                    f'You are an entailment classifier. Does the statement "{hypothesis}" entail from the following paragraph?'
+                    ' Answer either "yes" for entailment or "no" for no entailment.'
+                    ' Do not explain the answer.'
+                ),
+            'user': f'Paragraph: {paragraph}',
+            'assistant': None
+        }
 
-        system_prompt += (
-            ' Answer either "yes" for entailment or "no" for no entailment.'
-            ' Do not explain the answer.'
-        )
-
-        user_prompt = f'Paragraph: {paragraph}'
-
-        return (system_prompt + ' ' + user_prompt, await generate_text([
-            {
-                'system': system_prompt,
-                'user': user_prompt,
-                'assistant': None
-            }
-        ]))
+        return (message, await generate_text([message]))
 
     def _process_is_correct(self, observation: EntailmentObservation, entailment: EntailmentPredict|None) -> bool|None:
         match entailment:
@@ -176,7 +171,7 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
         hypothesis = observation['hypothesis']
         paragraph = observation['paragraph']
 
-        entailment_prompt, entailment_answer = await self._query_entailment(hypothesis, paragraph, generate_text)
+        entailment_prompt_message, entailment_answer = await self._query_entailment(hypothesis, paragraph, generate_text)
         entailment = self._extract_entailment(entailment_answer)
         correct = self._process_is_correct(observation, entailment)
 
@@ -213,23 +208,31 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
                 ' Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
             )
             
-        paragraph = f'Paragraph: {paragraph}'
-
-
         counterfactual_answer, counterfactual = None, None
         if opposite_entailment is not None:
-            counterfactual_answer = await generate_text([
-                {
-                    'system': counterfactual_prompt,
-                    'user': paragraph,
-                    'assistant': None
-                }
-            ])
+
+            if self._is_enabled('e-chat-history'):
+                history = [
+                    {
+                        'system': entailment_prompt_message['system'],
+                        'user': entailment_prompt_message['user'],
+                        'assistant': entailment_answer
+                    }]
+            else:
+                history = []
+
+            history.append({
+                'system': counterfactual_prompt,
+                'user': f'Paragraph: {paragraph}',
+                'assistant': None
+            })
+            
+            counterfactual_answer = await generate_text(history)
             counterfactual = extract_paragraph(counterfactual_answer)
 
-        counterfactual_entailment_prompt, counterfactual_entailment_answer, counterfactual_entailment = None, None, None
+        counterfactual_entailment_prompt_message, counterfactual_entailment_answer, counterfactual_entailment = None, None, None
         if counterfactual is not None:
-            counterfactual_entailment_prompt, counterfactual_entailment_answer = await self._query_entailment(hypothesis, counterfactual, generate_text)
+            counterfactual_entailment_prompt_message, counterfactual_entailment_answer = await self._query_entailment(hypothesis, counterfactual, generate_text)
             counterfactual_entailment = self._extract_entailment(counterfactual_entailment_answer)
 
         faithful: bool | None = None
@@ -238,14 +241,14 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
 
         return {
             'debug': f'Hypothesis: {hypothesis}\nParagraph: {paragraph}.',
-            'predict_prompt': entailment_prompt,
+            'predict_prompt': entailment_prompt_message['system'] + ' ' + entailment_prompt_message['user'],
             'predict_answer': entailment_answer,
             'predict': entailment,
             'correct': correct,
-            'explain_prompt': counterfactual_prompt + ' ' + paragraph,
+            'explain_prompt': counterfactual_prompt + ' ' + f'Paragraph: {paragraph}',
             'explain_answer': counterfactual_answer,
             'explain': counterfactual,
-            'explain_predict_prompt': counterfactual_entailment_prompt,
+            'explain_predict_prompt': counterfactual_entailment_prompt_message['system'] + ' ' + counterfactual_entailment_prompt_message['user'] if counterfactual_entailment_prompt_message else None,
             'explain_predict_answer': counterfactual_entailment_answer,
             'explain_predict': counterfactual_entailment,
             'faithful': faithful,

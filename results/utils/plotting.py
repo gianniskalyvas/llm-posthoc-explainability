@@ -9,6 +9,7 @@ import seaborn as sns
 # Define base colors for each main variant
 base_colors = {
     'baseline': 'tab:gray',
+    'e-chat-history': 'tab:blue',
     'e-persona-you': 'tab:orange',
     'e-persona-human': 'tab:green'
 }
@@ -169,6 +170,7 @@ def plot_size_comparison(models, results, directory, show_plots=True):
     experiment_sets = {
         "Introspection": [
             "baseline",
+            "e-chat-history",
             "e-persona-you",
             "e-persona-human",
             "e-implcit-target",

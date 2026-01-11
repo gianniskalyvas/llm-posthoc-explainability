@@ -37,22 +37,19 @@ class SentimentTask(AbstractTask[SentimentDataset, SentimentObservation, Partial
                 return 'negative'
             case 'negative':
                 return 'positive'
+    
 
     async def _query_sentiment(
         self, paragraph: str, generate_text: RequestCapture
     ) -> tuple[str, str]:
 
-        system_prompt = 'You are a sentiment classifier. Answer only "positive" or "negative". Do not explain the answer. What is the sentiment of the user\'s paragraph?'
+        message = {
+            'system': 'You are a sentiment classifier. Answer only "positive" or "negative". Do not explain the answer. What is the sentiment of the user\'s paragraph?',
+            'user': f'Paragraph: {paragraph}',
+            'assistant': None
+        }
 
-        user_prompt = f'Paragraph: {paragraph}'
-
-        return (system_prompt + ' ' + user_prompt, await generate_text([
-            {
-                'system': system_prompt,
-                'user': user_prompt,
-                'assistant': None
-            }
-        ]))
+        return (message, await generate_text([message]))
 
     def _process_is_correct(self, observation: SentimentObservation, sentiment: SentimentPredict|None) -> bool|None:
         match sentiment:
@@ -161,7 +158,7 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
     async def _task(self, observation: SentimentObservation, generate_text: RequestCapture) -> PartialFaithfulSentimentResult:
         paragraph = observation['text']
 
-        sentiment_prompt, sentiment_answer = await self._query_sentiment(paragraph, generate_text)
+        sentiment_prompt_message, sentiment_answer = await self._query_sentiment(paragraph, generate_text)
         sentiment = self._extract_sentiment(sentiment_answer)
         correct = self._process_is_correct(observation, sentiment)
 
@@ -196,22 +193,33 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
                 ' Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
             )
 
-        paragraph = f'Paragraph: {paragraph}'
 
         counterfactual_answer, counterfactual = None, None
         if opposite_sentiment is not None:
-            counterfactual_answer = await generate_text([
-                {
-                    'system': counterfactual_prompt,
-                    'user': paragraph,
-                    'assistant': None
-                }
-            ])
+
+            if self._is_enabled('e-chat-history'):
+                history = [
+                    {
+                        'system': sentiment_prompt_message['system'],
+                        'user': sentiment_prompt_message['user'],
+                        'assistant': sentiment_answer
+                    }]
+            else:
+                history = []
+
+            history.append({
+                'system': counterfactual_prompt,
+                'user': f'Paragraph: {paragraph}',
+                'assistant': None
+            })
+            
+            counterfactual_answer = await generate_text(history)
+
             counterfactual = extract_paragraph(counterfactual_answer)
 
-        counterfactual_sentiment_prompt, counterfactual_sentiment_answer, counterfactual_sentiment = None, None, None
+        counterfactual_sentiment_prompt_message, counterfactual_sentiment_answer, counterfactual_sentiment = None, None, None
         if counterfactual is not None:
-            counterfactual_sentiment_prompt, counterfactual_sentiment_answer = await self._query_sentiment(counterfactual, generate_text)
+            counterfactual_sentiment_prompt_message, counterfactual_sentiment_answer = await self._query_sentiment(counterfactual, generate_text)
             counterfactual_sentiment = self._extract_sentiment(counterfactual_sentiment_answer)
 
         faithful: bool | None = None
@@ -220,14 +228,14 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
 
         return {
             'debug': paragraph,
-            'predict_prompt': sentiment_prompt,
+            'predict_prompt': sentiment_prompt_message['system'] + ' ' + sentiment_prompt_message['user'],
             'predict_answer': sentiment_answer,
             'predict': sentiment,
             'correct': correct,
-            'explain_prompt': counterfactual_prompt,
+            'explain_prompt': counterfactual_prompt + ' ' + f'Paragraph: {paragraph}',
             'explain_answer': counterfactual_answer,
             'explain': counterfactual,
-            'explain_predict_prompt': counterfactual_sentiment_prompt,
+            'explain_predict_prompt': counterfactual_sentiment_prompt_message['system'] + ' ' + counterfactual_sentiment_prompt_message['user'] if counterfactual_sentiment_prompt_message else None,
             'explain_predict_answer': counterfactual_sentiment_answer,
             'explain_predict': counterfactual_sentiment,
             'faithful': faithful,

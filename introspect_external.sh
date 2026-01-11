@@ -94,13 +94,6 @@ done
 
 echo "Experiment model identifier: $exp_model"
 
-# Retry configuration
-flags=(
-    ""
-    "e-persona-you"
-    "e-persona-human"
-    "e-implcit-target"
-)
 
 datasets=(
      "IMDB"
@@ -113,39 +106,15 @@ export MODEL_NAME="$model_name"
 
 # Run analysis for each flag combination with unlimited retries and no delay
 for dataset in "${datasets[@]}"; do
-    for flag in "${flags[@]}"; do
-        echo "Running analysis with flags: $flag"
-        attempt=1
-        while true; do
-            python llm-introspection-main/experiments/analysis.py \
-                --persistent-dir "$PWD/introspections" \
-                --endpoint "$endpoint" \
-                --task counterfactual \
-                --task-config "$flag" \
-                --model-name "$exp_model" \
-                --dataset "$dataset" \
-                --split test \
-                --seed 0 \
-                --max-workers 1 \
-                --client OpenAI 
-            rc=$?
-            if [ $rc -eq 0 ]; then
-                echo "Run succeeded."
-                break
-            fi
-            echo "Run failed (exit code $rc). Retrying immediately... (attempt $attempt)"
-            attempt=$((attempt + 1))
-        done
-    done
-    
+   
     # Combined configurations
     attempt=1
     while true; do
         python llm-introspection-main/experiments/analysis.py \
-            --persistent-dir "$PWD/introspections" \
+            --persistent-dir "$PWD/introspections_chat_history" \
             --endpoint "$endpoint" \
             --task counterfactual \
-            --task-config "e-implcit-target" "e-persona-you" \
+            --task-config "e-chat-history" \
             --model-name "$exp_model" \
             --dataset "$dataset" \
             --split test \
@@ -161,27 +130,6 @@ for dataset in "${datasets[@]}"; do
         attempt=$((attempt + 1))
     done
     
-    attempt=1
-    while true; do
-        python llm-introspection-main/experiments/analysis.py \
-            --persistent-dir "$PWD/introspections" \
-            --endpoint "$endpoint" \
-            --task counterfactual \
-            --task-config "e-implcit-target" "e-persona-human" \
-            --model-name "$exp_model" \
-            --dataset "$dataset" \
-            --split test \
-            --seed 0 \
-            --max-workers 1 \
-            --client OpenAI 
-        rc=$?
-        if [ $rc -eq 0 ]; then
-            echo "Run succeeded."
-            break
-        fi
-        echo "Run failed (exit code $rc). Retrying immediately... (attempt $attempt)"
-        attempt=$((attempt + 1))
-    done
 done
 
 echo "Experiment completed!"

@@ -15,11 +15,16 @@ class Qwen(AbstractModel):
     }
 
     def _render_prompt(self, history):
-    
+        
+        prompt = ""
+        
         for message_pair in history:
             system_msg = message_pair["system"]
             user_msg = message_pair["user"]
+            assistant_msg = message_pair["assistant"]
 
-            prompt = f"<|im_start|>system\n{system_msg}\n<|im_end|><|im_start|>user\n{user_msg}\n<|im_end|><|im_start|>assistant"
+            prompt += f"<|im_start|>system\n{system_msg}\n<|im_end|><|im_start|>user\n{user_msg}\n<|im_end|><|im_start|>assistant"
+            if assistant_msg is not None:
+                prompt += f"\n{assistant_msg}\n<|im_end|>"
 
         return prompt
