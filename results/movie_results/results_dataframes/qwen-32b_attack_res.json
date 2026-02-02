@@ -1,14 +1,10 @@
 {
-    "e-chat-history": {
-        "successful": 186,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-you": {
+    "e-chain-of-thought": {
         "successful": 164,
         "total": 199
     },
-    "e-implcit-target-e-persona-human": {
-        "successful": 162,
+    "e-chat-history": {
+        "successful": 186,
         "total": 199
     },
     "baseline": {

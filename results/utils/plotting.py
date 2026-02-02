@@ -8,28 +8,13 @@ import seaborn as sns
 
 # Define base colors for each main variant
 base_colors = {
-    'baseline': 'tab:gray',
+    'baseline': 'black',
     'e-chat-history': 'tab:blue',
     'e-persona-you': 'tab:orange',
-    'e-persona-human': 'tab:green'
+    'e-persona-human': 'tab:green',
+    'e-chain-of-thought': 'tab:red',
+    'e-implcit-target': 'tab:gray',
 }
-
-# Function to make color darker
-def darken_color(color, amount=0.6):
-    c = mcolors.to_rgb(color)
-    return tuple([amount*x for x in c])
-
-def get_variant_color(variant):
-    if 'e-implcit-target' in variant:
-        # Map the corresponding base variant and darken it
-        if 'e-persona-you' in variant:
-            return darken_color(base_colors['e-persona-you'])
-        elif 'e-persona-human' in variant:
-            return darken_color(base_colors['e-persona-human'])
-        else:  # default for baseline-related e-implcit-target
-            return darken_color(base_colors['baseline'])
-    else:
-        return base_colors.get(variant, 'gray')  # fallback color
 
 def plot_attack_comparison(models, attacks, plot_dir):
 
@@ -51,14 +36,7 @@ def plot_attack_comparison(models, attacks, plot_dir):
             })
 
     df = pd.DataFrame(records)
-
-    # Split prompt variants from attacks
     prompt_variants = df[~df['variant'].str.contains("TextFooler", case=False, na=False)]
-    attack_variants = df[df['variant'].str.contains("TextFooler", case=False, na=False)]
-
-    # ------------------------------
-    # 📈 1. Prompt variation success by model size
-    # ------------------------------
 
     fig, axes = plt.subplots(1, 2, figsize=(15,7), sharey=True)
 
@@ -71,26 +49,48 @@ def plot_attack_comparison(models, attacks, plot_dir):
     for i, family in enumerate(['Llama3', 'Qwen']):
         subdf = prompt_variants[prompt_variants['family']==family]
         for variant, vdf in subdf.groupby('variant'):
-            axes[i].plot(vdf['size'], vdf['success_rate'], marker="o", label=variant, color=get_variant_color(variant))
-
-        axes[i].set_title(f"{family} Models")
-        axes[i].set_xlabel("Model Size (B parameters)")
-        axes[i].set_ylabel("Success Rate")
+            axes[i].plot(vdf['size'], vdf['success_rate'], marker="o", label=variant, color=base_colors.get(variant, 'gray'))
+        if family == 'Qwen':
+            family = 'Qwen2.5'  
+        axes[i].set_title(f"{family} Family", fontsize=14)
+        axes[i].set_xlabel("Model size (Billions of parameters)")
+        axes[i].set_ylabel("Faithfulness")
         axes[i].set_xscale('log')
         axes[i].set_xticks(major_sizes)
         axes[i].set_xticklabels(size_labels, rotation=45, ha='right')
         axes[i].grid(True)
-        axes[i].legend(fontsize=8)
 
-    plt.suptitle("Faithful Counterfactuals by Model Size & Prompt Variant")
-    plt.ylim(0, 1)  # Set y-axis limits from 0 to 1
+    plt.suptitle("Faithfulness vs. Model Size Across Prompt Variants", fontsize=16, fontweight='bold')
+    plt.ylim(0, 1)  # Set y-axis limits from 0 to 1i
     plt.tight_layout()
-    fig.savefig(os.path.join(plot_dir, 'Introspection_Success'), dpi=300, bbox_inches="tight")
+    fig.savefig(os.path.join(plot_dir, 'faithfulness_vs_model_size'), dpi=300, bbox_inches="tight")
+    
+    # Create and save separate legend
+    legend_fig = plt.figure(figsize=(8, 2))
+    legend_elements = []
+    variant_labels = []
+    
+    # Get unique variants and their colors
+    unique_variants = prompt_variants['variant'].unique()
+    for variant in unique_variants:
+        color = base_colors.get(variant, 'gray')
+        legend_elements.append(plt.Line2D([0], [0], color=color, marker='o', linestyle='-', linewidth=2, markersize=8))
+        variant_labels.append(variant)
+    
+    # Create legend on the figure
+    legend_fig.legend(legend_elements, variant_labels, loc='center', ncol=len(unique_variants), 
+                     fontsize=12, frameon=False)
+    # Remove axes to show only legend
+    legend_fig.gca().set_axis_off()
+    legend_fig.savefig(os.path.join(plot_dir, 'legend'), dpi=300, bbox_inches="tight")
+    plt.show()
+    plt.close(legend_fig)
+    
     plt.show()
 
-    # ------------------------------
-    # 💥 2. Attack success by model size
-    # ------------------------------
+
+    """
+    attack_variants = df[df['variant'].str.contains("TextFooler", case=False, na=False)]
     fig2, ax = plt.subplots(figsize=(12,5))  # ✅ Create new figure and axis properly    
 
     for family, subdf in attack_variants.groupby('family'):
@@ -112,7 +112,7 @@ def plot_attack_comparison(models, attacks, plot_dir):
     plt.tight_layout()
     fig2.savefig(os.path.join(plot_dir, 'Attack_Success'), dpi=300, bbox_inches="tight")
     plt.show()
-    
+    """
     
 
 def extract_means(df):
@@ -121,16 +121,16 @@ def extract_means(df):
         'closeness': {col: flattened[col].mean() for col in flattened if 'closeness' in col},
         'semantic_similarity': {col: flattened[col].mean() for col in flattened if 'similarity' in col},
         'contradiction': {col: flattened[col].mean() for col in flattened if 'contradiction' in col},
-        'fluency': {col: flattened[col].mean() for col in flattened if 'fluency' in col},
-        'diversity': {col: flattened[col].mean() for col in flattened if 'diversity' in col},
-        'evidence_accuracy': {col: flattened[col].mean() for col in flattened if 'evidence_accuracy' in col},
+        #'fluency': {col: flattened[col].mean() for col in flattened if 'fluency' in col},
+        #'diversity': {col: flattened[col].mean() for col in flattened if 'diversity' in col},
+        #'evidence_accuracy': {col: flattened[col].mean() for col in flattened if 'evidence_accuracy' in col},
         'evidence_precision': {col: flattened[col].mean() for col in flattened if 'evidence_precision' in col},
-        'evidence_recall': {col: flattened[col].mean() for col in flattened if 'evidence_recall' in col},
-        'evidence_f1': {col: flattened[col].mean() for col in flattened if 'evidence_f1' in col},
-        'crest_accuracy': {col: flattened[col].mean() for col in flattened if 'crest_accuracy' in col},
+        #'evidence_recall': {col: flattened[col].mean() for col in flattened if 'evidence_recall' in col},
+        #'evidence_f1': {col: flattened[col].mean() for col in flattened if 'evidence_f1' in col},
+        #'crest_accuracy': {col: flattened[col].mean() for col in flattened if 'crest_accuracy' in col},
         'crest_precision': {col: flattened[col].mean() for col in flattened if 'crest_precision' in col},
-        'crest_recall': {col: flattened[col].mean() for col in flattened if 'crest_recall' in col},
-        'crest_f1': {col: flattened[col].mean() for col in flattened if 'crest_f1' in col}, 
+        #'crest_recall': {col: flattened[col].mean() for col in flattened if 'crest_recall' in col},
+        #'crest_f1': {col: flattened[col].mean() for col in flattened if 'crest_f1' in col}, 
     }
 
 
@@ -166,21 +166,15 @@ def plot_size_comparison(models, results, directory, show_plots=True):
     for k in metric_groups.keys():
         print("  •", k)
 
-    # --- Experiment group sets ---
-    experiment_sets = {
-        "Introspection": [
-            "baseline",
-            "e-chat-history",
-            "e-persona-you",
-            "e-persona-human",
-            "e-implcit-target",
-            "e-implcit-target-e-persona-you",
-            "e-implcit-target-e-persona-human"
-        ],
-        "TextFooler": [
-            "TextFoolerJin2019"
-        ]
-    }
+
+    prompt_variations = [
+        "baseline",
+        "e-chat-history",
+        "e-persona-you",
+        "e-persona-human",
+        "e-implcit-target",
+        "e-chain-of-thought"
+    ]
 
     # --- Families and model sizes ---
     families = sorted(set(data['family'] for data in model_data.values()))
@@ -197,131 +191,69 @@ def plot_size_comparison(models, results, directory, show_plots=True):
     for metric_group_name in metric_groups.keys():
         print(f"\n🔹 Processing metric group: {metric_group_name}")
 
-        for group_label, experiments in experiment_sets.items():
+        for family in families:
 
-            # --- CASE 1: Baseline group → separate plots per family ---
-            if group_label == "Introspection":
-                for family in families:
-                    print(f"   📊 Plotting {group_label} for {family}")
-                    fig, ax = plt.subplots(figsize=(6, 5))
-                    plotted = False
+            fig, ax = plt.subplots(figsize=(6, 5))
+            plotted = False
 
-                    for variant in experiments:
-                        exp_values = []
-                        for size_label, size_num in zip(all_size_labels, all_size_nums):
-                            key = f"{family}_{size_label}"
-                            if key not in model_data:
-                                continue
+            for variant in prompt_variations:
+                exp_values = []
+                for size_label, size_num in zip(all_size_labels, all_size_nums):
+                    key = f"{family}_{size_label}"
+                    if key not in model_data:
+                        continue
 
-                            metrics_dict = model_data[key]['metrics']
-                            if metric_group_name not in metrics_dict:
-                                continue
+                    metrics_dict = model_data[key]['metrics']
+                    if metric_group_name not in metrics_dict:
+                        continue
 
-                            # --- match experiment name by prefix ---
-                            found_key = None
-                            for k in metrics_dict[metric_group_name].keys():
-                                if k.lower().startswith(variant.lower()):
-                                    found_key = k
-                                    break
-                            if not found_key:
-                                continue
+                    # --- match experiment name by prefix but exclude combined variants ---
+                    found_key = None
+                    for k in metrics_dict[metric_group_name].keys():
+                        if k.lower().startswith(variant.lower()):
+                            # Exclude combined variants by checking they don't have extra components
+                            k_parts = k.lower().split('-')
+                            variant_parts = variant.lower().split('-')
+                            if len(k_parts) == len(variant_parts) or (len(k_parts) == len(variant_parts) + 1 and k_parts[-1].isdigit()):
+                                found_key = k
+                                break
+                    if not found_key:
+                        continue
 
-                            val = metrics_dict[metric_group_name][found_key]
-                            exp_values.append((size_num, float(val)))
+                    val = metrics_dict[metric_group_name][found_key]
+                    exp_values.append((size_num, float(val)))
 
-                        if not exp_values:
-                            continue
+                if not exp_values:
+                    continue
 
-                        exp_values.sort()
-                        x_vals, y_vals = zip(*exp_values)
-                        ax.plot(x_vals, y_vals, marker='o', label=variant, color=get_variant_color(variant))
-                        plotted = True
+                exp_values.sort()
+                x_vals, y_vals = zip(*exp_values)
+                ax.plot(x_vals, y_vals, marker='o', label=variant, color=base_colors.get(variant, 'gray'))
+                plotted = True
 
-                    ax.set_title(f"{metric_group_name.replace('_', ' ').title()} – {group_label.replace('_', ' ')} ({family.title()})",
-                                 fontsize=12, fontweight='bold')
-                    ax.set_xlabel('Model Size', fontweight='bold')
-                    ax.set_ylabel('Score', fontweight='bold')
-                    ax.set_xscale('log')
-                    ax.set_xticks(major_size_nums)
-                    ax.set_xticklabels(major_size_labels, rotation=45, ha='right')
-                    ax.grid(True, alpha=0.3, linestyle='--')
+            if family.title() == 'Qwen':    
+                f = 'Qwen2.5'
+            else:
+                f = family.title()
+            ax.set_title(f,fontsize=12)
+            ax.set_xlabel('Model Size')
+            ax.set_ylabel(metric_group_name.replace('_', ' ').title())
+            ax.set_xscale('log')
+            ax.set_xticks(major_size_nums)
+            ax.set_xticklabels(major_size_labels, rotation=45, ha='right')
+            ax.grid(True, alpha=0.3, linestyle='--')
 
-                    if plotted:
-                        ax.legend(loc='best', title='Promp variation',fontsize=8)
-                        ymin, ymax = ax.get_ylim()
-                        ax.set_ylim(0, ymax * 1.15)
+            if plotted:
+                #ax.legend(loc='best', title='Promp variation',fontsize=8)
+                ymin, ymax = ax.get_ylim()
+                ax.set_ylim(0, ymax * 1.15)
 
-                    plt.tight_layout()
-                    filename = f"{metric_group_name}_{group_label}_{family}.png"
-                    path = os.path.join(directory, filename)
-                    fig.savefig(path, dpi=300, bbox_inches="tight")
-                    print(f"   ✅ Saved {path}")
-                    if show_plots:
-                        plt.show()
-                    plt.close(fig)
+            plt.tight_layout()
+            filename = f"{metric_group_name}_{family}.png"
+            path = os.path.join(directory, filename)
+            fig.savefig(path, dpi=300, bbox_inches="tight")
+            print(f"   ✅ Saved {path}")
+            if show_plots:
+                plt.show()
+            plt.close(fig)
 
-            # --- CASE 2: TextFooler group → single plot with both families ---
-            elif group_label == "TextFooler":
-                print(f"   📊 Plotting {group_label} (both families combined)")
-
-                fig, ax = plt.subplots(figsize=(6, 5))
-                plotted = False
-
-                for exp_name in experiments:
-                    for fam_idx, family in enumerate(["Llama3", "Qwen"]):
-                        exp_values = []
-                        for size_label, size_num in zip(all_size_labels, all_size_nums):
-                            key = f"{family}_{size_label}"
-                            if key not in model_data:
-                                continue
-
-                            metrics_dict = model_data[key]['metrics']
-                            if metric_group_name not in metrics_dict:
-                                continue
-
-                            # --- match experiment name by prefix ---
-                            found_key = None
-                            for k in metrics_dict[metric_group_name].keys():
-                                if k.lower().startswith(exp_name.lower()):
-                                    found_key = k
-                                    break
-                            if not found_key:
-                                continue
-
-                            val = metrics_dict[metric_group_name][found_key]
-                            exp_values.append((size_num, float(val)))
-
-                        if not exp_values:
-                            continue
-
-                        exp_values.sort()
-                        x_vals, y_vals = zip(*exp_values)
-                        ax.plot(
-                            x_vals, y_vals,
-                            marker='s', linestyle='--',
-                            label=family.title(),
-                        )
-
-                        plotted = True
-
-                ax.set_title(f"{metric_group_name.replace('_', ' ').title()} – {group_label.replace('_', ' ')}",
-                             fontsize=12, fontweight='bold')
-                ax.set_xlabel('Model Size', fontweight='bold')
-                ax.set_ylabel('Score', fontweight='bold')
-                ax.set_xscale('log')
-                ax.set_xticks(major_size_nums)
-                ax.set_xticklabels(major_size_labels, rotation=45, ha='right')
-                ax.grid(True, alpha=0.3, linestyle='--')
-
-                if plotted:
-                    ax.legend(loc='best', title='Model Family',fontsize=8)
-                    ax.set_ylim(0, 1)
-
-                plt.tight_layout()
-                filename = f"{metric_group_name}_{group_label}.png"
-                path = os.path.join(directory, filename)
-                fig.savefig(path, dpi=300, bbox_inches="tight")
-                print(f"   ✅ Saved {path}")
-                if show_plots:
-                    plt.show()
-                plt.close(fig)

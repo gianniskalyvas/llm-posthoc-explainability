@@ -164,56 +164,86 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
 
         #opposite_sentiment = self._make_counterfactual_sentiment(observation['label'])
         opposite_sentiment = self._make_counterfactual_sentiment(sentiment)
-        
-        counterfactual_prompt = ''
-        if self._is_enabled('e-implcit-target'):
-            counterfactual_prompt += 'Generate a counterfactual explanation by making minimal changes to the user\'s paragraph, '
-            if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += 'so that you would classify it as the opposite sentiment of what it currently is.'
-        
-            elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += 'so that a human would classify it as the opposite sentiment of what it currently is.'
-            else:
-                counterfactual_prompt += 'so that the sentiment becomes the opposite of what it currently is.'
-        else:
-            counterfactual_prompt += (
-                    f' The task is sentiment classification. The following paragraph was classified as "{sentiment}".'
-                    f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
-                )
-            if self._is_enabled('e-persona-you'):
-                counterfactual_prompt +=  f' so that you would predict that the paragraph is "{opposite_sentiment}".'
-            elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt +=f' so that a human would predict that the paragraph is "{opposite_sentiment}".'
-            else:
-                counterfactual_prompt += f' so that the classifier would predict that the paragraph is "{opposite_sentiment}".'
-                
-        counterfactual_prompt += (
-                ' Use the following definition of ‘counterfactual explanation’:'
-                ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
-                ' Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
-            )
 
+        cf_definition = (
+                ' Use the following definition of "counterfactual explanation": '
+                '"A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome." '
+                'Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
+            )        
 
         counterfactual_answer, counterfactual = None, None
+        counterfactual_prompt = None
         if opposite_sentiment is not None:
 
-            if self._is_enabled('e-chat-history'):
-                history = [
-                    {
-                        'system': sentiment_prompt_message['system'],
-                        'user': sentiment_prompt_message['user'],
-                        'assistant': sentiment_answer
-                    }]
+            if self._is_enabled('e-chain-of-thought'):
+                identify_prompt = (
+                    f'In the task of sentiment classification, the following paragraph was classified as "{sentiment}". ' +
+                    f'Explain why the "{sentiment}" label was predicted by identifying the words in the input that caused the label. ' +
+                    'List ONLY the words as a comma separated list.'
+                )
+                identify_message = {
+                    'system': identify_prompt,
+                    'user': f'Paragraph: {paragraph}',
+                    'assistant': None
+                }
+
+                identify_message['assistant'] = await generate_text([identify_message])
+
+                generate_prompt = f'Generate a counterfactual explanation for the original paragraph by ONLY changing a minimal set of the words you identified, so that the label changes from "{sentiment}" to "{opposite_sentiment}". ' + cf_definition
+
+                counterfactual_message = {
+                    'system': generate_prompt,
+                    'user': f'Paragraph: {paragraph}',
+                    'assistant': None
+                }
+
+                counterfactual_prompt = 'Identification Step: ' + identify_prompt + ' ' + identify_message['assistant'] + ' Generation Step: ' + generate_prompt
+
+                counterfactual_answer = await generate_text([identify_message, counterfactual_message])
+
+
             else:
                 history = []
+                if self._is_enabled('e-chat-history'):
+                    history.append({
+                            'system': sentiment_prompt_message['system'],
+                            'user': sentiment_prompt_message['user'],
+                            'assistant': sentiment_answer
+                        })
+                
+                counterfactual_prompt = ''
+                if self._is_enabled('e-implcit-target'):
+                    counterfactual_prompt += 'Generate a counterfactual explanation by making minimal changes to the user\'s paragraph, '
+                    if self._is_enabled('e-persona-you'):
+                        counterfactual_prompt += 'so that you would classify it as the opposite sentiment of what it currently is.'
+                
+                    elif self._is_enabled('e-persona-human'):
+                        counterfactual_prompt += 'so that a human would classify it as the opposite sentiment of what it currently is.'
+                    else:
+                        counterfactual_prompt += 'so that the sentiment becomes the opposite of what it currently is.'
+                else:
+                    counterfactual_prompt += (
+                            f' The task is sentiment classification. The following paragraph was classified as "{sentiment}".'
+                            f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                        )
+                    if self._is_enabled('e-persona-you'):
+                        counterfactual_prompt +=  f' so that you would predict that the paragraph is "{opposite_sentiment}".'
+                    elif self._is_enabled('e-persona-human'):
+                        counterfactual_prompt +=f' so that a human would predict that the paragraph is "{opposite_sentiment}".'
+                    else:
+                        counterfactual_prompt += f' so that the classifier would predict that the paragraph is "{opposite_sentiment}".'
+                        
 
-            history.append({
-                'system': counterfactual_prompt,
-                'user': f'Paragraph: {paragraph}',
-                'assistant': None
-            })
-            
-            counterfactual_answer = await generate_text(history)
+
+                counterfactual_prompt += cf_definition
+
+                history.append({
+                    'system': counterfactual_prompt,
+                    'user': f'Paragraph: {paragraph}',
+                    'assistant': None
+                })
+                
+                counterfactual_answer = await generate_text(history)
 
             counterfactual = extract_paragraph(counterfactual_answer)
 
@@ -232,7 +262,7 @@ class SentimentCounterfactualTask(FaithfulTask[SentimentDataset, SentimentObserv
             'predict_answer': sentiment_answer,
             'predict': sentiment,
             'correct': correct,
-            'explain_prompt': counterfactual_prompt + ' ' + f'Paragraph: {paragraph}',
+            'explain_prompt': counterfactual_prompt + ' ' + f'Paragraph: {paragraph}' if counterfactual_prompt else None,
             'explain_answer': counterfactual_answer,
             'explain': counterfactual,
             'explain_predict_prompt': counterfactual_sentiment_prompt_message['system'] + ' ' + counterfactual_sentiment_prompt_message['user'] if counterfactual_sentiment_prompt_message else None,

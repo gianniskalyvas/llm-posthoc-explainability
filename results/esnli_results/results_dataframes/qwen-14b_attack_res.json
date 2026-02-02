@@ -1,8 +1,4 @@
 {
-    "e-implcit-target-e-persona-human": {
-        "successful": 3786,
-        "total": 6598
-    },
     "e-implcit-target": {
         "successful": 3791,
         "total": 6598
@@ -19,12 +15,12 @@
         "successful": 5569,
         "total": 6598
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 3749,
-        "total": 6598
-    },
     "e-chat-history": {
         "successful": 6050,
+        "total": 6598
+    },
+    "e-chain-of-thought": {
+        "successful": 5528,
         "total": 6598
     }
 }

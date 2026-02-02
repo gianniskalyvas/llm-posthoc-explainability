@@ -1,14 +1,10 @@
 {
-    "e-implcit-target-e-persona-you": {
-        "successful": 78,
+    "e-chain-of-thought": {
+        "successful": 92,
         "total": 199
     },
     "e-persona-human": {
         "successful": 91,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 72,
         "total": 199
     },
     "e-persona-you": {

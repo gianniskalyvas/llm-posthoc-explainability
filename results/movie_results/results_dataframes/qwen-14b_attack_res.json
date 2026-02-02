@@ -11,16 +11,12 @@
         "successful": 138,
         "total": 199
     },
+    "e-chain-of-thought": {
+        "successful": 147,
+        "total": 199
+    },
     "e-persona-human": {
         "successful": 162,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 134,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-you": {
-        "successful": 136,
         "total": 199
     },
     "baseline": {

@@ -111,10 +111,10 @@ for dataset in "${datasets[@]}"; do
     attempt=1
     while true; do
         python llm-introspection-main/experiments/analysis.py \
-            --persistent-dir "$PWD/introspections_chat_history" \
+            --persistent-dir "$PWD/introspections_chain_of_thought" \
             --endpoint "$endpoint" \
             --task counterfactual \
-            --task-config "e-chat-history" \
+            --task-config "e-chain-of-thought" \
             --model-name "$exp_model" \
             --dataset "$dataset" \
             --split test \

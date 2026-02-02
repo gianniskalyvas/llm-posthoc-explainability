@@ -19,12 +19,8 @@
         "successful": 187,
         "total": 199
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 173,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 169,
+    "e-chain-of-thought": {
+        "successful": 165,
         "total": 199
     }
 }

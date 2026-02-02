@@ -3,10 +3,6 @@
         "successful": 159,
         "total": 199
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 178,
-        "total": 199
-    },
     "e-persona-you": {
         "successful": 171,
         "total": 199
@@ -15,12 +11,12 @@
         "successful": 173,
         "total": 199
     },
-    "e-implcit-target-e-persona-human": {
-        "successful": 172,
-        "total": 199
-    },
     "e-implcit-target": {
         "successful": 179,
+        "total": 199
+    },
+    "e-chain-of-thought": {
+        "successful": 186,
         "total": 199
     },
     "e-chat-history": {

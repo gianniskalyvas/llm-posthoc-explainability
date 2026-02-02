@@ -15,16 +15,12 @@
         "successful": 20,
         "total": 199
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 18,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 19,
-        "total": 199
-    },
     "baseline": {
         "successful": 33,
+        "total": 199
+    },
+    "e-chain-of-thought": {
+        "successful": 23,
         "total": 199
     },
     "TextFoolerJin2019": {

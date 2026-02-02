@@ -3,14 +3,6 @@
         "successful": 2467,
         "total": 6598
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 2393,
-        "total": 6598
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 2279,
-        "total": 6598
-    },
     "e-chat-history": {
         "successful": 3034,
         "total": 6598
@@ -25,6 +17,10 @@
     },
     "e-persona-you": {
         "successful": 3035,
+        "total": 6598
+    },
+    "e-chain-of-thought": {
+        "successful": 3656,
         "total": 6598
     },
     "TextFoolerJin2019": {

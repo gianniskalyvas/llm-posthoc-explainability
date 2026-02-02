@@ -11,16 +11,12 @@
         "successful": 8,
         "total": 199
     },
+    "e-chain-of-thought": {
+        "successful": 7,
+        "total": 199
+    },
     "e-chat-history": {
         "successful": 12,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-you": {
-        "successful": 5,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 6,
         "total": 199
     },
     "e-persona-human": {

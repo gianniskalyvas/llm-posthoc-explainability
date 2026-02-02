@@ -3,16 +3,12 @@
         "successful": 129,
         "total": 199
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 149,
-        "total": 199
-    },
     "e-implcit-target": {
         "successful": 160,
         "total": 199
     },
-    "e-implcit-target-e-persona-human": {
-        "successful": 156,
+    "e-chain-of-thought": {
+        "successful": 161,
         "total": 199
     },
     "e-persona-human": {

@@ -176,58 +176,89 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
         correct = self._process_is_correct(observation, entailment)
 
         opposite_entailment = self._make_counterfactual_entailment(entailment)
-        
-        counterfactual_prompt = ''
-        if self._is_enabled('e-implcit-target'):
-            counterfactual_prompt += 'Generate a counterfactual explanation by making minimal changes to the user\'s paragraph, '
-            if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f'so that given the statement "{hypothesis}", you would say the entailment is the opposite of what it currently is.'
-            elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f'so that given the statement "{hypothesis}", a human would say the entailment is the opposite of what it currently is.'
-            else:
-                counterfactual_prompt += f'so that given the statement "{hypothesis}", the entailment becomes the opposite of what it currently is.'
-        else:
-        
-            entail_instruction1 = 'does not entail' if opposite_entailment == 'yes' else 'entails'
-            entail_instruction2 = 'entails' if opposite_entailment == 'yes' else 'does not entail'
-            counterfactual_prompt += (
-                f' The task is entailment classification and the statement "{hypothesis}" {entail_instruction1} the user\'s paragraph.'
-                f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+
+        cf_definition = (
+                ' Use the following definition of "counterfactual explanation": '
+                '"A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome." '
+                'Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
             )
 
-            if self._is_enabled('e-persona-you'):
-                counterfactual_prompt += f' so that you would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
-            elif self._is_enabled('e-persona-human'):
-                counterfactual_prompt += f' so that a human would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
-            else:
-                counterfactual_prompt += f' so that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
-            
-        counterfactual_prompt += (
-                ' Use the following definition of ‘counterfactual explanation’:'
-                ' “A counterfactual explanation is a minimal edit of the original paragraph with the words or phrases crucial for classification changed, revealing what should have been different to observe the opposite outcome.”'
-                ' Enclose only the edited paragraph inside <new> tags and nothing else; for example: <new>The revised paragraph goes here.</new>.'
-            )
+        entail_instruction1 = 'does not entail' if opposite_entailment == 'yes' else 'entails'
+        entail_instruction2 = 'entails' if opposite_entailment == 'yes' else 'does not entail'        
+
+
             
         counterfactual_answer, counterfactual = None, None
+        counterfactual_prompt = None
         if opposite_entailment is not None:
 
-            if self._is_enabled('e-chat-history'):
-                history = [
-                    {
-                        'system': entailment_prompt_message['system'],
-                        'user': entailment_prompt_message['user'],
-                        'assistant': entailment_answer
-                    }]
+            if self._is_enabled('e-chain-of-thought'):
+                identify_prompt = (
+                    f'In the task of entailment classification the statement "{hypothesis}" {entail_instruction1} the user\'s paragraph. ' +
+                    'Explain the prediction by identifying the words in the paragraph that caused this label. ' +
+                    'List ONLY the words as a comma separated list.'
+                )
+                identify_message = {
+                    'system': identify_prompt,
+                    'user': f'Paragraph: {paragraph}',
+                    'assistant': None
+                }
+
+                identify_message['assistant'] = await generate_text([identify_message])
+
+                generate_prompt = f'Generate a counterfactual explanation for the original paragraph by ONLY changing a minimal set of the words you identified, so that the following paragraph {entail_instruction2} the statement "{hypothesis}". ' + cf_definition
+
+                counterfactual_message = {
+                    'system': generate_prompt,
+                    'user': f'Paragraph: {paragraph}',
+                    'assistant': None
+                }
+
+                counterfactual_prompt = 'Identification Step: ' + identify_prompt + ' ' + identify_message['assistant'] + ' Generation Step: ' + generate_prompt
+
+                counterfactual_answer = await generate_text([identify_message, counterfactual_message])
+
             else:
                 history = []
+                if self._is_enabled('e-chat-history'):
+                    history.append({
+                            'system': entailment_prompt_message['system'],
+                            'user': entailment_prompt_message['user'],
+                            'assistant': entailment_answer
+                        })
+                
+                counterfactual_prompt = ''
+                if self._is_enabled('e-implcit-target'):
+                    counterfactual_prompt += 'Generate a counterfactual explanation by making minimal changes to the user\'s paragraph, '
+                    if self._is_enabled('e-persona-you'):
+                        counterfactual_prompt += f'so that given the statement "{hypothesis}", you would say the entailment is the opposite of what it currently is.'
+                    elif self._is_enabled('e-persona-human'):
+                        counterfactual_prompt += f'so that given the statement "{hypothesis}", a human would say the entailment is the opposite of what it currently is.'
+                    else:
+                        counterfactual_prompt += f'so that given the statement "{hypothesis}", the entailment becomes the opposite of what it currently is.'
+                else:
+                    counterfactual_prompt += (
+                        f' The task is entailment classification and the statement "{hypothesis}" {entail_instruction1} the user\'s paragraph.'
+                        f' Generate a counterfactual explanation by making minimal changes to the paragraph,'
+                    )
 
-            history.append({
-                'system': counterfactual_prompt,
-                'user': f'Paragraph: {paragraph}',
-                'assistant': None
-            })
-            
-            counterfactual_answer = await generate_text(history)
+                    if self._is_enabled('e-persona-you'):
+                        counterfactual_prompt += f' so that you would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
+                    elif self._is_enabled('e-persona-human'):
+                        counterfactual_prompt += f' so that a human would predict that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
+                    else:
+                        counterfactual_prompt += f' so that the following paragraph {entail_instruction2} the statement "{hypothesis}".'
+                    
+                counterfactual_prompt += cf_definition
+
+                history.append({
+                    'system': counterfactual_prompt,
+                    'user': f'Paragraph: {paragraph}',
+                    'assistant': None
+                })
+                
+                counterfactual_answer = await generate_text(history)
+
             counterfactual = extract_paragraph(counterfactual_answer)
 
         counterfactual_entailment_prompt_message, counterfactual_entailment_answer, counterfactual_entailment = None, None, None
@@ -245,7 +276,7 @@ class EntailmentCounterfactualTask(FaithfulTask[EntailmentDataset, EntailmentObs
             'predict_answer': entailment_answer,
             'predict': entailment,
             'correct': correct,
-            'explain_prompt': counterfactual_prompt + ' ' + f'Paragraph: {paragraph}',
+            'explain_prompt': counterfactual_prompt + ' ' + f'Paragraph: {paragraph}' if counterfactual_prompt else None,
             'explain_answer': counterfactual_answer,
             'explain': counterfactual,
             'explain_predict_prompt': counterfactual_entailment_prompt_message['system'] + ' ' + counterfactual_entailment_prompt_message['user'] if counterfactual_entailment_prompt_message else None,

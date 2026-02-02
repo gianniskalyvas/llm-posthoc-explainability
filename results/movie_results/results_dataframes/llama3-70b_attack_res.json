@@ -7,6 +7,10 @@
         "successful": 167,
         "total": 199
     },
+    "e-chain-of-thought": {
+        "successful": 178,
+        "total": 199
+    },
     "baseline": {
         "successful": 164,
         "total": 199
@@ -15,16 +19,8 @@
         "successful": 191,
         "total": 199
     },
-    "e-implcit-target-e-persona-you": {
-        "successful": 166,
-        "total": 199
-    },
     "e-implcit-target": {
         "successful": 175,
-        "total": 199
-    },
-    "e-implcit-target-e-persona-human": {
-        "successful": 167,
         "total": 199
     }
 }
