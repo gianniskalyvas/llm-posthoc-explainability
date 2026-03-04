@@ -7,7 +7,7 @@ This project adopts counterfactuals as a primary method for post-hoc explainabil
 We evaluate multiple models across different scales by generating counterfactual explanations as in *Are Self-Explanations from Large Language Models Faithful?*.
 We extended the framework’s abstract classes to support newer models and our custom datasets, and to better align the framework with the specific requirements of our study.
 
-We analyze the impact of model scale on the quality of post-hoc counterfactual explanations.
+We analyze the impact of model scale but also prompt configuration on the quality of post-hoc counterfactual explanations.
 
 ### Datasets
 
@@ -16,160 +16,67 @@ ERASER benchmark: Standard benchmark datasets augmented with human-provided rati
  - Movie Reviews: A collection of movie reviews labeled for sentiment (positive or negative). 
  - e-SNLI: Sentence pairs labeled for entailment (yes or no).
 
-### Models
+### LLMs 
 
 - **LLaMA-3:** 1B, 3B, 8B, 70B  
 - **Qwen-2.5:** 1.5B, 3B, 7B, 14B, 32B, 72B  
-- **t5-small** trained according to CREST
 
-The selected models enable comparisons across scales within the same architecture, with CREST serving as a trained rationalization baseline rather than a generative self-explanation model.
-
----
-
-### Directory Structure
-- `introspections/` — Self-generated counterfactual results  
-- `results/` — Evaluation metrics and visualization plots
-- `eraserbenchmark-master/` — ERASER benchmark datasets with human annotations
-- `llm-introspection-main/` — Modified introspection module (adapted from *Are Self-Explanations from Large Language Models Faithful?*)
-- `crest/` — CREST rationalizers
 
 
 # Experiment Pipeline
 
-Refer to `experiment_summary.ipynb` for a complete walkthrough of the experimental pipeline.
 
-```mermaid
-flowchart LR
-    A[Instance]
-
-    %% Left branch: Explanations
-    A --> B(ERASER)
-    B --> C[Human<br/>Annotations]
-
-
-    A --> F(CREST<br/>Explainer)
-    F --> G[Rationales]
-
-
-    %% Middle: Prediction
-    A --> J(Model/<br/>Classifier)
-    J --> K[Prediction]
-
-    %% Right branch: Counterfactuals
-    A --> M(Model/<br/>Counterfactual<br/>Generator)
-    L[Persona] --> M
-    K --> W{Visible<br/>Target?}
-    W --> |Yes|M
-
-    M --> N[Self-Generated<br/>Counterfactual]
-    N --> O(Model/<br/>Classifier)
-    O --> P[Counterfactual<br/>Prediction]
-
-    %% Evaluation logic
-    K --> Q{Same?}
-    P --> Q
-    
-    A --> T(editdistance)
-    N --> T
-    A --> IA(mpnet)
-    N --> IA
-    A --> IC(roberta_mnli)
-    N --> IC
-
-    G --> H(Measure<br/>Precision)
-    N --> H
-    C --> D(Measure<br/>Precision)
-    N --> D
-
-    subgraph IB[Evaluation]
-
-      subgraph IE[Intrinsic]
-          Q -->|Yes| R[Unfaithful]
-          Q -->|No| S[Faithful]
-          T --> U[Closeness]
-          IA --> V[Semantic<br/>Similarity]
-          IC --> ID[Contradiction]
-      end
-
-      subgraph IF[Precision]
-        H --> I[CREST<br/>Precision]
-        D --> E[Human<br/>Precision]
-      end
-
-    end
-
-```
-
+<div style="text-align:center;">
+  <img src="experimental-pipeline.png" alt="pipeline" style="width:100%;"/>
+</div>
 
 ## 1. Classifiers
 
 <div style="text-align:center;">
-  <img src="results/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:100%;"/>
+  <img src="results/classifiers/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:100%;"/>
 </div>
 
-## 2. Counterfactuals
 
-### Examples
+## 2. Counterfactual Generation
 
-<details>
-<summary><b>📖 Movie Review Example </b></summary>
+Generation is organized into three stages: original prediction,counterfactual generation, and counterfactual evaluation. All stages are implemented using a single large
+language model (LLM), which assumes different roles through distinct prompting configurations.
 
-#### Original Review
-```
-michael robbins ' hardball is quite the cinematic achievement . in about two hours , we get a glancing examination of ghetto life , a funeral with a heartfelt eulogy , speeches about never giving up , a cache of cute kids ( including a fat one with asthma ) , a hard - luck gambler who finds salvation in a good woman and a climactic " big game , " where the underdogs prove to have a bigger bite than anyone ever imagined ...
-```
-**Classification:** `NEGATIVE` ✓
+### Prompt Configurations
 
----
+**Baseline** -  serves as a point of referance. 
 
-#### Self-Generated Counterfactual (Introspection)
-```
-Michael Robbins' Hardball is a cinematic masterpiece. In about two hours, we get a nuanced exploration of ghetto life, a funeral with a heartfelt eulogy, speeches about perseverance, a cache of endearing kids (including a young one with asthma), a hard-luck gambler who finds redemption in a kind woman and a climactic "big game," where the underdogs prove to have a bigger impact than anyone ever imagined ... 
-```
-**Result:** `NEGATIVE → POSITIVE`  
-**Faithfulness:** ✓ Successfully flipped prediction  
-**Key Changes:** Systematically replaced negative descriptors ("quite the cinematic achievement"→"masterpiece", "glancing examination"→"nuanced exploration", "cute kids"→"endearing kids") with positive alternatives while maintaining sentence structure.
+The model is explicitly provided with the target label—defined as the opposite of its prediction in Stage I—and is instructed to modify the original instance accordingly. The prompt further includes a formal definition of a counterfactual to encourage adherence to minimality and label-flipping principles.
 
-</details>
-
-<details>
-<summary><b>📖 e-SNLI Example </b></summary>
-
-#### Original Instance
-**Hypothesis:** `Several people sitting in a boat.` <br>
-**Premise:**  `A group of people traveling in a small wooden boat.`  <br>
-**Classification:** `YES (entailment)` ✓
-
-#### Self-Generated Counterfactual (Introspection)
-**Premise:** `A group of people traveling in a small wooden airplane.`  
-**Result:** `YES → NO`  
-**Faithfulness:** ✓ Successfully flipped prediction  
-**Key Changes:** Replaced "boat" with "airplane", changing the mode of transport.
-
-</details>
-
-### Introspect
-
-**Perspective / Persona Manipulation** – subject of the explanation
+**Persona Manipulation** – subject of the explanation
  - ```e-persona-you``` (e.g., *"What would have to change for you to change your mind?"*).
 
  - ```e-persona-human``` (e.g.,*"What would have to change for a human to change their mind?"*).
 
 
-**Target Visibility Manipulation** 
+**Target Visibility** 
  - ```e-implicit-target``` (The model is not told what its initial prediction was.)
  
+**Chat history** 
 
-```e-implicit-target``` flag can be combined with ```e-persona-you``` or ```e-persona-human```.
+the initial classification and the counterfactual generation are performed within the same chat history to eximen wether context influences behavior.
+
+**Chain of thought Prompting** 
+
+The model is first instructed to identify the decision-relevant features and then to generate a counterfactual restricting its changes in the identified features.
 
 
-### CREST
-
-We train a CREST rationalizer on each task that produces a token-level mask indicating features relevant to the prediction, allowing us to examine whether counterfactual edits perturb tokens identified as causally important.
 
 ## 3. Evaluation
 
- - *Faithfulness*: Percentage of self-generated counterfactuals that successfully flip the model's prediction.
+### Faithfulness
+
+Percentage of self-generated counterfactuals that successfully flip the model's prediction.
+
+
+### Minimality 
+
+We evaluate the extent to which a counterfactual explanation remains close to the original input. We consider multiple complementary instantiations of such a distance:
 
  - *Closeness*: Normalized edit distance.
 
@@ -177,56 +84,86 @@ We train a CREST rationalizer on each task that produces a token-level mask indi
 
  - *Contradiction*: Contradiction probability from `roberta-large-mnli`.
 
+### Evidence-Supported Modification Precision (ESMP)
+
+
+We examine to what extent LLM modify only decision-relevant parts of the input.
+
+Do this end we leverage human annotations as provided by ERASER.
+
+To this end we also train a rationalizer to extract a rationale sufficient for prediction. 
+Its high accuracy although its constrains suggest it sucessfully identifies decision-relevant features.
+
+
+
+
+<h1 style="text-align:left;">Faithfulness</h2>
+
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
-  <img src="results/movie_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
+  <img src="results/movie_results/plots/faithfulness_vs_model_size.png" alt="Faithfulness" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
+  <img src="results/movie_results/plots/legend.png">
 </div>
-
-
-
-<div style="height:40px;"></div>
-
-<div style="text-align:center;">
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;  ">
-    <!-- Distance Row -->
-    <img src="results/movie_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:49%; margin:0; padding:0;"/>
-    <!-- Contradiction Row -->
-    <img src="results/movie_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:49%; margin:0; padding:0;"/>
-    <!-- Semantic Similarity Row -->
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:49%; margin:0; padding:0;"/>
-  </div>
-</div>
-
-
 
 <h2 style="text-align:left;">e-SNLI</h2>
 <div style="text-align:center;">
-  <img src="results/esnli_results/plots/Introspection_Success.png" alt="Introspection Success" style="display:block; margin:0 auto; width:100%; padding-bottom:40px;"/>
-</div>
-
-<div style="height:40px;"></div>
-
-<div style="text-align:center;">
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
-    <!-- Distance Row -->
-    <img src="results/esnli_results/plots/closeness_Introspection_Llama3.png" alt="Distance LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/closeness_Introspection_Qwen.png" alt="Distance Qwen" style="width:49%; margin:0; padding:0;"/>
-    <!-- Contradiction Row -->
-    <img src="results/esnli_results/plots/contradiction_Introspection_Llama3.png" alt="Contradiction LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/contradiction_Introspection_Qwen.png" alt="Contradiction Qwen" style="width:49%; margin:0; padding:0;"/>
-    <!-- Semantic Similarity Row -->
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Llama3.png" alt="Semantic Similarity LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/semantic_similarity_Introspection_Qwen.png" alt="Semantic Similarity Qwen" style="width:49%; margin:0; padding:0;"/>
-  </div>
+  <img src="results/esnli_results/plots/faithfulness_vs_model_size.png" alt="Faithfulness" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
+  <img src="results/movie_results/plots/legend.png">
 </div>
 
 
-## 4. Precision
 
-### Metric Definitions
+<h1 style="text-align:left;">Minimality</h2>
+
+<h2>Movie Reviews</h2>
+
+<table>
+<tr>
+<th>LLaMA-3</th>
+<th>Qwen</th>
+</tr>
+
+<tr>
+<td><img src="results/movie_results/plots/Closeness_Llama3.png" width="100%"></td>
+<td><img src="results/movie_results/plots/Closeness_Qwen.png" width="100%"></td>
+</tr>
+
+<tr>
+<td><img src="results/movie_results/plots/Semantic Similarity_Llama3.png" width="100%"></td>
+<td><img src="results/movie_results/plots/Semantic Similarity_Qwen.png" width="100%"></td>
+</tr>
+
+<tr>
+<td><img src="results/movie_results/plots/Contradiction_Llama3.png" width="100%"></td>
+<td><img src="results/movie_results/plots/Contradiction_Qwen.png" width="100%"></td>
+</tr>
+</table>
+
+<h2>e-SNLI</h2>
+
+<table>
+<tr>
+<th>LLaMA-3</th>
+<th>Qwen</th>
+</tr>
+
+<tr>
+<td><img src="results/esnli_results/plots/Closeness_Llama3.png" width="100%"></td>
+<td><img src="results/esnli_results/plots/Closeness_Qwen.png" width="100%"></td>
+</tr>
+
+<tr>
+<td><img src="results/esnli_results/plots/Semantic Similarity_Llama3.png" width="100%"></td>
+<td><img src="results/esnli_results/plots/Semantic Similarity_Qwen.png" width="100%"></td>
+</tr>
+
+<tr>
+<td><img src="results/esnli_results/plots/Contradiction_Llama3.png" width="100%"></td>
+<td><img src="results/esnli_results/plots/Contradiction_Qwen.png" width="100%"></td>
+</tr>
+</table>
+
+## 4. Evidence-Supported Modification Precision
 
 To measure how well counterfactual edits align with evidence spans, we compute word-level precision:
 
@@ -237,43 +174,101 @@ Precision = TP / (TP + FP): What percent of the perturbations in the input are e
 
 
 We consider two types of evidence spans.
- - Human-annotation provided by ERASER
- - Rationales generated by trained CREST Explainer
+ - Human-annotation provided by ERASER (H-ESMP)
+ - Rationales generated by trained CREST Explainer (R-ESMP)
 
 
-<h2 style="text-align:left;">e-Movies</h2>
-<div style="text-align:center;">
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
-    <!-- Evidence Accuracy Row -->
-    <img src="results/movie_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:49%; margin:0; padding:0;"/>
-    <!-- Evidence Recall Row -->
-    <img src="results/movie_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest F1 LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/movie_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest F1 Qwen" style="width:49%; margin:0; padding:0;"/>
-  </div>
+<h2>ESMP on Movie Reviews</h2>
 
-</div>
+<table>
+<tr>
+<th>LLaMA-3</th>
+<th>Qwen</th>
+</tr>
 
-<h2 style="text-align:left;">e-SNLI</h2>
-<div style="text-align:center;">
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; margin:0 auto; line-height:0; padding-bottom:40px;">
-    <!-- Evidence Precision Row -->
-    <img src="results/esnli_results/plots/evidence_precision_Introspection_Llama3.png" alt="Evidence Precision LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/evidence_precision_Introspection_Qwen.png" alt="Evidence Precision Qwen" style="width:49%; margin:0; padding:0;"/>
-    <!-- Evidence F1 Row -->
-    <img src="results/esnli_results/plots/crest_precision_Introspection_Llama3.png" alt="Crest Precision LLaMA-3" style="width:49%; margin:0; padding:0;"/>
-    <img src="results/esnli_results/plots/crest_precision_Introspection_Qwen.png" alt="Crest Precision Qwen" style="width:49%; margin:0; padding:0;"/>
-  </div>
-</div>
+<tr>
+<td><img src="results/movie_results/plots/H-ESMP_Llama3.png" width="100%"></td>
+<td><img src="results/movie_results/plots/H-ESMP_Qwen.png" width="100%"></td>
+</tr>
+
+<tr>
+<td><img src="results/movie_results/plots/R-ESMP_Llama3.png" width="100%"></td>
+<td><img src="results/movie_results/plots/R-ESMP_Qwen.png" width="100%"></td>
+</tr>
+</table>
+
+
+
+<h2>ESMP on e-SNLI</h2>
+<table>
+<tr>
+<th>LLaMA-3</th>
+<th>Qwen</th>
+</tr>
+
+<tr>
+<td><img src="results/esnli_results/plots/H-ESMP_Llama3.png" width="100%"></td>
+<td><img src="results/esnli_results/plots/H-ESMP_Qwen.png" width="100%"></td>
+</tr>
+
+<tr>
+<td><img src="results/esnli_results/plots/R-ESMP_Llama3.png" width="100%"></td>
+<td><img src="results/esnli_results/plots/R-ESMP_Qwen.png" width="100%"></td>
+</tr>
+</table>
+
+
+---
+
+<h3>Directory Structure</h3>
+
+<ul>
+  <li>
+    <code>introspections/</code> — Self-generated counterfactual outputs and introspective explanations produced by the evaluated LLMs.
+  </li>
+
+  <li>
+    <code>results/</code> — Experiment outputs including evaluation metrics, logs, and visualization plots.
+  </li>
+
+  <li>
+    <code>eraserbenchmark-master/</code> — ERASER benchmark datasets containing human-annotated evidence spans used for evaluating explanation faithfulness.
+  </li>
+
+  <li>
+    <code>llm-introspection-main/</code> — Adapted implementation of the framework from 
+    <em>Are Self-Explanations from Large Language Models Faithful?</em> (Madsen et al.). 
+    The original codebase was extended to support our experimental setup, including:
+    <ul>
+      <li>Support for newer LLM architectures (<strong>LLaMA-3</strong> and <strong>Qwen-2.5</strong>)</li>
+      <li>Dataset wrapper classes for integration with our evaluation pipeline</li>
+      <li>Compatibility with multiple inference providers (<strong>Together AI</strong>, <strong>Featherless</strong>)</li>
+      <li>A configurable <strong>chat-history mechanism</strong> for controlled context experiments</li>
+      <li>Adjusted prompt designs for sentiment and entailment tasks</li>
+    </ul>
+  </li>
+
+  <li>
+    <code>crest/</code> — Implementation of the <strong>CREST rationalization framework</strong>, used to train rationalizers that produce token-level explanations for comparison with LLM-generated introspections.
+  </li>
+</ul>
 
 
 ## References
 
-This project builds upon and extends the methodology from:
+This project builds upon and extends prior works:
 
-Lanham, T., Chen, A., Radhakrishnan, A., Steiner, B., Denison, C., & Hernandez, D. (2023). *Are Self-Explanations from Large Language Models Faithful?* [Original introspection framework]
+1. Lanham, T., Chen, A., Radhakrishnan, A., Steiner, B., Denison, C., & Hernandez, D. (2023).  
+   <em>Are Self-Explanations from Large Language Models Faithful?</em>  
+   arXiv preprint arXiv:2301.03625.  
+   https://arxiv.org/abs/2301.03625
 
-DeYoung, J., Jain, S., Rajani, N. F., Lehman, E., Xiong, C., Socher, R., & Wallace, B. C. (2020). *ERASER: A Benchmark to Evaluate Rationalized NLP Models.* ACL 2020. [Human rationale annotations]
+2. DeYoung, J., Jain, S., Rajani, N. F., Lehman, E., Xiong, C., Socher, R., & Wallace, B. C. (2020).  
+   <em>ERASER: A Benchmark to Evaluate Rationalized NLP Models.</em>  
+   Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL 2020).  
+   https://arxiv.org/abs/1911.03429
 
-Treviso, M., Ross, A., Guerreiro, N. M., & Martins, A. F. T. (2023). *CREST: A Joint Framework for Rationalization and Counterfactual Text Generation.* 
-
+3. Treviso, M., Ross, A., Guerreiro, N. M., & Martins, A. F. T. (2023).  
+   <em>CREST: A Joint Framework for Rationalization and Counterfactual Text Generation.</em>  
+   arXiv preprint arXiv:2305.00641.  
+   https://arxiv.org/abs/2305.00641

@@ -49,15 +49,15 @@ def plot_attack_comparison(models, attacks, plot_dir):
             axes[i].plot(vdf['size'], vdf['success_rate'], marker="o", label=variant, color=base_colors.get(variant, 'gray'))
         if family == 'Qwen':
             family = 'Qwen2.5'  
-        axes[i].set_title(f"{family} Family", fontsize=14)
-        axes[i].set_xlabel("Model size (Billions of parameters)")
-        axes[i].set_ylabel("Faithfulness")
+        axes[i].set_title(family, fontsize=20)
+        axes[i].set_xlabel("Model size (Billions of parameters)", fontsize=16)
+        axes[i].set_ylabel("Faithfulness", fontsize=16)
         axes[i].set_xscale('log')
         axes[i].set_xticks(major_sizes)
         axes[i].set_xticklabels(size_labels, rotation=45, ha='right')
         axes[i].grid(True)
 
-    plt.suptitle("Faithfulness vs. Model Size Across Prompt Variants", fontsize=16, fontweight='bold')
+    #plt.suptitle("Faithfulness vs. Model Size Across Prompt Variants", fontsize=16, fontweight='bold')
     plt.ylim(0, 1)  # Set y-axis limits from 0 to 1i
     plt.tight_layout()
     fig.savefig(os.path.join(plot_dir, 'faithfulness_vs_model_size'), dpi=300, bbox_inches="tight")
@@ -115,17 +115,17 @@ def plot_attack_comparison(models, attacks, plot_dir):
 def extract_means(df):
     flattened = pd.json_normalize(df.apply(lambda x: x.to_dict(), axis=1))
     return {
-        'closeness': {col: flattened[col].mean() for col in flattened if 'closeness' in col},
-        'semantic_similarity': {col: flattened[col].mean() for col in flattened if 'similarity' in col},
-        'contradiction': {col: flattened[col].mean() for col in flattened if 'contradiction' in col},
-        #'fluency': {col: flattened[col].mean() for col in flattened if 'fluency' in col},
-        #'diversity': {col: flattened[col].mean() for col in flattened if 'diversity' in col},
-        #'evidence_accuracy': {col: flattened[col].mean() for col in flattened if 'evidence_accuracy' in col},
-        'evidence_precision': {col: flattened[col].mean() for col in flattened if 'evidence_precision' in col},
+        'Closeness': {col: flattened[col].mean() for col in flattened if 'closeness' in col},
+        'Semantic Similarity': {col: flattened[col].mean() for col in flattened if 'similarity' in col},
+        'Contradiction': {col: flattened[col].mean() for col in flattened if 'contradiction' in col},
+        #'Fluency': {col: flattened[col].mean() for col in flattened if 'fluency' in col},
+        #'Diversity': {col: flattened[col].mean() for col in flattened if 'diversity' in col},
+        #'Evidence Accuracy': {col: flattened[col].mean() for col in flattened if 'evidence_accuracy' in col},
+        'H-ESMP': {col: flattened[col].mean() for col in flattened if 'evidence_precision' in col},
         #'evidence_recall': {col: flattened[col].mean() for col in flattened if 'evidence_recall' in col},
         #'evidence_f1': {col: flattened[col].mean() for col in flattened if 'evidence_f1' in col},
         #'crest_accuracy': {col: flattened[col].mean() for col in flattened if 'crest_accuracy' in col},
-        'crest_precision': {col: flattened[col].mean() for col in flattened if 'crest_precision' in col},
+        'R-ESMP': {col: flattened[col].mean() for col in flattened if 'crest_precision' in col},
         #'crest_recall': {col: flattened[col].mean() for col in flattened if 'crest_recall' in col},
         #'crest_f1': {col: flattened[col].mean() for col in flattened if 'crest_f1' in col}, 
     }
@@ -232,12 +232,12 @@ def plot_size_comparison(models, results, directory, show_plots=True):
                 f = 'Qwen2.5'
             else:
                 f = family.title()
-            ax.set_title(f,fontsize=12)
-            ax.set_xlabel('Model Size')
-            ax.set_ylabel(metric_group_name.replace('_', ' ').title())
+            #ax.set_title(f,fontsize=12)
+            ax.set_xlabel('Model Size', fontsize=15)
+            ax.set_ylabel(metric_group_name, fontsize=15)
             ax.set_xscale('log')
             ax.set_xticks(major_size_nums)
-            ax.set_xticklabels(major_size_labels, rotation=45, ha='right')
+            ax.set_xticklabels(major_size_labels, fontsize=12, rotation=45, ha='right')
             ax.grid(True, alpha=0.3, linestyle='--')
 
             if plotted:
