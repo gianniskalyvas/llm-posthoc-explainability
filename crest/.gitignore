@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Ignore lp-sparsemap and eigen directories
+lp-sparsemap/
+eigen/
+
 # C extensions
 *.so
 
