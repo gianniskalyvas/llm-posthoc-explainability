@@ -28,7 +28,7 @@ ERASER benchmark: Standard benchmark datasets augmented with human-provided rati
 
 
 
-# Experiment Pipeline
+# Pipeline
 
 
 <div style="text-align:center;">
