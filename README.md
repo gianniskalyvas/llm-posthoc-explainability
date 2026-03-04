@@ -95,13 +95,13 @@ We evaluate the extent to which a counterfactual explanation remains close to th
 
 ### Evidence-Supported Modification Precision (ESMP)
 
+**ESMP** measures the extent to which LLMs modify only the parts of the input that are relevant for a prediction.
 
-We examine to what extent LLM modify only decision-relevant parts of the input.
+We use human annotations from the **ERASER** benchmark to identify decision-relevant spans.
+In addition, we train a rationalizer that extracts a minimal rationale sufficient for prediction. 
+Despite the budget constraints, its high accuracy suggests it successfully identifies decision-relevant features.
 
-Do this end we leverage human annotations as provided by ERASER.
-
-To this end we also train a rationalizer to extract a rationale sufficient for prediction. 
-Its high accuracy although its constrains suggest it sucessfully identifies decision-relevant features.
+ESMP evaluates whether LLM modifications are concentrated within these evidence-supported regions.
 
 
 
