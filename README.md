@@ -30,14 +30,9 @@ ERASER benchmark: Standard benchmark datasets augmented with human-provided rati
   <img src="experimental-pipeline.png" alt="pipeline" style="width:100%;"/>
 </div>
 
-## 1. Classifiers
-
-<div style="text-align:center;">
-  <img src="results/classifiers/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:100%;"/>
-</div>
 
 
-## 2. Counterfactual Generation
+## Counterfactual Generation
 
 Generation is organized into three stages: original prediction,counterfactual generation, and counterfactual evaluation. All stages are implemented using a single large
 language model (LLM), which assumes different roles through distinct prompting configurations.
@@ -66,8 +61,17 @@ the initial classification and the counterfactual generation are performed withi
 The model is first instructed to identify the decision-relevant features and then to generate a counterfactual restricting its changes in the identified features.
 
 
+## Preliminary Evaluation
 
-## 3. Evaluation
+Before analyzing counterfactual explanations, we perform a preliminary evaluation of the models on the underlying classification tasks (e-Movies and e-SNLI). Establishing reliable baseline accuracy is important to ensure that the generated rationales and counterfactual explanations are meaningful. Overall, classification performance improves with model size, while the CREST rationalizer achieves competitive accuracy despite operating under constraints.
+
+<div style="text-align:center;">
+  <img src="results/classifiers/classifier_accuracy_comparison.png" alt="Experiment Summary" style="width:100%;"/>
+</div>
+
+
+
+## Main Evaluation Protocol
 
 ### Faithfulness
 
