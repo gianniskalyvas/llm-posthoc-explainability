@@ -106,13 +106,13 @@ Its high accuracy although its constrains suggest it sucessfully identifies deci
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
   <img src="results/movie_results/plots/faithfulness_vs_model_size.png" alt="Faithfulness" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
-  <img src="results/movie_results/plots/legend.png" style="width:70%">
+  <img src="results/movie_results/plots/legend.png" >
 </div>
 
 <h2 style="text-align:left;">e-SNLI</h2>
 <div style="text-align:center;">
   <img src="results/esnli_results/plots/faithfulness_vs_model_size.png" alt="Faithfulness" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
-  <img src="results/movie_results/plots/legend.png" style="width:70%">
+  <img src="results/movie_results/plots/legend.png">
 </div>
 
 
