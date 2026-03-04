@@ -12,7 +12,7 @@ Faithful counterfactual reasoning appears to emerge only beyond a certain model 
 
 
 
-# Methodologie
+# Setup
 
 ### Datasets
 
