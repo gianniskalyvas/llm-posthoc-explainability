@@ -106,13 +106,13 @@ Its high accuracy although its constrains suggest it sucessfully identifies deci
 <h2 style="text-align:left;">Movie Reviews</h2>
 <div style="text-align:center;">
   <img src="results/movie_results/plots/faithfulness_vs_model_size.png" alt="Faithfulness" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
-  <img src="results/movie_results/plots/legend.png">
+  <img src="results/movie_results/plots/legend.png" style="width:70%">
 </div>
 
 <h2 style="text-align:left;">e-SNLI</h2>
 <div style="text-align:center;">
   <img src="results/esnli_results/plots/faithfulness_vs_model_size.png" alt="Faithfulness" style="display:block; margin:0 auto; width:100%; padding-bottom:40px; "/>
-  <img src="results/movie_results/plots/legend.png">
+  <img src="results/movie_results/plots/legend.png" style="width:70%">
 </div>
 
 
@@ -142,6 +142,8 @@ Its high accuracy although its constrains suggest it sucessfully identifies deci
 <td><img src="results/movie_results/plots/Contradiction_Qwen.png" width="100%"></td>
 </tr>
 </table>
+<img src="results/movie_results/plots/legend.png">
+
 
 <h2>e-SNLI</h2>
 
@@ -166,6 +168,9 @@ Its high accuracy although its constrains suggest it sucessfully identifies deci
 <td><img src="results/esnli_results/plots/Contradiction_Qwen.png" width="100%"></td>
 </tr>
 </table>
+<img src="results/movie_results/plots/legend.png">
+
+
 
 ## 4. Evidence-Supported Modification Precision
 
@@ -201,6 +206,7 @@ We consider two types of evidence spans.
 </tr>
 </table>
 
+<img src="results/movie_results/plots/legend.png">
 
 
 <h2>ESMP on e-SNLI</h2>
@@ -220,6 +226,8 @@ We consider two types of evidence spans.
 <td><img src="results/esnli_results/plots/R-ESMP_Qwen.png" width="100%"></td>
 </tr>
 </table>
+
+<img src="results/movie_results/plots/legend.png">
 
 
 ---
