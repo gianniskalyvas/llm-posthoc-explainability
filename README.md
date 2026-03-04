@@ -71,12 +71,12 @@ Before analyzing counterfactual explanations, we perform a preliminary evaluatio
 
 ## Main Evaluation Protocol
 
-### Faithfulness
+### Criterion 1: Faithfulness
 
 Percentage of self-generated counterfactuals that successfully flip the model's prediction.
 
 
-### Minimality 
+### Criterion 2: Minimality 
 
 We evaluate the extent to which a counterfactual explanation remains close to the original input. We consider multiple complementary instantiations of such a distance:
 
@@ -86,7 +86,7 @@ We evaluate the extent to which a counterfactual explanation remains close to th
 
  - *Contradiction*: Contradiction probability from `roberta-large-mnli`.
 
-### Evidence-Supported Modification Precision (ESMP)
+### Criterion 3: Evidence-Supported Modification Precision (ESMP)
 
 **ESMP** measures the extent to which LLMs modify only the parts of the input that are relevant for a prediction.
 
