@@ -1,4 +1,4 @@
-# How Model Scale Influences Post-Hoc Explainability in Large Language Models
+# Post-Hoc Explainability in LLMs
 
 As large language models (LLMs) grow in size to enhance performance, there remains a limited understanding of how this expansion affects their explainability.
 This project adopts counterfactuals as a primary method for post-hoc explainability, using the following definition: 
