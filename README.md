@@ -44,28 +44,21 @@ language model (LLM), which assumes different roles through distinct prompting c
 
 ### Prompt Configurations
 
-**Baseline** -  serves as a point of referance. 
+**Baseline** – Serves as a reference point.  
+- `baseline`: The model is given the target label (the opposite of its Stage I prediction) and instructed to modify the original instance accordingly. The prompt also includes a definition of a counterfactual to encourage minimal changes that flip the label.
 
-The model is explicitly provided with the target label—defined as the opposite of its prediction in Stage I—and is instructed to modify the original instance accordingly. The prompt further includes a formal definition of a counterfactual to encourage adherence to minimality and label-flipping principles.
+**Persona Manipulation** – Changes the subject of the explanation.  
+- `e-persona-you`: e.g., *“What would have to change for you to change your mind?”*  
+- `e-persona-human`: e.g., *“What would have to change for a human to change their mind?”*
 
-**Persona Manipulation** – subject of the explanation
- - ```e-persona-you``` (e.g., *"What would have to change for you to change your mind?"*).
+**Target Visibility**  
+- `e-implicit-target`: The model is not told what its initial prediction was.
 
- - ```e-persona-human``` (e.g.,*"What would have to change for a human to change their mind?"*).
+**Chat History**  
+- `e-chat-history`: The classification and counterfactual generation occur within the same chat history to examine whether prior context influences behavior.
 
-
-**Target Visibility** 
- - ```e-implicit-target``` (The model is not told what its initial prediction was.)
- 
-**Chat history** 
-
-the initial classification and the counterfactual generation are performed within the same chat history to eximen wether context influences behavior.
-
-**Chain of thought Prompting** 
-
-The model is first instructed to identify the decision-relevant features and then to generate a counterfactual restricting its changes in the identified features.
-
-
+**Chain-of-Thought Prompting**  
+- `e-chain-of-thought`: The model is first asked to identify decision-relevant features and then generate a counterfactual that restricts modifications to those features.
 ## Preliminary Evaluation
 
 Before analyzing counterfactual explanations, we perform a preliminary evaluation of the models on the underlying classification tasks (e-Movies and e-SNLI). Establishing reliable baseline accuracy is important to ensure that the generated rationales and counterfactual explanations are meaningful. Overall, classification performance improves with model size, while the CREST rationalizer achieves competitive accuracy despite operating under constraints.
